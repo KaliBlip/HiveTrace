@@ -1,0 +1,289 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// User model - stores all users (producers, consumers, admins)
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  name      String
+  role      String     @default("CONSUMER")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  producer  Producer?
+  reviews   Review[]
+  sessions  Session[]
+  orders    Order[]
+
+  @@index([email])
+}
+
+
+
+// Session model for NextAuth
+model Session {
+  id        String   @id @default(cuid())
+  sessionToken String  @unique
+  userId    String
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Producer model - stores producer/beekeeper information
+model Producer {
+  id                String     @id @default(cuid())
+  userId            String     @unique
+  businessName      String
+  location          String
+  latitude          Float?
+  longitude         Float?
+  description       String?
+  verificationHash  String     @unique // HMAC-SHA256 hash
+  apiarySize        Int?       // in hectares
+  certifications    String?    // organic, fair trade, etc.
+  verified          Boolean    @default(false)
+  verifiedAt        DateTime?
+  status            String     @default("PENDING")
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  batches           HoneyBatch[]
+  ratings           ProducerRating?
+  fraudAlerts       FraudAlert[]
+  products          Product[]
+
+  @@index([userId])
+  @@index([verified])
+  @@index([status])
+}
+
+
+
+// Producer Rating/Reputation model
+model ProducerRating {
+  id                String     @id @default(cuid())
+  producerId        String     @unique
+  averageRating     Float      @default(0)
+  totalReviews      Int        @default(0)
+  trustScore        Float      @default(100) // 0-100
+  fraudCasesCount   Int        @default(0)
+  updatedAt         DateTime   @updatedAt
+
+  producer          Producer   @relation(fields: [producerId], references: [id], onDelete: Cascade)
+}
+
+// Honey Batch model - individual batches of honey
+model HoneyBatch {
+  id                String     @id @default(cuid())
+  batchCode         String     @unique // e.g., HT-2024-GVA-001
+  producerId        String
+  honeyType         String     // e.g., Wildflower, Clover, etc.
+  quantity          Float      // in kg
+  harvestDate       DateTime
+  processingDate    DateTime?
+  description       String?
+  verificationHash  String     @unique // HMAC-SHA256 hash
+  verified          Boolean    @default(false)
+  verifiedAt        DateTime?
+  scanCount         Int        @default(0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  producer          Producer   @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  qrCodes           QRCode[]
+  reviews           Review[]
+  fraudAlerts       FraudAlert[]
+  product           Product?
+
+  @@index([producerId])
+  @@index([verified])
+  @@index([harvestDate])
+}
+
+// QR Code model - individual QR codes for each batch
+model QRCode {
+  id                String     @id @default(cuid())
+  batchId           String
+  code              String     @unique // unique code for QR
+  generatedAt       DateTime   @default(now())
+  scanCount         Int        @default(0)
+  firstScannedAt    DateTime?
+  lastScannedAt     DateTime?
+
+  // Relations
+  batch             HoneyBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  scans             QRScan[]
+
+  @@index([batchId])
+  @@index([code])
+}
+
+// QR Scan model - tracks individual scans
+model QRScan {
+  id                String     @id @default(cuid())
+  qrCodeId          String
+  latitude          Float?
+  longitude         Float?
+  country           String?
+  city              String?
+  timestamp         DateTime   @default(now())
+  userAgent         String?
+  ipAddress         String?
+
+  // Relations
+  qrCode            QRCode     @relation(fields: [qrCodeId], references: [id], onDelete: Cascade)
+
+  @@index([qrCodeId])
+  @@index([timestamp])
+}
+
+// Review model - consumer reviews for batches
+model Review {
+  id                String     @id @default(cuid())
+  batchId           String
+  userId            String
+  rating            Int        // 1-5 stars
+  text              String
+  verified          Boolean    @default(false) // consumer purchased batch
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  batch             HoneyBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([batchId])
+  @@index([userId])
+  @@index([verified])
+}
+
+// Fraud Alert model - suspicious activities
+model FraudAlert {
+  id                String     @id @default(cuid())
+  type              String
+  severity          String
+  producerId        String?
+  batchId           String?
+  description       String
+  evidence          String?    // JSON data supporting the alert
+  status            String     @default("FLAGGED")
+  investigatedAt    DateTime?
+  resolvedAt        DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+
+  // Relations
+  producer          Producer?  @relation(fields: [producerId], references: [id], onDelete: SetNull)
+  batch             HoneyBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  @@index([producerId])
+  @@index([batchId])
+  @@index([status])
+  @@index([type])
+  @@index([severity])
+}
+
+
+
+// --- E-commerce Models ---
+
+// Product model - makes a honey batch available for sale
+model Product {
+  id              String     @id @default(cuid())
+  batchId         String     @unique
+  producerId      String
+  name            String
+  description     String
+  price           Float      // Price per unit
+  unit            String     @default("kg") // kg, jar, etc.
+  stock           Int        @default(0)
+  imageUrl        String?
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  batch           HoneyBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  producer        Producer   @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+
+  @@index([producerId])
+  @@index([isActive])
+}
+
+// Order model - tracks consumer purchases
+model Order {
+  id              String      @id @default(cuid())
+  consumerId      String
+  status          String      @default("PENDING")
+  totalAmount     Float
+  currency        String      @default("NGN") // Default for Paystack
+  shippingAddress String?
+  paymentId       String?     @unique // Paystack reference
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  // Relations
+  consumer        User        @relation(fields: [consumerId], references: [id])
+  items           OrderItem[]
+  payment         Payment?
+
+  @@index([consumerId])
+  @@index([status])
+}
+
+
+
+// OrderItem model - individual products in an order
+model OrderItem {
+  id              String   @id @default(cuid())
+  orderId         String
+  productId       String
+  quantity        Int
+  priceAtPurchase Float
+  createdAt       DateTime @default(now())
+
+  // Relations
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// Payment model - tracks Paystack transactions
+model Payment {
+  id              String        @id @default(cuid())
+  orderId         String        @unique
+  reference       String        @unique // Paystack reference
+  status          String        @default("PENDING")
+  amount          Float
+  channel         String?       // card, bank, etc.
+  paidAt          DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  // Relations
+  order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+
+
