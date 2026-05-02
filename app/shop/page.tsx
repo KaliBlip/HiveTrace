@@ -1,6 +1,7 @@
 import { getAllActiveProducts } from '@/lib/actions/product-actions';
 import { ShopClient } from '@/components/shop/shop-client';
 import { ConsumerHeader } from '@/components/consumer/header';
+import { Footer } from '@/components/footer';
 
 export default async function ShopPage() {
   const products = await getAllActiveProducts();
@@ -25,6 +26,7 @@ export default async function ShopPage() {
     <>
       <ConsumerHeader />
       <ShopClient products={serialized} />
+      <Footer />
     </>
   );
 }
