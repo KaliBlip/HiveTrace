@@ -2,7 +2,19 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Product } from '@/lib/store';
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  unit: string;
+  stock: number;
+  imageUrl?: string | null;
+  isActive: boolean;
+  batchId: string;
+  producerId: string;
+  createdAt: string;
+}
 
 export interface CartItem extends Product {
   quantity: number;

@@ -6,42 +6,56 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Check, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Check, AlertCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { getBatchById } from '@/lib/store';
+import { createProduct } from '@/lib/actions/product-actions';
+import { toast } from 'sonner';
 
 function NewProductForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const batchId = searchParams.get('batchId');
-  const batch = batchId ? getBatchById(batchId) : null;
 
   const [formData, setFormData] = useState({
-    name: batch ? `Pure ${batch.type} Honey` : '',
+    name: '',
     price: '',
     stock: '',
-    description: batch ? `A premium batch of ${batch.type} honey, harvested on ${batch.harvestDate}. Cryptographically verified for authenticity.` : '',
+    description: '',
     unit: '500g Jar',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!batchId) return;
+
     setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      await createProduct({
+        name: formData.name,
+        price: parseFloat(formData.price),
+        stock: parseInt(formData.stock),
+        description: formData.description,
+        unit: formData.unit,
+        batchId: batchId,
+      });
+
       setIsSuccess(true);
+      toast.success('Product listed successfully!');
       setTimeout(() => {
         router.push('/dashboard/products');
       }, 2000);
-    }, 1500);
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create listing');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (!batchId || !batch) {
+  if (!batchId) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
         <AlertCircle className="w-12 h-12 text-yellow-500" />
@@ -76,7 +90,7 @@ function NewProductForm() {
 
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">List for Sale</h1>
-        <p className="text-muted-foreground">Create a marketplace listing for batch <strong>{batch.batchCode}</strong></p>
+        <p className="text-muted-foreground">Create a marketplace listing from your verified batch</p>
       </div>
 
       <Card className="border-border">
@@ -88,65 +102,72 @@ function NewProductForm() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-medium">Product Name</label>
-              <Input 
-                value={formData.name} 
+              <Input
+                value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
-                placeholder="e.g. Pure Wildflower Honey" 
-                required 
+                placeholder="e.g. Pure Wildflower Honey"
+                required
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Price (₦)</label>
-                <Input 
+                <Input
                   type="number"
-                  value={formData.price} 
+                  value={formData.price}
                   onChange={(e) => setFormData({...formData, price: e.target.value})}
-                  placeholder="0.00" 
-                  required 
+                  placeholder="0.00"
+                  required
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Unit</label>
-                <Input 
-                  value={formData.unit} 
+                <Input
+                  value={formData.unit}
                   onChange={(e) => setFormData({...formData, unit: e.target.value})}
-                  placeholder="e.g. 500g Jar" 
-                  required 
+                  placeholder="e.g. 500g Jar"
+                  required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Initial Stock (Units)</label>
-              <Input 
+              <Input
                 type="number"
-                value={formData.stock} 
+                value={formData.stock}
                 onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                placeholder="e.g. 100" 
-                required 
+                placeholder="e.g. 100"
+                required
               />
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium">Product Description</label>
-              <Textarea 
-                value={formData.description} 
+              <Textarea
+                value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
-                placeholder="Describe your honey..." 
+                placeholder="Describe your honey..."
                 className="min-h-32"
-                required 
+                required
               />
             </div>
 
             <div className="pt-4">
-              <Button 
-                type="submit" 
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12"
+              <Button
+                type="submit"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 gap-2"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Creating Listing...' : 'List Product in Marketplace'}
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Creating Listing...
+                  </>
+                ) : (
+                  'List Product in Marketplace'
+                )}
               </Button>
             </div>
           </form>

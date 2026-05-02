@@ -30,7 +30,7 @@ export async function getProducerOrders() {
           product: true
         }
       },
-      user: {
+      consumer: {
         select: {
           name: true,
           email: true
@@ -45,7 +45,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');
 
-  // Verify the producer owns at least one item in this order
   const producer = await prisma.producer.findUnique({
     where: { userId: session.user.id },
   });

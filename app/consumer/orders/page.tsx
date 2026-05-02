@@ -1,30 +1,29 @@
-'use client';
-
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ShoppingBag, Package, Truck, CheckCircle2, Clock } from 'lucide-react';
-import { getOrdersByConsumerId, getProductById } from '@/lib/store';
+import Link from 'next/link';
+import { getConsumerOrders } from '@/lib/actions/consumer-actions';
 
-export default function ConsumerOrdersPage() {
-  // In a real app, we would get the consumer ID from the session
-  const orders = getOrdersByConsumerId('user-2');
+export default async function ConsumerOrdersPage() {
+  const orders = await getConsumerOrders();
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return <Clock className="w-4 h-4" />;
-      case 'paid': return <ShoppingBag className="w-4 h-4" />;
-      case 'shipped': return <Truck className="w-4 h-4" />;
-      case 'delivered': return <CheckCircle2 className="w-4 h-4" />;
+      case 'PENDING': return <Clock className="w-4 h-4" />;
+      case 'PAID': return <ShoppingBag className="w-4 h-4" />;
+      case 'SHIPPED': return <Truck className="w-4 h-4" />;
+      case 'DELIVERED': return <CheckCircle2 className="w-4 h-4" />;
       default: return <Package className="w-4 h-4" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'paid': return 'bg-blue-100 text-blue-800';
-      case 'shipped': return 'bg-purple-100 text-purple-800';
-      case 'delivered': return 'bg-green-100 text-green-800';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'PAID': return 'bg-blue-100 text-blue-800';
+      case 'SHIPPED': return 'bg-purple-100 text-purple-800';
+      case 'DELIVERED': return 'bg-green-100 text-green-800';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -55,31 +54,28 @@ export default function ConsumerOrdersPage() {
                   <span className="text-xs text-muted-foreground">Order #{order.id.slice(-8).toUpperCase()}</span>
                   <Badge className={getStatusColor(order.status) + " gap-1"}>
                     {getStatusIcon(order.status)}
-                    {order.status}
+                    {order.status.toLowerCase()}
                   </Badge>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-6">
-                {order.items.map((item) => {
-                  const product = getProductById(item.productId);
-                  return (
-                    <div key={item.id} className="flex gap-4">
-                      <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden shrink-0">
-                        {product?.imageUrl && <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm truncate">{product?.name || 'Deleted Product'}</p>
-                        <p className="text-xs text-muted-foreground">Quantity: {item.quantity}</p>
-                        <p className="text-xs font-medium">₦{item.priceAtPurchase.toLocaleString()}</p>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">Verified</Badge>
-                      </div>
+                {order.items.map((item) => (
+                  <div key={item.id} className="flex gap-4">
+                    <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden shrink-0">
+                      {item.product?.imageUrl && <img src={item.product.imageUrl} alt={item.product.name} className="w-full h-full object-cover" />}
                     </div>
-                  );
-                })}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-sm truncate">{item.product?.name || 'Deleted Product'}</p>
+                      <p className="text-xs text-muted-foreground">Quantity: {item.quantity}</p>
+                      <p className="text-xs font-medium">₦{item.priceAtPurchase.toLocaleString()}</p>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">Verified</Badge>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>

@@ -31,11 +31,15 @@ export async function POST(req: Request) {
 
     // If the user is a producer, create a producer profile
     if (role === 'PRODUCER') {
+      const crypto = await import('crypto');
+      const verificationHash = crypto.createHash('sha256').update(`${user.id}-${Date.now()}`).digest('hex');
+
       await prisma.producer.create({
         data: {
           userId: user.id,
-          businessName: name, // Default to user's name
-          location: { address: '', city: '', state: '' }, // Empty defaults
+          businessName: name,
+          location: '',
+          verificationHash,
         },
       });
     }

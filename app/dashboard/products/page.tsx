@@ -1,15 +1,13 @@
-'use client';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Edit, Trash2, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { getProductsByProducerId } from '@/lib/store';
+import { getProducerProducts } from '@/lib/actions/product-actions';
+import { DeleteProductButton } from '@/components/dashboard/delete-product-button';
 
-export default function ProducerProductsPage() {
-  // In a real app, we would get the producer ID from the session
-  const products = getProductsByProducerId('producer-1');
+export default async function ProducerProductsPage() {
+  const products = await getProducerProducts();
 
   return (
     <div className="space-y-8">
@@ -71,9 +69,7 @@ export default function ProducerProductsPage() {
                     Preview
                   </Button>
                 </Link>
-                <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                  <Trash2 className="w-4 h-4" />
-                </Button>
+                <DeleteProductButton productId={product.id} />
               </div>
             </CardContent>
           </Card>
