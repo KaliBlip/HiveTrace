@@ -3,8 +3,17 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { TrendingUp, Package, Star, AlertCircle, Clock, ChevronRight } from 'lucide-react';
 import { getProducerStats } from '@/lib/actions/producer-actions';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function DashboardPage() {
+  const session = await auth();
+  if (!session) redirect('/auth/login');
+  
+  const role = (session.user as any).role;
+  if (role === 'CONSUMER') redirect('/shop');
+  if (role === 'ADMIN') redirect('/admin');
+
   const statsData = await getProducerStats();
 
   const stats = [

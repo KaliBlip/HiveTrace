@@ -4,7 +4,14 @@ import { auth } from '@/lib/auth';
 
 export async function getProducerStats() {
   const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
+  if (!session?.user?.id) {
+    return {
+      producer: { businessName: 'Guest', rating: 5, verified: false } as any,
+      batchCount: 0,
+      scanCount: 0,
+      recentBatches: []
+    };
+  }
 
   const producer = await prisma.producer.findUnique({
     where: { userId: session.user.id },
@@ -16,7 +23,15 @@ export async function getProducerStats() {
     }
   });
 
-  if (!producer) throw new Error('Producer profile not found');
+  if (!producer) {
+    // If user is a producer but has no profile yet, return default empty stats
+    return {
+      producer: { businessName: 'New Producer', rating: 5, verified: false } as any,
+      batchCount: 0,
+      scanCount: 0,
+      recentBatches: []
+    };
+  }
 
   const [scanCount, recentBatches] = await Promise.all([
     prisma.qRScan.count({

@@ -5,7 +5,14 @@ import { auth } from '@/lib/auth';
 export async function getAdminStats() {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'ADMIN') {
-    throw new Error('Unauthorized');
+    return {
+      producerCount: 0,
+      batchCount: 0,
+      fraudAlertCount: 0,
+      scanCount: 0,
+      recentAlerts: [],
+      pendingProducers: []
+    };
   }
 
   const [

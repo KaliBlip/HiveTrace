@@ -23,10 +23,10 @@ export function ConsumerHeader() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="/consumer"
-              className="text-muted-foreground hover:text-foreground transition"
+              href="/shop"
+              className="text-foreground font-bold hover:text-primary transition"
             >
-              Scan Honey
+              Marketplace
             </Link>
             <Link
               href="/consumer/scanner"
@@ -35,10 +35,10 @@ export function ConsumerHeader() {
               QR Scanner
             </Link>
             <Link
-              href="/dashboard"
+              href="/consumer"
               className="text-muted-foreground hover:text-foreground transition"
             >
-              Dashboard
+              Reputation
             </Link>
           </nav>
 
@@ -72,20 +72,14 @@ export function ConsumerHeader() {
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-border bg-card">
             <nav className="flex flex-col p-4 gap-2">
-              <Link href="/consumer" className="px-4 py-2 hover:bg-muted rounded">
-                Scan Honey
+              <Link href="/shop" className="px-4 py-2 hover:bg-muted rounded font-bold">
+                Marketplace
               </Link>
-              <Link
-                href="/consumer/scanner"
-                className="px-4 py-2 hover:bg-muted rounded"
-              >
+              <Link href="/consumer/scanner" className="px-4 py-2 hover:bg-muted rounded">
                 QR Scanner
               </Link>
-              <Link
-                href="/dashboard"
-                className="px-4 py-2 hover:bg-muted rounded"
-              >
-                Dashboard
+              <Link href="/consumer" className="px-4 py-2 hover:bg-muted rounded">
+                Reputation
               </Link>
               <div className="border-t border-border pt-2 mt-2 flex flex-col gap-2">
                 <Link href="/auth/login" className="w-full">

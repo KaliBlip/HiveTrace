@@ -19,10 +19,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function BatchDetailPage() {
-  const params = useParams();
+export default function BatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
-  const id = params.id as string;
   
   // In a real app, fetch this from the DB using a Server Action
   // For this demo, we'll use local state and a placeholder

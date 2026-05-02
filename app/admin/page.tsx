@@ -4,8 +4,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, AlertTriangle, Users, Package, Clock } from 'lucide-react';
 import { getAdminStats } from '@/lib/actions/admin-actions';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function AdminPage() {
+  const session = await auth();
+  if (!session) redirect('/auth/login');
+  if ((session.user as any).role !== 'ADMIN') redirect('/dashboard');
   const statsData = await getAdminStats();
 
   const stats = [

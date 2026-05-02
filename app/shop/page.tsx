@@ -1,5 +1,6 @@
 import { getAllActiveProducts } from '@/lib/actions/product-actions';
 import { ShopClient } from '@/components/shop/shop-client';
+import { ConsumerHeader } from '@/components/consumer/header';
 
 export default async function ShopPage() {
   const products = await getAllActiveProducts();
@@ -20,5 +21,10 @@ export default async function ShopPage() {
     producerName: p.producer?.businessName || p.producer?.user?.name || 'Unknown Producer',
   }));
 
-  return <ShopClient products={serialized} />;
+  return (
+    <>
+      <ConsumerHeader />
+      <ShopClient products={serialized} />
+    </>
+  );
 }
