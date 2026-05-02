@@ -14,7 +14,10 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-export default function BatchDetailPage({ params }: { params: { id: string } }) {
+import { use } from 'react';
+
+export default function BatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [rating, setRating] = useState('0');
   const [reviewText, setReviewText] = useState('');
   const [submitted, setSubmitted] = useState(false);

@@ -5,18 +5,26 @@ export async function POST(req: Request) {
     const { email, amount, metadata } = await req.json();
 
     const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY;
+    const IS_DEV = process.env.NODE_ENV === 'development';
 
     if (!PAYSTACK_SECRET_KEY) {
-      // For development when keys aren't provided yet, return a mock response
-      return NextResponse.json({
-        status: true,
-        message: "Mock Transaction Initialized (Keys Missing)",
-        data: {
-          authorization_url: "#",
-          access_code: "mock_code",
-          reference: `HT-${Date.now()}`
-        }
-      });
+      if (IS_DEV) {
+        console.log('⚠️ Paystack Secret Key missing. Using mock response for development.');
+        return NextResponse.json({
+          status: true,
+          message: "Mock Transaction Initialized (Dev Mode)",
+          data: {
+            authorization_url: "#",
+            access_code: "mock_code",
+            reference: `HT-MOCK-${Date.now()}`
+          }
+        });
+      }
+      
+      return NextResponse.json(
+        { status: false, message: 'Payment gateway not configured. Please contact administrator.' },
+        { status: 500 }
+      );
     }
 
     const response = await fetch('https://api.paystack.co/transaction/initialize', {

@@ -19,7 +19,7 @@ export function useAuth() {
   );
 
   const logout = useCallback(async () => {
-    await signOut({ redirect: true, redirectUrl: "/" });
+    await signOut({ callbackUrl: "/" });
   }, []);
 
   return {

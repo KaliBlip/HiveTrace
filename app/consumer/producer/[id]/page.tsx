@@ -5,7 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Star, MapPin, TrendingUp } from 'lucide-react';
 
-export default function ProducerProfilePage({ params }: { params: { id: string } }) {
+import { use } from 'react';
+
+export default function ProducerProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const batches = [
     {
       id: 1,
