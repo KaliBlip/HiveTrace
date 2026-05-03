@@ -6,10 +6,14 @@ import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useAuth } from '@/lib/hooks/use-auth';
+import { LayoutDashboard, User } from 'lucide-react';
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { isAuthenticated, role, user } = useAuth();
+  const currentRole = role?.toLowerCase();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -55,16 +59,33 @@ export function PublicHeader() {
 
         {/* Desktop Auth Buttons */}
         <div className="hidden lg:flex items-center gap-4">
-          <Link href="/auth/login">
-            <Button variant="ghost" className="font-bold text-stone-500 hover:text-primary">
-              Sign In
-            </Button>
-          </Link>
-          <Link href="/auth/register">
-            <Button className="bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all">
-              Join the Network
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <Link href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'}>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-lg gap-2">
+                {user?.image ? (
+                  <img src={user.image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                ) : currentRole === 'producer' || currentRole === 'admin' ? (
+                  <LayoutDashboard className="w-4 h-4" />
+                ) : (
+                  <User className="w-4 h-4" />
+                )}
+                {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'My Account'}
+              </Button>
+            </Link>
+          ) : (
+            <>
+              <Link href="/auth/login">
+                <Button variant="ghost" className="font-bold text-stone-500 hover:text-primary">
+                  Sign In
+                </Button>
+              </Link>
+              <Link href="/auth/register">
+                <Button className="bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all">
+                  Join the Network
+                </Button>
+              </Link>
+            </>
+          )}
           <div className="pl-4 border-l border-stone-200">
             <ThemeToggle />
           </div>
@@ -121,16 +142,36 @@ export function PublicHeader() {
                 <span className="font-bold text-stone-500">Theme</span>
                 <ThemeToggle />
               </div>
-              <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                <Button variant="outline" className="w-full h-14 text-lg font-bold border-2 border-stone-200">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                <Button className="w-full h-14 text-lg font-black bg-stone-900 hover:bg-primary text-white rounded-xl shadow-xl">
-                  Join the Network
-                </Button>
-              </Link>
+              {isAuthenticated ? (
+                <Link 
+                  href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Button className="w-full h-14 text-lg font-black bg-primary text-primary-foreground rounded-xl shadow-xl gap-2">
+                    {user?.image ? (
+                      <img src={user.image} alt="" className="w-8 h-8 rounded-full object-cover" />
+                    ) : currentRole === 'producer' || currentRole === 'admin' ? (
+                      <LayoutDashboard className="w-5 h-5" />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                    {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'My Account'}
+                  </Button>
+                </Link>
+              ) : (
+                <>
+                  <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
+                    <Button variant="outline" className="w-full h-14 text-lg font-bold border-2 border-stone-200">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
+                    <Button className="w-full h-14 text-lg font-black bg-stone-900 hover:bg-primary text-white rounded-xl shadow-xl">
+                      Join the Network
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -21,8 +21,12 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  Moon,
+  Sun,
+  Shield
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const producerMenuItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
@@ -52,10 +56,11 @@ export function Sidebar() {
   const pathname = usePathname();
   const { user, role, logout } = useAuth();
 
+  const currentRole = role?.toLowerCase();
   const menuItems =
-    role === "producer"
+    currentRole === "producer"
       ? producerMenuItems
-      : role === "admin"
+      : currentRole === "admin"
         ? adminMenuItems
         : consumerMenuItems;
 
@@ -81,7 +86,7 @@ export function Sidebar() {
       )}>
         <Link href="/" className="flex items-center gap-3">
           <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
-            <span className="text-xl">🍯</span>
+            <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
           {!isCollapsed && (
             <span className="font-bold text-lg whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
@@ -92,12 +97,28 @@ export function Sidebar() {
       </div>
 
       {/* User Info */}
-      {user && !isCollapsed && (
-        <div className="px-6 py-4 bg-sidebar-accent/5 overflow-hidden">
-          <p className="text-sm font-semibold text-sidebar-foreground truncate">
-            {user.name}
-          </p>
-          <p className="text-xs text-sidebar-foreground/70 capitalize">{role}</p>
+      {user && (
+        <div className={cn(
+          "px-6 py-4 bg-sidebar-accent/5 overflow-hidden flex items-center gap-3",
+          isCollapsed && "justify-center px-4"
+        )}>
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden border border-sidebar-border">
+            {user.image ? (
+              <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-primary font-bold text-xs uppercase">
+                {user.name?.charAt(0) || "U"}
+              </span>
+            )}
+          </div>
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-sidebar-foreground truncate">
+                {user.name}
+              </p>
+              <p className="text-xs text-sidebar-foreground/70 capitalize">{currentRole}</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -131,7 +152,15 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border mt-auto">
+      <div className="p-4 border-t border-sidebar-border mt-auto space-y-2">
+        <div className={cn(
+          "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all text-sidebar-foreground",
+          isCollapsed && "justify-center px-0"
+        )}>
+          <ThemeToggle />
+          {!isCollapsed && <span className="ml-1">Appearance</span>}
+        </div>
+        
         <Button
           variant="outline"
           className={cn(

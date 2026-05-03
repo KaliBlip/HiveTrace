@@ -6,13 +6,33 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/lib/hooks/use-auth';
+import { updateProfile } from '@/lib/actions/user-actions';
+import { Camera, Loader2, User as UserIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
+  const { user, update } = useAuth();
   const [isSaving, setIsSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    image: user?.image || '',
+  });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 1000);
+    try {
+      await updateProfile({
+        name: formData.name,
+        image: formData.image,
+      });
+      await update(); // Refresh session
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      toast.error('Failed to update profile');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -30,30 +50,55 @@ export default function SettingsPage() {
               <CardTitle>Profile Information</CardTitle>
               <CardDescription>Update your business details</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="businessName">Business Name</Label>
-                <Input
-                  id="businessName"
-                  defaultValue="Golden Valley Apiaries"
-                />
+            <CardContent className="space-y-6">
+              {/* Profile Image Section */}
+              <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-border">
+                <div className="relative group">
+                  <div className="w-24 h-24 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden border-2 border-primary/20 shadow-inner">
+                    {formData.image ? (
+                      <img src={formData.image} alt="Profile" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
+                    ) : (
+                      <UserIcon className="w-10 h-10 text-primary/40" />
+                    )}
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 p-2 bg-primary text-primary-foreground rounded-xl shadow-lg cursor-pointer hover:scale-110 transition-transform">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-2 text-center sm:text-left">
+                  <h3 className="font-bold text-lg">Profile Photo</h3>
+                  <p className="text-sm text-muted-foreground max-w-xs">
+                    This will be displayed on your producer profile and batches. Paste an image URL below.
+                  </p>
+                  <Input 
+                    placeholder="https://example.com/avatar.jpg"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    className="text-xs h-8"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="ownerName">Owner Name</Label>
+                <Label htmlFor="ownerName">Your Name</Label>
                 <Input
                   id="ownerName"
-                  defaultValue="John Smith"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Enter your full name"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
-                  defaultValue="john@example.com"
+                  value={user?.email || ''}
+                  disabled
+                  className="bg-muted"
                 />
+                <p className="text-[10px] text-muted-foreground italic">Email cannot be changed directly for security reasons.</p>
               </div>
 
               <div className="space-y-2">
@@ -73,13 +118,20 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <Button
-                onClick={handleSave}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground"
-                disabled={isSaving}
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </Button>
+                <Button
+                  onClick={handleSave}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 px-8 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+                  disabled={isSaving}
+                >
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving Changes...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
+                </Button>
             </CardContent>
           </Card>
 

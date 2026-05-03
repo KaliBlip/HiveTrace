@@ -64,6 +64,34 @@ export async function createProduct(data: {
 
   if (!producer) throw new Error('Producer profile not found');
 
+  // Check if batch already has a listing
+  const existingProduct = await prisma.product.findUnique({
+    where: { batchId: data.batchId },
+  });
+
+  if (existingProduct) {
+    if (existingProduct.isActive) {
+      throw new Error('This batch already has an active marketplace listing.');
+    }
+    // If it exists but is inactive, we could reactivate it or delete and recreate.
+    // For now, let's just update the existing one.
+    const updatedProduct = await prisma.product.update({
+      where: { id: existingProduct.id },
+      data: {
+        name: data.name,
+        description: data.description || '',
+        price: data.price,
+        unit: data.unit,
+        stock: data.stock,
+        imageUrl: data.imageUrl || null,
+        isActive: true,
+      },
+    });
+    revalidatePath('/dashboard/products');
+    revalidatePath('/shop');
+    return updatedProduct;
+  }
+
   const product = await prisma.product.create({
     data: {
       name: data.name,

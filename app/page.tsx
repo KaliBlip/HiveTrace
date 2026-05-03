@@ -83,7 +83,7 @@ export default function Home() {
       </section>
 
       {/* Trust Bar */}
-      <section className="bg-white border-b border-stone-200">
+      <section className="bg-background border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-12 flex flex-wrap justify-between items-center gap-8 opacity-40 grayscale">
           <p className="text-sm font-black uppercase tracking-[0.3em] italic">Artisan Certified</p>
           <p className="text-sm font-black uppercase tracking-[0.3em] italic">Eco-Friendly</p>
@@ -136,8 +136,8 @@ export default function Home() {
                   { icon: BarChart3, title: "Reputation Engine", desc: "Our algorithm calculates trust scores based on verified scan history and consumer feedback." }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-6 group">
-                    <div className="w-14 h-14 shrink-0 rounded-2xl bg-stone-100 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <item.icon className="w-7 h-7 text-stone-900 group-hover:text-primary" />
+                    <div className="w-14 h-14 shrink-0 rounded-2xl bg-secondary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <item.icon className="w-7 h-7 text-foreground group-hover:text-primary" />
                     </div>
                     <div className="space-y-1 pt-1">
                       <h3 className="text-lg font-black uppercase tracking-tight">{item.title}</h3>
@@ -200,7 +200,7 @@ export default function Home() {
       </section>
 
       {/* Featured Market Section */}
-      <section className="py-32 px-4 bg-white">
+      <section className="py-32 px-4 bg-background">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6">
             <div className="space-y-4">
@@ -224,10 +224,10 @@ export default function Home() {
               { name: "Plateau Premium", price: "GH₵18,000", img: "https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=1000" }
             ].map((product, i) => (
               <Link key={i} href="/shop" className="group space-y-6 block">
-                <div className="aspect-[4/5] rounded-[2rem] overflow-hidden bg-stone-100 relative shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
+                <div className="aspect-[4/5] rounded-[2rem] overflow-hidden bg-secondary relative shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
                   <img src={product.img} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt={product.name} />
                   <div className="absolute bottom-6 left-6">
-                    <Badge className="bg-white/90 backdrop-blur text-[10px] font-black uppercase py-1.5 px-3">Artisan Grade</Badge>
+                    <Badge className="bg-background/90 backdrop-blur text-[10px] font-black uppercase py-1.5 px-3">Artisan Grade</Badge>
                   </div>
                 </div>
                 <div className="flex justify-between items-start px-2">
