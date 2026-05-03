@@ -121,5 +121,53 @@ export async function deleteProduct(id: string) {
   });
 
   revalidatePath('/dashboard/products');
+  revalidatePath('/dashboard/products');
   revalidatePath('/shop');
+}
+
+export async function updateProduct(id: string, data: {
+  name: string;
+  description?: string;
+  price: number;
+  unit: string;
+  stock: number;
+  imageUrl?: string;
+  isActive?: boolean;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
+
+  const product = await prisma.product.findUnique({
+    where: { id },
+    include: { producer: true },
+  });
+
+  if (!product) throw new Error('Product not found');
+  
+  const producer = await prisma.producer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!producer || product.producerId !== producer.id) {
+    throw new Error('Unauthorized to update this product');
+  }
+
+  const updatedProduct = await prisma.product.update({
+    where: { id },
+    data: {
+      name: data.name,
+      description: data.description || '',
+      price: data.price,
+      unit: data.unit,
+      stock: data.stock,
+      imageUrl: data.imageUrl || null,
+      isActive: data.isActive !== undefined ? data.isActive : product.isActive,
+    },
+  });
+
+  revalidatePath('/dashboard/products');
+  revalidatePath('/shop');
+  revalidatePath(`/shop/${id}`);
+  
+  return updatedProduct;
 }

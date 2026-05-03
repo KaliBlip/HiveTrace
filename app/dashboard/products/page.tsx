@@ -59,10 +59,12 @@ export default async function ProducerProductsPage() {
                 <span className="font-medium">{product.stock} units</span>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1 gap-2">
-                  <Edit className="w-4 h-4" />
-                  Edit
-                </Button>
+                <Link href={`/dashboard/products/${product.id}/edit`} className="flex-1">
+                  <Button variant="outline" size="sm" className="w-full gap-2">
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </Button>
+                </Link>
                 <Link href={`/shop/${product.id}`} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full gap-2">
                     <ExternalLink className="w-4 h-4" />
