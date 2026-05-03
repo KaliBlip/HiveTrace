@@ -158,7 +158,7 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
   };
 
   return (
-    <Card className="bg-white border-stone-200 shadow-2xl rounded-[2rem] overflow-hidden">
+    <Card className="bg-card border-border shadow-2xl rounded-[2rem] overflow-hidden">
       <CardContent className="p-8 lg:p-12 space-y-8">
         {error && (
           <Alert variant="destructive" className="rounded-2xl border-2">
@@ -169,9 +169,9 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
 
         {!scanning ? (
           <div className="space-y-6">
-            <div className="aspect-square bg-stone-50 border-4 border-dashed border-stone-100 rounded-[2rem] flex flex-col items-center justify-center text-stone-300 p-12 text-center space-y-4">
-              <div className="w-20 h-20 bg-stone-100 rounded-3xl flex items-center justify-center">
-                <Camera className="w-10 h-10 text-stone-400" />
+            <div className="aspect-square bg-secondary/50 border-4 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-muted-foreground p-12 text-center space-y-4">
+              <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center">
+                <Camera className="w-10 h-10 text-muted-foreground/50" />
               </div>
               <p className="font-bold uppercase tracking-widest text-xs">Camera Ready</p>
             </div>
@@ -180,7 +180,7 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
               <Button
                 onClick={startCamera}
                 disabled={isLoading || !cameraSupported}
-                className="h-16 bg-stone-900 hover:bg-primary text-white font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl transition-all"
+                className="h-16 bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl shadow-primary/20 transition-all"
               >
                 <Camera className="w-5 h-5" />
                 Start Scan
@@ -190,7 +190,7 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading}
                 variant="outline"
-                className="h-16 border-2 border-stone-100 hover:bg-stone-50 font-bold uppercase tracking-widest rounded-2xl gap-3 transition-all"
+                className="h-16 border-2 border-border hover:bg-secondary font-bold uppercase tracking-widest rounded-2xl gap-3 transition-all"
               >
                 <Upload className="w-5 h-5" />
                 Upload
@@ -237,8 +237,8 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
           </div>
         )}
 
-        <div className="pt-6 border-t border-stone-100 text-center">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
+        <div className="pt-6 border-t border-border text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
             {barcodeDetectorSupported
               ? 'Hardware Acceleration Active'
               : 'Software Verification Mode'}
