@@ -17,45 +17,45 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
       <header className={`sticky top-0 z-50 backdrop-blur transition-all duration-300 ${
         transparent 
           ? 'bg-white md:bg-transparent border-b border-stone-200 md:border-white/10 text-[#1c1917] md:text-white' 
-          : 'bg-background/95 border-b border-border text-foreground'
+          : 'bg-white lg:bg-white/80 border-b border-stone-200 text-[#1c1917]'
       }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
-              🍯
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+              <span className="text-primary-foreground font-bold text-xl">🍯</span>
             </div>
-            <span className={`hidden sm:inline ${transparent ? 'text-[#1c1917] md:text-white' : 'text-foreground'}`}>HiveTrace</span>
+            <span className={`hidden sm:inline font-black text-2xl tracking-tighter uppercase italic ${transparent ? 'text-[#1c1917] md:text-white' : 'text-[#1c1917]'}`}>HiveTrace</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-10">
             <Link
               href="/shop"
-              className={`font-bold transition-colors ${
+              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/shop') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-300 hover:text-white' : 'text-foreground hover:text-primary'
+                  : transparent ? 'text-stone-300 hover:text-white' : 'text-stone-500 hover:text-primary'
               }`}
             >
               Marketplace
             </Link>
             <Link
               href="/consumer/scanner"
-              className={`font-bold transition-colors ${
+              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/consumer/scanner') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'
+                  : transparent ? 'text-stone-400 hover:text-white' : 'text-stone-500 hover:text-primary'
               }`}
             >
               QR Scanner
             </Link>
             <Link
               href="/consumer"
-              className={`font-bold transition-colors ${
+              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/consumer') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-400 hover:text-white' : 'text-muted-foreground hover:text-foreground'
+                  : transparent ? 'text-stone-400 hover:text-white' : 'text-stone-500 hover:text-primary'
               }`}
             >
               Reputation
@@ -63,12 +63,12 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-4">
             <Link href="/auth/login">
-              <Button variant="ghost" className={transparent ? 'text-white hover:bg-white/10' : ''}>Sign In</Button>
+              <Button variant="ghost" className={`font-bold transition-colors ${transparent ? 'text-white hover:bg-white/10' : 'text-stone-500 hover:text-primary'}`}>Sign In</Button>
             </Link>
             <Link href="/auth/register">
-              <Button className={`bg-primary hover:bg-primary/90 text-primary-foreground ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
+              <Button className={`bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
                 Join the Network
               </Button>
             </Link>
