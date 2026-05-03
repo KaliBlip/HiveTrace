@@ -112,7 +112,7 @@ function NewProductForm() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Price (₦)</label>
+                <label className="text-sm font-medium">Price (GH₵)</label>
                 <Input
                   type="number"
                   value={formData.price}

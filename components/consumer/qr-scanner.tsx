@@ -2,8 +2,8 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Camera, Upload } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { AlertCircle, Camera, Upload, StopCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 declare global {
@@ -27,7 +27,6 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
   const [barcodeDetectorSupported, setBarcodeDetectorSupported] = useState(false);
 
   useEffect(() => {
-    // Check for BarcodeDetector support
     if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
       setBarcodeDetectorSupported(true);
     }
@@ -91,7 +90,6 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
       console.error('[v0] QR detection error:', err);
     }
 
-    // Continue scanning
     if (scanning) {
       requestAnimationFrame(scanQRCode);
     }
@@ -160,84 +158,95 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
   };
 
   return (
-    <div className="space-y-4">
-      {error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+    <Card className="bg-white border-stone-200 shadow-2xl rounded-[2rem] overflow-hidden">
+      <CardContent className="p-8 lg:p-12 space-y-8">
+        {error && (
+          <Alert variant="destructive" className="rounded-2xl border-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="font-bold">{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <Card className="border-border">
-        <CardHeader>
-          <CardTitle>Scan QR Code</CardTitle>
-          <CardDescription>
-            Use your device camera or upload an image to scan a honey batch QR code
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {!scanning ? (
-            <div className="space-y-4">
+        {!scanning ? (
+          <div className="space-y-6">
+            <div className="aspect-square bg-stone-50 border-4 border-dashed border-stone-100 rounded-[2rem] flex flex-col items-center justify-center text-stone-300 p-12 text-center space-y-4">
+              <div className="w-20 h-20 bg-stone-100 rounded-3xl flex items-center justify-center">
+                <Camera className="w-10 h-10 text-stone-400" />
+              </div>
+              <p className="font-bold uppercase tracking-widest text-xs">Camera Ready</p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4">
               <Button
                 onClick={startCamera}
                 disabled={isLoading || !cameraSupported}
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
+                className="h-16 bg-stone-900 hover:bg-primary text-white font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl transition-all"
               >
-                <Camera className="w-4 h-4" />
-                Start Camera
+                <Camera className="w-5 h-5" />
+                Start Scan
               </Button>
 
-              {cameraSupported && (
-                <>
-                  <div className="text-center text-muted-foreground text-sm">or</div>
-                  <Button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isLoading}
-                    variant="outline"
-                    className="w-full gap-2"
-                  >
-                    <Upload className="w-4 h-4" />
-                    Upload Image
-                  </Button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="relative bg-black rounded-lg overflow-hidden aspect-square">
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 border-4 border-primary/50 pointer-events-none" />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 border-2 border-primary rounded-lg pointer-events-none" />
-              </div>
               <Button
-                onClick={stopCamera}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isLoading}
                 variant="outline"
-                className="w-full"
+                className="h-16 border-2 border-stone-100 hover:bg-stone-50 font-bold uppercase tracking-widest rounded-2xl gap-3 transition-all"
               >
-                Stop Scanning
+                <Upload className="w-5 h-5" />
+                Upload
               </Button>
             </div>
-          )}
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-black shadow-inner">
+              <video
+                ref={videoRef}
+                className="w-full h-full object-cover grayscale contrast-125"
+              />
+              {/* High-tech Scan Overlay */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-12 border-2 border-primary/50 rounded-3xl">
+                  <div className="absolute -top-1 -left-1 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl"></div>
+                  <div className="absolute -top-1 -right-1 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-xl"></div>
+                  <div className="absolute -bottom-1 -left-1 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-xl"></div>
+                  <div className="absolute -bottom-1 -right-1 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-xl"></div>
+                  
+                  {/* Scanning Line Animation */}
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_15px_rgba(251,191,36,0.8)] animate-[scan_2s_ease-in-out_infinite]"></div>
+                </div>
+                <div className="absolute inset-0 bg-primary/5"></div>
+              </div>
+            </div>
+            
+            <Button
+              onClick={stopCamera}
+              className="w-full h-16 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl transition-all"
+            >
+              <StopCircle className="w-5 h-5" />
+              Stop Scanning
+            </Button>
+          </div>
+        )}
 
-          <canvas ref={canvasRef} className="hidden" />
-        </CardContent>
-      </Card>
-
-      <p className="text-sm text-muted-foreground text-center">
-        {barcodeDetectorSupported
-          ? 'Your device supports QR code scanning'
-          : 'QR code detection requires a modern browser'}
-      </p>
-    </div>
+        <div className="pt-6 border-t border-stone-100 text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">
+            {barcodeDetectorSupported
+              ? 'Hardware Acceleration Active'
+              : 'Software Verification Mode'}
+          </p>
+        </div>
+      </CardContent>
+      <canvas ref={canvasRef} className="hidden" />
+    </Card>
   );
 }
+

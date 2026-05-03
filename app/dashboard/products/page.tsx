@@ -49,7 +49,7 @@ export default async function ProducerProductsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <CardDescription>₦{product.price.toLocaleString()} / {product.unit}</CardDescription>
+                  <CardDescription>GH₵{product.price.toLocaleString()} / {product.unit}</CardDescription>
                 </div>
               </div>
             </CardHeader>

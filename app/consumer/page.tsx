@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { QrCode, Shield, Star, MapPin, Package } from 'lucide-react';
 import { getFeaturedProducers, getPlatformStats } from '@/lib/actions/consumer-actions';
 import { ConsumerHeader } from '@/components/consumer/header';
+import { Footer } from '@/components/footer';
 
 export default async function ConsumerPage() {
   const featuredProducers = await getFeaturedProducers();
@@ -13,43 +14,56 @@ export default async function ConsumerPage() {
     <div className="min-h-screen bg-background">
       <ConsumerHeader />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
-        {/* Hero */}
-        <section className="text-center space-y-8 relative">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-primary/10 rounded-full blur-3xl -z-10"></div>
-          <div className="space-y-4">
-            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter">
-              Track Your Honey&apos;s <span className="text-primary">Story</span>
+      {/* Hero */}
+      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 flex items-center overflow-hidden bg-[#1c1917] text-white">
+        {/* Abstract Background Elements */}
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=2000')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1c1917] via-[#1c1917]/80 to-[#1c1917]"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+          <div className="max-w-3xl space-y-8 text-center md:text-left">
+            <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase italic leading-[0.85]">
+              TRACK YOUR <br className="hidden md:block" />HONEY&apos;S <span className="text-primary not-italic tracking-tight">STORY.</span>
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-medium">
+            <p className="text-xl text-stone-300 font-medium max-w-xl md:mx-0 mx-auto leading-relaxed">
               Join thousands of conscious consumers using HiveTrace to verify authenticity and support transparent, ethical beekeepers.
             </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/consumer/scanner">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-3 h-16 px-8 text-lg font-bold shadow-xl hover:scale-105 transition-transform">
-                <QrCode className="w-6 h-6" />
-                Scan Honey QR
-              </Button>
-            </Link>
-            <Link href="/shop">
-              <Button size="lg" variant="outline" className="h-16 px-8 text-lg font-bold border-2 hover:bg-muted transition-all">
-                Browse Marketplace
-              </Button>
-            </Link>
-          </div>
-          
-          <div className="flex justify-center gap-8 pt-8 text-sm font-bold uppercase tracking-widest text-muted-foreground/60">
-            <div className="flex items-center gap-2">
-              <Package className="w-4 h-4" />
-              {stats.batchCount.toLocaleString()}+ Batches
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
+              <Link href="/consumer/scanner">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-3 h-16 px-10 text-lg font-black shadow-2xl shadow-primary/30 rounded-2xl group">
+                  <QrCode className="w-6 h-6" />
+                  Scan Honey QR
+                </Button>
+              </Link>
+              <Link href="/shop">
+                <Button size="lg" variant="outline" className="h-16 px-10 text-lg font-bold border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white backdrop-blur-sm rounded-2xl transition-all">
+                  Browse Marketplace
+                </Button>
+              </Link>
             </div>
-            <div className="flex items-center gap-2">
-              <Star className="w-4 h-4" />
-              {stats.producerCount.toLocaleString()}+ Producers
+            
+            <div className="flex flex-wrap justify-center md:justify-start gap-8 md:gap-12 pt-12 border-t border-stone-800 mt-8">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-3xl md:text-4xl font-black text-white tracking-tighter">
+                  <Package className="w-6 md:w-8 h-6 md:h-8 text-primary" />
+                  {stats.batchCount.toLocaleString()}+
+                </div>
+                <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Verified Batches</p>
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-3xl md:text-4xl font-black text-white tracking-tighter">
+                  <Star className="w-6 md:w-8 h-6 md:h-8 text-primary" />
+                  {stats.producerCount.toLocaleString()}+
+                </div>
+                <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Artisan Producers</p>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 space-y-32 flex-1">
 
         {/* How It Works */}
         <section className="space-y-12">
@@ -178,6 +192,7 @@ export default async function ConsumerPage() {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 }

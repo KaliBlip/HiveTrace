@@ -4,25 +4,26 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { ArrowLeft, ShieldCheck, Zap, Info, ScanLine, Keyboard } from 'lucide-react';
 import { QRScanner } from '@/components/consumer/qr-scanner';
+import { ConsumerHeader } from '@/components/consumer/header';
+import { Footer } from '@/components/footer';
+import { Badge } from '@/components/ui/badge';
 
 export default function ScannerPage() {
   const router = useRouter();
   const [qrCode, setQrCode] = useState('');
   const [manualInput, setManualInput] = useState('');
   const [showResult, setShowResult] = useState(false);
+  const [inputType, setInputType] = useState<'camera' | 'manual'>('camera');
 
   const handleQRScan = (data: string) => {
-    // If it's a full URL from HiveTrace, extract the hash
     if (data.includes('/verify/')) {
       const hash = data.split('/verify/')[1];
       router.push(`/verify/${hash}`);
       return;
     }
-    
-    // Otherwise, show the result in place (manual entry)
     setQrCode(data);
     setShowResult(true);
   };
@@ -40,108 +41,172 @@ export default function ScannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Link href="/consumer" className="flex items-center gap-2 text-primary hover:underline mb-4">
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </Link>
-          <h1 className="text-3xl font-bold">Scan a Honey Batch</h1>
-          <p className="text-muted-foreground mt-2">Use your camera or upload an image to scan a HiveTrace QR code</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] font-sans flex flex-col">
+      <ConsumerHeader transparent />
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Scanner */}
-          <div>
-            <QRScanner onScan={handleQRScan} />
+      <main className="flex-1 relative">
+        {/* Background Atmosphere */}
+        <div className="absolute inset-0 bg-[#1c1917] h-[600px] -z-10">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center opacity-20 grayscale mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-[#fafaf9]"></div>
+        </div>
+
+        <div className="max-w-4xl mx-auto px-4 pt-12 pb-24">
+          {/* Back Link */}
+          <Link href="/consumer" className="inline-flex items-center gap-2 text-stone-400 hover:text-primary transition-colors font-bold uppercase tracking-widest text-[10px] mb-8">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Link>
+
+          {/* Header */}
+          <div className="text-center space-y-4 mb-12">
+            <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em]">
+              Verification Protocol
+            </Badge>
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-white leading-none">
+              SCAN YOUR <span className="text-primary not-italic">HONEY.</span>
+            </h1>
+            <p className="text-stone-400 font-medium text-lg max-w-xl mx-auto">
+              Decrypt the story behind your jar. Every scan verifies authenticity and supports artisan beekeepers.
+            </p>
           </div>
 
-          {/* Manual Input & Results */}
-          <div className="space-y-6">
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle>Manual Entry</CardTitle>
-                <CardDescription>Enter QR code manually if needed</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Enter QR code or batch ID (e.g., HT-2024-WFB-001)"
-                  value={manualInput}
-                  onChange={(e) => setManualInput(e.target.value)}
-                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
-                />
-                <Button
-                  onClick={handleManualVerify}
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
-                  disabled={!manualInput.trim()}
-                >
-                  Verify Batch
-                </Button>
-              </CardContent>
-            </Card>
+          <div className="space-y-8">
+            {/* Input Toggle */}
+            <div className="flex justify-center p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl w-fit mx-auto">
+              <button
+                onClick={() => setInputType('camera')}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${
+                  inputType === 'camera' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-white hover:text-primary'
+                }`}
+              >
+                <ScanLine className="w-4 h-4" />
+                Camera Scan
+              </button>
+              <button
+                onClick={() => setInputType('manual')}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${
+                  inputType === 'manual' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-white hover:text-primary'
+                }`}
+              >
+                <Keyboard className="w-4 h-4" />
+                Manual Entry
+              </button>
+            </div>
 
-            {/* Result */}
-            {showResult && (
-              <Card className="border-green-400/50 bg-green-50/30 dark:bg-green-900/10">
-                <CardHeader>
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                    <CardTitle>Batch Verified</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Batch ID</p>
-                      <p className="font-mono font-semibold text-foreground">{qrCode}</p>
+            {/* Main Interface */}
+            <div className="grid gap-8">
+              {inputType === 'camera' ? (
+                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <QRScanner onScan={handleQRScan} />
+                </div>
+              ) : (
+                <Card className="bg-white border-stone-200 shadow-2xl rounded-[2rem] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <CardContent className="p-8 lg:p-12 space-y-8 text-center">
+                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
+                      <Zap className="w-8 h-8 text-primary" />
                     </div>
-                  </div>
+                    <div className="space-y-2">
+                      <h2 className="text-2xl font-black uppercase tracking-tight">Manual Verification</h2>
+                      <p className="text-stone-500 font-medium">Enter the unique cryptographic hash or batch ID found on the label.</p>
+                    </div>
+                    <div className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="e.g., HT-2024-WFB-001"
+                        value={manualInput}
+                        onChange={(e) => setManualInput(e.target.value)}
+                        className="w-full h-16 px-6 bg-stone-50 border-2 border-stone-100 rounded-2xl focus:outline-none focus:border-primary transition-colors text-center text-xl font-bold uppercase tracking-widest placeholder:normal-case placeholder:font-medium placeholder:tracking-normal"
+                      />
+                      <Button
+                        onClick={handleManualVerify}
+                        className="w-full h-16 bg-stone-900 hover:bg-primary text-white text-lg font-black uppercase tracking-widest rounded-2xl transition-all"
+                        disabled={!manualInput.trim()}
+                      >
+                        Verify Cryptographic Hash
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
-                  <div className="border-t border-border pt-4 space-y-3">
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Honey Type</p>
-                      <p className="font-medium">Wildflower Blend</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Harvest Date</p>
-                      <p className="font-medium">May 2024</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground">Producer</p>
-                      <Link href="/consumer/producer/1">
-                        <p className="font-medium text-primary hover:underline">Golden Valley Apiaries</p>
-                      </Link>
-                    </div>
-                  </div>
+              {/* Results Section */}
+              {showResult && (
+                <Card className="bg-white border-2 border-green-500/20 shadow-2xl rounded-[2rem] overflow-hidden animate-in zoom-in-95 duration-500">
+                  <div className="bg-green-500 h-2 w-full"></div>
+                  <CardContent className="p-8 lg:p-12">
+                    <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+                      <div className="w-24 h-24 bg-green-100 rounded-3xl flex items-center justify-center shrink-0">
+                        <ShieldCheck className="w-12 h-12 text-green-600" />
+                      </div>
+                      <div className="flex-1 text-center md:text-left space-y-6">
+                        <div className="space-y-2">
+                          <Badge className="bg-green-100 text-green-700 border-none uppercase tracking-widest font-black text-[10px]">Authenticity Confirmed</Badge>
+                          <h2 className="text-3xl font-black uppercase tracking-tight">Batch Verified Successfully</h2>
+                          <p className="font-mono text-stone-500 font-bold bg-stone-50 px-3 py-1 rounded-lg inline-block">{qrCode}</p>
+                        </div>
 
-                  <div className="border-t border-border pt-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="font-medium">Producer Rating</p>
-                      <div className="flex gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <span key={i} className="text-lg">★</span>
-                        ))}
+                        <div className="grid grid-cols-2 gap-8 py-6 border-y border-stone-100">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Honey Type</p>
+                            <p className="font-bold text-lg">Wildflower Blend</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Harvest Date</p>
+                            <p className="font-bold text-lg">May 2024</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Producer</p>
+                            <p className="font-bold text-lg">Golden Valley Apiaries</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Trust Score</p>
+                            <div className="flex items-center gap-1">
+                              <span className="font-bold text-lg">4.8</span>
+                              <span className="text-primary text-sm font-black uppercase italic">Platinum</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <Link href="/consumer/batch/1" className="block">
+                          <Button className="w-full h-16 bg-stone-900 hover:bg-primary text-white text-lg font-black uppercase tracking-widest rounded-2xl">
+                            Explore Full Traceability Data
+                          </Button>
+                        </Link>
                       </div>
                     </div>
-                    <p className="text-sm text-muted-foreground">4.8 stars from 128 reviews</p>
-                  </div>
+                  </CardContent>
+                </Card>
+              )}
 
-                  <Link href={`/consumer/batch/1`}>
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                      View Full Details & Reviews
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            )}
+              {/* Info Tips */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-6 bg-white border border-stone-200 rounded-3xl flex gap-4 items-start">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <Info className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-bold uppercase text-xs tracking-widest">Scanning Tip</p>
+                    <p className="text-sm text-stone-500 font-medium">Hold your phone steady and ensure there is enough light on the QR code.</p>
+                  </div>
+                </div>
+                <div className="p-6 bg-white border border-stone-200 rounded-3xl flex gap-4 items-start">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="font-bold uppercase text-xs tracking-widest">Digital Signature</p>
+                    <p className="text-sm text-stone-500 font-medium">Every scan checks the HMAC-SHA256 hash to ensure zero tampering.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }
+

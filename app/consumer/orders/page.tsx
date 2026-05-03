@@ -47,7 +47,7 @@ export default async function ConsumerOrdersPage() {
                   </div>
                   <div>
                     <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Total</p>
-                    <p className="text-sm font-bold text-primary">₦{order.totalAmount.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-primary">GH₵{order.totalAmount.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export default async function ConsumerOrdersPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-sm truncate">{item.product?.name || 'Deleted Product'}</p>
                       <p className="text-xs text-muted-foreground">Quantity: {item.quantity}</p>
-                      <p className="text-xs font-medium">₦{item.priceAtPurchase.toLocaleString()}</p>
+                      <p className="text-xs font-medium">GH₵{item.priceAtPurchase.toLocaleString()}</p>
                     </div>
                     <div className="flex flex-col gap-2">
                       <Badge variant="outline" className="text-[10px] border-primary/20 text-primary">Verified</Badge>

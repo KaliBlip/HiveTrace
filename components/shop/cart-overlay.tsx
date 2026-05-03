@@ -62,9 +62,11 @@ export function CartOverlay() {
                   <p className="font-bold text-lg">Your cart is empty</p>
                   <p className="text-sm text-muted-foreground">Add some verified honey to get started!</p>
                 </div>
-                <Button variant="outline" onClick={toggleOpen} className="mt-4">
-                  Browse Shop
-                </Button>
+                <Link href="/shop" onClick={toggleOpen}>
+                  <Button variant="outline" className="mt-4">
+                    Browse Shop
+                  </Button>
+                </Link>
               </div>
             ) : (
               <div className="space-y-6">
@@ -82,7 +84,7 @@ export function CartOverlay() {
                     <div className="flex-1 space-y-1">
                       <div className="flex justify-between">
                         <h3 className="font-bold text-sm leading-tight line-clamp-1">{item.name}</h3>
-                        <p className="font-bold text-sm shrink-0 ml-2">₦{(item.price * item.quantity).toLocaleString()}</p>
+                        <p className="font-bold text-sm shrink-0 ml-2">GH₵{(item.price * item.quantity).toLocaleString()}</p>
                       </div>
                       <p className="text-xs text-muted-foreground mb-2">{item.unit}</p>
                       <div className="flex items-center justify-between">
@@ -121,7 +123,7 @@ export function CartOverlay() {
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>₦{totalPrice().toLocaleString()}</span>
+                  <span>GH₵{totalPrice().toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -129,7 +131,7 @@ export function CartOverlay() {
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-border">
                   <span className="font-bold text-lg">Total</span>
-                  <span className="font-bold text-2xl">₦{totalPrice().toLocaleString()}</span>
+                  <span className="font-bold text-2xl">GH₵{totalPrice().toLocaleString()}</span>
                 </div>
               </div>
               <Link href="/checkout" onClick={toggleOpen}>

@@ -54,12 +54,12 @@ export default async function ProducerOrdersPage() {
                   {order.items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-sm">
                       <span>{item.product?.name || 'Deleted Product'} x {item.quantity}</span>
-                      <span className="font-medium">₦{(item.priceAtPurchase * item.quantity).toLocaleString()}</span>
+                      <span className="font-medium">GH₵{(item.priceAtPurchase * item.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                   <div className="pt-2 border-t border-border flex justify-between font-bold">
                     <span>Total</span>
-                    <span>₦{order.totalAmount.toLocaleString()}</span>
+                    <span>GH₵{order.totalAmount.toLocaleString()}</span>
                   </div>
                 </div>
 

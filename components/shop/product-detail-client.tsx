@@ -104,7 +104,7 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
             </div>
 
             <div className="space-y-2">
-              <p className="text-3xl font-bold">₦{product.price.toLocaleString()}</p>
+              <p className="text-3xl font-bold">GH₵{product.price.toLocaleString()}</p>
               <p className="text-sm text-green-600 font-medium">In Stock: {product.stock} units available</p>
             </div>
 

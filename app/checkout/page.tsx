@@ -211,7 +211,7 @@ export default function CheckoutPage() {
                       <span className="text-muted-foreground">
                         {item.name} <span className="font-bold">x{item.quantity}</span>
                       </span>
-                      <span className="font-medium">₦{(item.price * item.quantity).toLocaleString()}</span>
+                      <span className="font-medium">GH₵{(item.price * item.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
                 <div className="pt-4 border-t border-border space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>₦{totalPrice().toLocaleString()}</span>
+                    <span>GH₵{totalPrice().toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
@@ -227,7 +227,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-border">
                     <span className="font-bold text-lg">Total</span>
-                    <span className="font-bold text-2xl text-primary">₦{totalPrice().toLocaleString()}</span>
+                    <span className="font-bold text-2xl text-primary">GH₵{totalPrice().toLocaleString()}</span>
                   </div>
                 </div>
 

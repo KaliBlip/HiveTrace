@@ -1,8 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Footer() {
+  const pathname = usePathname();
+  const isActive = (path: string) => pathname === path;
+
   return (
     <footer className="bg-white pt-24 pb-12 px-4 border-t border-stone-200">
       <div className="max-w-7xl mx-auto space-y-16">
@@ -21,7 +25,7 @@ export function Footer() {
           <div className="space-y-4">
             <p className="font-black uppercase tracking-widest text-[10px] text-stone-400">Network</p>
             <ul className="space-y-3 font-bold text-sm">
-              <li><Link href="/shop" className="hover:text-primary transition-colors">Marketplace</Link></li>
+              <li><Link href="/shop" className={`transition-colors ${isActive('/shop') ? 'text-primary' : 'hover:text-primary'}`}>Marketplace</Link></li>
               <li><Link href="/#technology" className="hover:text-primary transition-colors">Technology</Link></li>
               <li><Link href="/#mission" className="hover:text-primary transition-colors">Mission</Link></li>
             </ul>
@@ -29,9 +33,9 @@ export function Footer() {
           <div className="space-y-4">
             <p className="font-black uppercase tracking-widest text-[10px] text-stone-400">Company</p>
             <ul className="space-y-3 font-bold text-sm">
-              <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
-              <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/about" className={`transition-colors ${isActive('/about') ? 'text-primary' : 'hover:text-primary'}`}>About Us</Link></li>
+              <li><Link href="/contact" className={`transition-colors ${isActive('/contact') ? 'text-primary' : 'hover:text-primary'}`}>Contact</Link></li>
+              <li><Link href="/privacy" className={`transition-colors ${isActive('/privacy') ? 'text-primary' : 'hover:text-primary'}`}>Privacy Policy</Link></li>
             </ul>
           </div>
           <div className="space-y-4">

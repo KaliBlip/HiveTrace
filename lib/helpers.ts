@@ -50,8 +50,8 @@ export function truncateText(text: string, length: number): string {
 /**
  * Format number as currency
  */
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatCurrency(amount: number, currency: string = 'GHS'): string {
+  return new Intl.NumberFormat('en-GH', {
     style: 'currency',
     currency,
   }).format(amount);

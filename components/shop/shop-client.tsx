@@ -202,7 +202,7 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
 
                 <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-black text-stone-900 leading-none">₦{product.price.toLocaleString()}</p>
+                    <p className="text-2xl font-black text-stone-900 leading-none">GH₵{product.price.toLocaleString()}</p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mt-1">Per {product.unit}</p>
                   </div>
                   <Button
