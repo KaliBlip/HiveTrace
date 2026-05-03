@@ -23,7 +23,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] font-sans flex flex-col">
+    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
       <PublicHeader />
 
       <main className="flex-1 pt-20">

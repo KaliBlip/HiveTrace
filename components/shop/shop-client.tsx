@@ -46,7 +46,7 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] pb-20">
+    <div className="min-h-screen bg-background pb-20">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-[#1c1917] text-white pt-40 pb-24 px-4">
         <div className="absolute top-0 left-0 w-full h-full opacity-20 bg-[url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=2000')] bg-cover bg-center"></div>
@@ -66,11 +66,11 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
       </section>
 
       {/* Trust Bar */}
-      <section className="bg-white border-y border-stone-200">
+      <section className="bg-card border-y border-stone-200 dark:border-stone-800">
         <div className="max-w-7xl mx-auto px-4 py-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="flex items-center gap-4 group">
-              <div className="w-12 h-12 rounded-full bg-stone-100 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                 <ShieldCheck className="w-6 h-6 text-primary" />
               </div>
               <div>
@@ -122,12 +122,12 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
               <Input
                 placeholder="Search variety, producer..."
-                className="pl-12 h-14 bg-white border-stone-200 rounded-xl text-lg font-medium focus:ring-primary shadow-sm"
+                className="pl-12 h-14 bg-background border-input rounded-xl text-lg font-medium focus:ring-primary shadow-sm"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline" className="h-14 px-6 rounded-xl border-2 border-stone-200 font-bold gap-2 hover:bg-stone-50">
+            <Button variant="outline" className="h-14 px-6 rounded-xl border-2 border-border font-bold gap-2 hover:bg-accent">
               <Filter className="w-4 h-4" /> Filters
             </Button>
           </div>
@@ -136,9 +136,9 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
         {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-12">
           {filtered.map((product) => (
-            <div key={product.id} className="group relative flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-stone-100 shadow-sm hover:shadow-2xl transition-all duration-500">
+            <div key={product.id} className="group relative flex flex-col h-full bg-card rounded-2xl overflow-hidden border border-border shadow-sm hover:shadow-2xl transition-all duration-500">
               {/* Image Section */}
-              <Link href={`/shop/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-stone-100">
+              <Link href={`/shop/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-secondary">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
@@ -146,7 +146,7 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
                     className="w-full h-full object-cover transition duration-700 group-hover:scale-110"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
+                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary/50 to-secondary">
                     <span className="text-6xl grayscale opacity-20">🍯</span>
                   </div>
                 )}
@@ -200,9 +200,9 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-stone-100 flex items-center justify-between">
+                <div className="pt-4 border-t border-border flex items-center justify-between">
                   <div>
-                    <p className="text-2xl font-black text-stone-900 leading-none">GH₵{product.price.toLocaleString()}</p>
+                    <p className="text-2xl font-black text-foreground leading-none">GH₵{product.price.toLocaleString()}</p>
                     <p className="text-[10px] font-black uppercase tracking-widest text-stone-400 mt-1">Per {product.unit}</p>
                   </div>
                   <Button
@@ -219,7 +219,7 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
 
         {/* Empty State */}
         {filtered.length === 0 && (
-          <div className="text-center py-32 space-y-6 bg-white rounded-3xl border-2 border-dashed border-stone-200">
+          <div className="text-center py-32 space-y-6 bg-card rounded-3xl border-2 border-dashed border-border">
             <div className="w-20 h-20 bg-stone-50 rounded-full flex items-center justify-center mx-auto text-stone-300">
               <Search className="w-10 h-10" />
             </div>

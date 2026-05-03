@@ -8,7 +8,7 @@ export function Footer() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <footer className="bg-white pt-24 pb-12 px-4 border-t border-stone-200">
+    <footer className="bg-background pt-24 pb-12 px-4 border-t border-border">
       <div className="max-w-7xl mx-auto space-y-16">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12">
           <div className="col-span-2 space-y-6">
@@ -48,7 +48,7 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="pt-12 border-t border-stone-100 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="pt-12 border-t border-border flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">© 2026 HIVETRACE PROTOCOL. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-8">
              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-stone-400">Security Audited</span>

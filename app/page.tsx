@@ -23,7 +23,7 @@ import { PublicHeader } from '@/components/public-header';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Navigation */}
       <PublicHeader />
 
@@ -32,7 +32,7 @@ export default function Home() {
         {/* Abstract Background Elements */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center opacity-40"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-[#1c1917] via-[#1c1917]/80 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#fafaf9] to-transparent"></div>
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent"></div>
 
         <div className="max-w-7xl mx-auto px-4 relative z-10 py-24 lg:py-32">
           <div className="max-w-3xl space-y-10">

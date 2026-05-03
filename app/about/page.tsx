@@ -5,7 +5,7 @@ import { Users, Globe, ShieldCheck, Leaf } from 'lucide-react';
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       <PublicHeader />
 
       <main className="pt-20">
@@ -28,7 +28,7 @@ export default function AboutPage() {
         </section>
 
         {/* Content */}
-        <section className="py-24 px-4 bg-white">
+        <section className="py-24 px-4 bg-background">
           <div className="max-w-4xl mx-auto space-y-16">
             <div className="space-y-6">
               <h2 className="text-4xl font-black tracking-tight uppercase">The Honey Crisis</h2>

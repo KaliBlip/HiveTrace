@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,6 +65,9 @@ export function PublicHeader() {
               Join the Network
             </Button>
           </Link>
+          <div className="pl-4 border-l border-stone-200">
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
@@ -113,6 +117,10 @@ export function PublicHeader() {
             </div>
             
             <div className="pt-8 border-t border-stone-100 flex flex-col space-y-4">
+              <div className="flex justify-between items-center pb-4">
+                <span className="font-bold text-stone-500">Theme</span>
+                <ThemeToggle />
+              </div>
               <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
                 <Button variant="outline" className="w-full h-14 text-lg font-bold border-2 border-stone-200">
                   Sign In

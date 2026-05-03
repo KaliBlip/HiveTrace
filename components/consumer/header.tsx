@@ -5,6 +5,7 @@ import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export function ConsumerHeader({ transparent = false }: { transparent?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -72,6 +73,9 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
                 Join the Network
               </Button>
             </Link>
+            <div className={`pl-4 border-l ${transparent ? 'border-white/20' : 'border-stone-200'}`}>
+              <ThemeToggle className={transparent ? 'text-white hover:bg-white/10' : ''} />
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -117,6 +121,10 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
                 Reputation
               </Link>
               <div className="border-t border-border pt-2 mt-2 flex flex-col gap-2">
+                <div className="flex justify-between items-center px-4 py-2">
+                  <span className="font-bold text-stone-500">Theme</span>
+                  <ThemeToggle />
+                </div>
                 <Link href="/auth/login" className="w-full">
                   <Button variant="outline" className="w-full">
                     Sign In

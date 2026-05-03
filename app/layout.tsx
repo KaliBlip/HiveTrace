@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/providers/auth-provider'
+import { ThemeProvider } from '@/components/theme-provider'
 import { CartOverlay } from '@/components/shop/cart-overlay'
 import './globals.css'
 
@@ -40,8 +41,15 @@ export default function RootLayout({
     <html lang="en" className="bg-background">
       <body className="font-sans antialiased text-foreground">
         <AuthProvider>
-          {children}
-          <CartOverlay />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <CartOverlay />
+          </ThemeProvider>
         </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

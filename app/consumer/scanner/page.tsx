@@ -41,14 +41,14 @@ export default function ScannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] font-sans flex flex-col">
+    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
       <ConsumerHeader transparent />
 
       <main className="flex-1 relative">
         {/* Background Atmosphere */}
         <div className="absolute inset-0 bg-[#1c1917] h-[600px] -z-10">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center opacity-20 grayscale mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-[#fafaf9]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-background"></div>
         </div>
 
         <div className="max-w-4xl mx-auto px-4 pt-12 pb-24 relative z-10">
