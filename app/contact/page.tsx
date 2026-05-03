@@ -44,7 +44,7 @@ export default function ContactPage() {
             <div className="grid lg:grid-cols-3 gap-12">
               {/* Contact Info */}
               <div className="lg:col-span-1 space-y-8">
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-stone-200 space-y-8">
+                <div className="bg-card p-8 rounded-3xl shadow-sm border border-border space-y-8">
                   <div className="space-y-4">
                     <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
                       <Mail className="w-6 h-6 text-primary" />
@@ -84,7 +84,7 @@ export default function ContactPage() {
 
               {/* Form */}
               <div className="lg:col-span-2">
-                <div className="bg-white p-8 lg:p-12 rounded-3xl shadow-xl border border-stone-200">
+                <div className="bg-card p-8 lg:p-12 rounded-3xl shadow-xl border border-border">
                   {submitted ? (
                     <div className="text-center py-16 space-y-6">
                       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -107,24 +107,24 @@ export default function ContactPage() {
                       <div className="grid sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">First Name</label>
-                          <Input required placeholder="Jane" className="h-12 bg-stone-50 border-stone-200" />
+                          <Input required placeholder="Jane" className="h-12 bg-background border-input" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Last Name</label>
-                          <Input required placeholder="Doe" className="h-12 bg-stone-50 border-stone-200" />
+                          <Input required placeholder="Doe" className="h-12 bg-background border-input" />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Email Address</label>
-                        <Input required type="email" placeholder="jane@example.com" className="h-12 bg-stone-50 border-stone-200" />
+                        <Input required type="email" placeholder="jane@example.com" className="h-12 bg-background border-input" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Subject</label>
-                        <Input required placeholder="How can we help you?" className="h-12 bg-stone-50 border-stone-200" />
+                        <Input required placeholder="How can we help you?" className="h-12 bg-background border-input" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Message</label>
-                        <Textarea required placeholder="Tell us more about your inquiry..." className="min-h-[150px] bg-stone-50 border-stone-200 resize-none" />
+                        <Textarea required placeholder="Tell us more about your inquiry..." className="min-h-[150px] bg-background border-input resize-none" />
                       </div>
                       <Button 
                         type="submit" 
