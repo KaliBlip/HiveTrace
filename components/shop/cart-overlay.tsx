@@ -19,7 +19,7 @@ export function CartOverlay() {
       {/* Floating Cart Button */}
       <button
         onClick={toggleOpen}
-        className="fixed bottom-8 right-8 z-40 w-16 h-16 bg-primary text-primary-foreground rounded-full shadow-2xl flex items-center justify-center group transition-all duration-300 hover:scale-110 active:scale-95"
+        className="fixed bottom-8 right-8 z-[100] w-16 h-16 bg-primary text-primary-foreground rounded-full shadow-2xl flex items-center justify-center group transition-all duration-300 hover:scale-110 active:scale-95"
       >
         <ShoppingCart className="w-7 h-7" />
         {totalItems() > 0 && (

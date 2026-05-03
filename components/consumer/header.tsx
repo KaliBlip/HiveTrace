@@ -16,7 +16,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
     <>
       <header className={`sticky top-0 z-50 backdrop-blur transition-all duration-300 ${
         transparent 
-          ? 'bg-transparent border-b border-white/10 text-white' 
+          ? 'bg-white md:bg-transparent border-b border-stone-200 md:border-white/10 text-[#1c1917] md:text-white' 
           : 'bg-background/95 border-b border-border text-foreground'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
@@ -25,7 +25,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
             <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/20">
               🍯
             </div>
-            <span className={`hidden sm:inline ${transparent ? 'text-white' : 'text-foreground'}`}>HiveTrace</span>
+            <span className={`hidden sm:inline ${transparent ? 'text-[#1c1917] md:text-white' : 'text-foreground'}`}>HiveTrace</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -69,7 +69,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
             </Link>
             <Link href="/auth/register">
               <Button className={`bg-primary hover:bg-primary/90 text-primary-foreground ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
-                Get Started
+                Join the Network
               </Button>
             </Link>
           </div>
@@ -77,7 +77,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 transition-colors ${transparent ? 'text-white' : 'text-foreground'}`}
+            className={`md:hidden p-2 transition-colors ${transparent ? 'text-[#1c1917] md:text-white' : 'text-foreground'}`}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -124,7 +124,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
                 </Link>
                 <Link href="/auth/register" className="w-full">
                   <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                    Get Started
+                    Join the Network
                   </Button>
                 </Link>
               </div>

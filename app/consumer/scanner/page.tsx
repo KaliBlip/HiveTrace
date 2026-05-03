@@ -51,7 +51,7 @@ export default function ScannerPage() {
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-[#fafaf9]"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 pt-12 pb-24">
+        <div className="max-w-4xl mx-auto px-4 pt-12 pb-24 relative z-10">
           {/* Back Link */}
           <Link href="/consumer" className="inline-flex items-center gap-2 text-stone-400 hover:text-primary transition-colors font-bold uppercase tracking-widest text-[10px] mb-8">
             <ArrowLeft className="w-4 h-4" />
