@@ -8,18 +8,37 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
 import { useState } from 'react';
+import { submitContactMessage } from '@/lib/actions/contact-actions';
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: '',
+  });
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      await submitContactMessage(formData);
       setSubmitted(true);
-    }, 1000);
+      setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+    } catch (err: any) {
+      setError(err.message || 'Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -104,31 +123,36 @@ export default function ContactPage() {
                     </div>
                   ) : (
                     <form onSubmit={handleSubmit} className="space-y-6">
+                      {error && (
+                        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm">
+                          {error}
+                        </div>
+                      )}
                       <div className="grid sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                           <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">First Name</label>
-                          <Input required placeholder="Jane" className="h-12 bg-background border-input" />
+                          <Input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Jane" className="h-12 bg-background border-input" />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Last Name</label>
-                          <Input required placeholder="Doe" className="h-12 bg-background border-input" />
+                          <Input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" className="h-12 bg-background border-input" />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Email Address</label>
-                        <Input required type="email" placeholder="jane@example.com" className="h-12 bg-background border-input" />
+                        <Input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="jane@example.com" className="h-12 bg-background border-input" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Subject</label>
-                        <Input required placeholder="How can we help you?" className="h-12 bg-background border-input" />
+                        <Input name="subject" value={formData.subject} onChange={handleChange} required placeholder="How can we help you?" className="h-12 bg-background border-input" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Message</label>
-                        <Textarea required placeholder="Tell us more about your inquiry..." className="min-h-[150px] bg-background border-input resize-none" />
+                        <Textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Tell us more about your inquiry..." className="min-h-[150px] bg-background border-input resize-none" />
                       </div>
-                      <Button 
-                        type="submit" 
-                        disabled={isSubmitting} 
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting}
                         className="w-full h-14 text-lg font-black bg-stone-900 hover:bg-primary text-white"
                       >
                         {isSubmitting ? 'Sending...' : 'Send Message'}

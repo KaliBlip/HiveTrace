@@ -4,6 +4,48 @@ import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
+export async function createOrderFromCart(data: {
+  items: { productId: string; quantity: number; priceAtPurchase: number }[];
+  totalAmount: number;
+  shippingAddress?: string;
+  paymentId?: string;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
+
+  const order = await prisma.order.create({
+    data: {
+      consumerId: session.user.id,
+      status: 'PAID',
+      totalAmount: data.totalAmount,
+      shippingAddress: data.shippingAddress,
+      paymentId: data.paymentId,
+      items: {
+        create: data.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          priceAtPurchase: item.priceAtPurchase,
+        })),
+      },
+    },
+    include: {
+      items: { include: { product: true } },
+    },
+  });
+
+  // Decrement product stock
+  for (const item of data.items) {
+    await prisma.product.update({
+      where: { id: item.productId },
+      data: { stock: { decrement: item.quantity } },
+    });
+  }
+
+  revalidatePath('/consumer/orders');
+  revalidatePath('/dashboard/orders');
+  return order;
+}
+
 export async function getProducerOrders() {
   const session = await auth();
   if (!session?.user?.id) return [];

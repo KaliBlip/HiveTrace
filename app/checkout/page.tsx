@@ -10,11 +10,14 @@ import Link from 'next/link';
 import { useCart } from '@/lib/hooks/use-cart';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { initializePaystackTransaction } from '@/lib/paystack';
+import { createOrderFromCart } from '@/lib/actions/order-actions';
+import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
-  
+  const router = useRouter();
+
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
     email: user?.email || '',
@@ -42,14 +45,35 @@ export default function CheckoutPage() {
 
       if (response.status) {
         if (response.data.authorization_url === "#") {
-          // Mock success for development
-          setTimeout(() => {
-            setIsProcessing(false);
-            setIsSuccess(true);
-            clearCart();
-          }, 2000);
+          // Mock success for development — persist order
+          const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
+          await createOrderFromCart({
+            items: items.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity,
+              priceAtPurchase: item.price,
+            })),
+            totalAmount: totalPrice(),
+            shippingAddress,
+            paymentId: response.data.reference,
+          });
+          setIsProcessing(false);
+          clearCart();
+          router.push('/checkout/success');
+          return;
         } else {
-          // Redirect to Paystack
+          // Persist order as PENDING before redirect, then update via webhook/callback
+          const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
+          await createOrderFromCart({
+            items: items.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity,
+              priceAtPurchase: item.price,
+            })),
+            totalAmount: totalPrice(),
+            shippingAddress,
+            paymentId: response.data.reference,
+          });
           window.location.href = response.data.authorization_url;
         }
       }
@@ -92,7 +116,7 @@ export default function CheckoutPage() {
             <Link href="/shop">
               <Button variant="outline">Continue Shopping</Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/consumer/orders">
               <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                 View Orders
               </Button>

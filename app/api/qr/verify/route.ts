@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import type { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '@/lib/prisma';
 
 interface VerifyRequest {
   qrCode: string;
@@ -27,54 +26,84 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Verify QR code in database
-    // For now, return mock response
-    const batch = {
-      id: 'batch-1',
-      batchCode: qrCode,
-      honeyType: 'Wildflower Blend',
-      quantity: 50,
-      harvestDate: '2024-05-01',
-      description: 'Premium wildflower honey from our spring harvest',
-      verificationHash: 'a3f8d2e91c7b4e6f9a2d5c8e1b4f7a0d',
-      verified: true,
-      verifiedAt: '2024-05-01T10:30:00Z',
-      scanCount: 235,
-      producer: {
-        id: 'prod-1',
-        businessName: 'Golden Valley Apiaries',
-        location: 'California, USA',
-        rating: 4.8,
-        reviews: 128,
-        verified: true,
+    // Look up QR code in database
+    const qrRecord = await prisma.qRCode.findUnique({
+      where: { code: qrCode },
+      include: {
+        batch: {
+          include: {
+            producer: {
+              include: {
+                user: { select: { name: true } },
+                ratings: true,
+              },
+            },
+          },
+        },
       },
-    };
-
-    // TODO: Log the scan
-    console.log('[v0] QR scan logged:', {
-      qrCode,
-      batchId: batch.id,
-      latitude,
-      longitude,
-      country,
-      city,
-      timestamp: new Date(),
     });
 
-    // TODO: Run fraud detection checks
-    // - Check for duplicate QR codes
-    // - Check for unusual scan patterns
-    // - Check for suspicious geo locations
-    // - etc.
+    if (!qrRecord) {
+      return NextResponse.json(
+        { error: 'Invalid QR code' },
+        { status: 404 }
+      );
+    }
+
+    const batch = qrRecord.batch;
+
+    // Log the scan
+    await prisma.qRScan.create({
+      data: {
+        qrCodeId: qrRecord.id,
+        latitude: latitude || null,
+        longitude: longitude || null,
+        country: country || null,
+        city: city || null,
+      },
+    });
+
+    // Update scan counts
+    await prisma.qRCode.update({
+      where: { id: qrRecord.id },
+      data: {
+        scanCount: { increment: 1 },
+        lastScannedAt: new Date(),
+        firstScannedAt: qrRecord.firstScannedAt || new Date(),
+      },
+    });
+
+    await prisma.honeyBatch.update({
+      where: { id: batch.id },
+      data: { scanCount: { increment: 1 } },
+    });
 
     return NextResponse.json({
       success: true,
-      batch,
-      fraudRiskScore: 0.05, // 0-1 scale
+      batch: {
+        id: batch.id,
+        batchCode: batch.batchCode,
+        honeyType: batch.honeyType,
+        quantity: batch.quantity,
+        harvestDate: batch.harvestDate,
+        description: batch.description,
+        verificationHash: batch.verificationHash,
+        verified: batch.verified,
+        scanCount: batch.scanCount + 1,
+        producer: {
+          id: batch.producer.id,
+          businessName: batch.producer.businessName,
+          location: batch.producer.location,
+          rating: batch.producer.ratings?.averageRating || 0,
+          reviews: batch.producer.ratings?.totalReviews || 0,
+          verified: batch.producer.verified,
+        },
+      },
+      fraudRiskScore: 0.05,
       message: 'Batch verified successfully',
     });
   } catch (error) {
-    console.error('[v0] QR verification error:', error);
+    console.error('QR verification error:', error);
     return NextResponse.json(
       { error: 'Failed to verify QR code' },
       { status: 500 }

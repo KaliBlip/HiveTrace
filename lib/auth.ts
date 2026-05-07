@@ -1,11 +1,8 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import { getServerSession } from "next-auth/next";
 
-export const { auth, signIn, signOut, handlers } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -17,6 +14,9 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
+
+        const { default: prisma } = await import("@/lib/prisma");
+        const { default: bcrypt } = await import("bcryptjs");
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email as string },
@@ -41,7 +41,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           name: user.name,
           role: user.role,
           image: user.image,
-        };
+        } as any;
       },
     }),
   ],
@@ -71,4 +71,13 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.AUTH_SECRET,
-});
+};
+
+// For Server Components
+export const auth = () => getServerSession(authOptions);
+
+// For API Routes (though not used directly here)
+export const handlers = {
+  GET: (req: any, res: any) => NextAuth(req, res, authOptions),
+  POST: (req: any, res: any) => NextAuth(req, res, authOptions),
+};

@@ -1,13 +1,9 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/providers/auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CartOverlay } from '@/components/shop/cart-overlay'
 import './globals.css'
-
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'HiveTrace - Cryptographically Verified Honey Traceability',

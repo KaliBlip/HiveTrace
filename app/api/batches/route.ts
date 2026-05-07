@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
+import prisma from '@/lib/prisma';
 
 /**
  * POST /api/batches
@@ -38,24 +39,23 @@ export async function POST(request: NextRequest) {
       .update(dataToHash)
       .digest('hex');
 
-    // TODO: Save batch to database
-    // For now, return mock response
-    const batch = {
-      id: crypto.randomUUID(),
-      batchCode,
-      honeyType,
-      quantity,
-      harvestDate,
-      description,
-      producerId,
-      verificationHash,
-      verified: true,
-      createdAt: new Date(),
-    };
+    const batch = await prisma.honeyBatch.create({
+      data: {
+        batchCode,
+        honeyType,
+        quantity: parseFloat(quantity),
+        harvestDate: new Date(harvestDate),
+        description: description || null,
+        producerId,
+        verificationHash,
+        verified: true,
+        verifiedAt: new Date(),
+      },
+    });
 
     return NextResponse.json(batch, { status: 201 });
   } catch (error) {
-    console.error('[v0] Batch creation error:', error);
+    console.error('Batch creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create batch' },
       { status: 500 }
@@ -79,32 +79,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // TODO: Fetch batches from database
-    // For now, return mock response
-    const batches = [
-      {
-        id: '1',
-        batchCode: 'HT-2024-WFB-001',
-        honeyType: 'Wildflower Blend',
-        quantity: 50,
-        harvestDate: '2024-05-01',
-        verified: true,
-        scanCount: 234,
-      },
-      {
-        id: '2',
-        batchCode: 'HT-2024-CLP-002',
-        honeyType: 'Clover Premium',
-        quantity: 75,
-        harvestDate: '2024-06-15',
-        verified: true,
-        scanCount: 189,
-      },
-    ];
+    const batches = await prisma.honeyBatch.findMany({
+      where: { producerId },
+      orderBy: { createdAt: 'desc' },
+    });
 
     return NextResponse.json(batches);
   } catch (error) {
-    console.error('[v0] Batch fetch error:', error);
+    console.error('Batch fetch error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch batches' },
       { status: 500 }

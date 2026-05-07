@@ -2,19 +2,35 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export default auth((req) => {
+  const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
-  const isAuthRoute = req.nextUrl.pathname.startsWith("/auth");
-  const isDashboardRoute = req.nextUrl.pathname.startsWith("/dashboard");
-  const isAdminRoute = req.nextUrl.pathname.startsWith("/admin");
+  const userRole = ((req.auth?.user as any)?.role as string)?.toLowerCase();
+  const isAuthRoute = nextUrl.pathname.startsWith("/auth");
+  const isDashboard = nextUrl.pathname.startsWith("/dashboard");
+  const isAdmin = nextUrl.pathname.startsWith("/admin");
+  const isConsumerOrders = nextUrl.pathname.startsWith("/consumer/orders");
+  const isCheckout = nextUrl.pathname.startsWith("/checkout");
 
   // Redirect authenticated users away from auth pages
   if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
-  // Redirect unauthenticated users trying to access protected routes
-  if ((isDashboardRoute || isAdminRoute) && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+  // If not logged in, redirect to login for protected routes
+  if ((isDashboard || isAdmin || isConsumerOrders || isCheckout) && !isLoggedIn) {
+    const loginUrl = new URL("/auth/login", nextUrl);
+    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  // Admin routes: admin only
+  if (isAdmin && userRole !== "admin") {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+  }
+
+  // Dashboard routes: producer or admin only
+  if (isDashboard && userRole !== "producer" && userRole !== "admin") {
+    return NextResponse.redirect(new URL("/shop", nextUrl));
   }
 
   return NextResponse.next();
@@ -22,13 +38,10 @@ export default auth((req) => {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public).*)",
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/consumer/orders",
+    "/checkout/:path*",
+    "/auth/:path*",
   ],
 };

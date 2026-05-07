@@ -5,11 +5,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ShieldCheck, 
+import {
+  ShieldCheck,
   ShieldAlert,
-  Calendar, 
-  Weight, 
+  Calendar,
+  Weight,
   MapPin,
   History,
   ExternalLink,
@@ -17,45 +17,28 @@ import {
   Verified
 } from 'lucide-react';
 import Link from 'next/link';
+import { verifyBatchByHash } from '@/lib/actions/verify-actions';
 
 export default function VerifyBatchPage() {
   const params = useParams();
   const hash = params.hash as string;
-  
+
   const [batch, setBatch] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, this would be a server-side lookup
-    setLoading(true);
-    setTimeout(() => {
-      // Mock lookup
-      if (hash.length > 10) {
-        setBatch({
-          batchCode: 'HT-2024-X42',
-          honeyType: 'Wildflower Blend',
-          quantity: 50,
-          unit: 'kg',
-          harvestDate: '2024-04-15',
-          description: 'Harvested from the north-eastern hills during the peak spring bloom.',
-          verified: true,
-          verificationHash: hash,
-          producer: {
-            name: 'Golden Valley Apiaries',
-            location: 'Jos Plateau, Nigeria',
-            rating: 4.8,
-            reviewCount: 156
-          },
-          scans: 124,
-          history: [
-            { event: 'Batch Registered', date: '2024-04-16', location: 'Jos, NG' },
-            { event: 'Quality Check Passed', date: '2024-04-18', location: 'Lab #3, Abuja' },
-            { event: 'Packaged for Shipment', date: '2024-04-20', location: 'Golden Valley Facility' }
-          ]
-        });
+    async function lookup() {
+      setLoading(true);
+      try {
+        const result = await verifyBatchByHash(hash);
+        setBatch(result);
+      } catch {
+        setBatch(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    }, 800);
+    }
+    lookup();
   }, [hash]);
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground animate-pulse">Verifying authenticity on the HiveTrace network...</div>;

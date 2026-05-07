@@ -1,38 +1,40 @@
-'use client';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, Calendar } from 'lucide-react';
+import { Download, Calendar, FileText } from 'lucide-react';
+import { getPlatformReportStats } from '@/lib/actions/reports-actions';
+import { ReportDownloadButton } from '@/components/admin/report-download-button';
 
-export default function AdminReportsPage() {
+export default async function AdminReportsPage() {
+  const stats = await getPlatformReportStats();
+
   const reports = [
     {
-      title: 'Monthly Platform Report',
+      title: 'Platform Overview Report',
       description: 'Comprehensive overview of platform metrics and activities',
-      period: 'May 2024',
-      generated: '2024-05-02',
-      records: '2,847 batches, 342 producers, 45.2K scans',
+      period: 'All Time',
+      generated: new Date().toLocaleDateString(),
+      records: `${stats.batchCount.toLocaleString()} batches, ${stats.producerCount.toLocaleString()} producers, ${stats.scanCount.toLocaleString()} scans`,
     },
     {
       title: 'Fraud Detection Report',
       description: 'Summary of detected fraud cases and prevention measures',
-      period: 'May 2024',
-      generated: '2024-05-02',
-      records: '8 active cases, 3 resolved',
+      period: 'All Time',
+      generated: new Date().toLocaleDateString(),
+      records: `${stats.fraudAlertCount} active flagged cases`,
     },
     {
       title: 'Producer Performance Report',
-      description: 'Analytics on top performing producers and ratings',
-      period: 'Q2 2024',
-      generated: '2024-04-30',
-      records: 'Top 10 producers, average rating 4.7',
+      description: 'Analytics on producers and platform ratings',
+      period: 'All Time',
+      generated: new Date().toLocaleDateString(),
+      records: `${stats.producerCount.toLocaleString()} producers, ${stats.reviewCount.toLocaleString()} reviews`,
     },
     {
       title: 'Consumer Engagement Report',
       description: 'Metrics on consumer scanning and verification activities',
-      period: 'May 2024',
-      generated: '2024-05-02',
-      records: '12.3K unique scanners, 45.2K total scans',
+      period: 'All Time',
+      generated: new Date().toLocaleDateString(),
+      records: `${stats.consumerCount.toLocaleString()} consumers, ${stats.orderCount.toLocaleString()} orders`,
     },
   ];
 
@@ -59,10 +61,7 @@ export default function AdminReportsPage() {
                 <p className="text-sm text-muted-foreground">Generated: {report.generated}</p>
                 <p className="text-sm font-medium">{report.records}</p>
               </div>
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2">
-                <Download className="w-4 h-4" />
-                Download Report
-              </Button>
+              <ReportDownloadButton title={report.title} stats={stats} />
             </CardContent>
           </Card>
         ))}
@@ -70,32 +69,42 @@ export default function AdminReportsPage() {
 
       <Card className="border-border">
         <CardHeader>
-          <CardTitle>Custom Report Generator</CardTitle>
-          <CardDescription>Create custom reports with specific date ranges and metrics</CardDescription>
+          <CardTitle>Platform Snapshot</CardTitle>
+          <CardDescription>Live metrics from the HiveTrace database</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium">Report Type</label>
-              <select className="w-full mt-2 px-3 py-2 border border-border rounded-lg bg-background text-foreground">
-                <option>Platform Overview</option>
-                <option>Producer Performance</option>
-                <option>Fraud Detection</option>
-                <option>Consumer Engagement</option>
-              </select>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.batchCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Batches</p>
             </div>
-            <div>
-              <label className="text-sm font-medium">Start Date</label>
-              <input type="date" className="w-full mt-2 px-3 py-2 border border-border rounded-lg bg-background text-foreground" />
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.producerCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Producers</p>
             </div>
-            <div>
-              <label className="text-sm font-medium">End Date</label>
-              <input type="date" className="w-full mt-2 px-3 py-2 border border-border rounded-lg bg-background text-foreground" />
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.scanCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Scans</p>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.orderCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Orders</p>
             </div>
           </div>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            Generate Report
-          </Button>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.consumerCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Consumers</p>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.reviewCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Reviews</p>
+            </div>
+            <div className="bg-muted/50 p-4 rounded-xl text-center">
+              <p className="text-2xl font-black">{stats.fraudAlertCount}</p>
+              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Fraud Alerts</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

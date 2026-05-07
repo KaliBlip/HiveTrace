@@ -21,8 +21,8 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
     <>
       <header className={`sticky top-0 z-50 backdrop-blur transition-all duration-300 ${
         transparent 
-          ? 'bg-white md:bg-transparent border-b border-stone-200 md:border-white/10 text-[#1c1917] md:text-white' 
-          : 'bg-white lg:bg-white/80 border-b border-stone-200 text-[#1c1917]'
+          ? 'bg-card md:bg-transparent border-b border-border md:border-white/10 text-foreground md:text-white' 
+          : 'bg-card lg:bg-card/80 border-b border-border text-foreground'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Logo */}
@@ -30,7 +30,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
               <span className="text-primary-foreground font-bold text-xl">🍯</span>
             </div>
-            <span className={`hidden sm:inline font-black text-2xl tracking-tighter uppercase italic ${transparent ? 'text-[#1c1917] md:text-white' : 'text-[#1c1917]'}`}>HiveTrace</span>
+            <span className={`hidden sm:inline font-black text-2xl tracking-tighter uppercase italic ${transparent ? 'text-foreground md:text-white' : 'text-foreground'}`}>HiveTrace</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -40,7 +40,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
               className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/shop') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-300 hover:text-white' : 'text-stone-500 hover:text-primary'
+                  : transparent ? 'text-muted-foreground/80 hover:text-white' : 'text-muted-foreground hover:text-primary'
               }`}
             >
               Marketplace
@@ -50,7 +50,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
               className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/consumer/scanner') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-400 hover:text-white' : 'text-stone-500 hover:text-primary'
+                  : transparent ? 'text-muted-foreground/70 hover:text-white' : 'text-muted-foreground hover:text-primary'
               }`}
             >
               QR Scanner
@@ -60,7 +60,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
               className={`text-sm font-bold uppercase tracking-widest transition-colors ${
                 isActive('/consumer') 
                   ? 'text-primary' 
-                  : transparent ? 'text-stone-400 hover:text-white' : 'text-stone-500 hover:text-primary'
+                  : transparent ? 'text-muted-foreground/70 hover:text-white' : 'text-muted-foreground hover:text-primary'
               }`}
             >
               Reputation
@@ -71,7 +71,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
           <div className="hidden md:flex items-center gap-4">
             {isAuthenticated ? (
               <Link href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'}>
-                <Button className="bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all flex items-center gap-2">
+                <Button className="bg-foreground hover:bg-primary text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-xl transition-all flex items-center gap-2">
                   {user?.image ? (
                     <img src={user.image} alt="" className="w-6 h-6 rounded-full object-cover" />
                   ) : currentRole === 'producer' || currentRole === 'admin' ? (
@@ -85,16 +85,16 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost" className={`font-bold transition-colors ${transparent ? 'text-white hover:bg-white/10' : 'text-stone-500 hover:text-primary'}`}>Sign In</Button>
+                  <Button variant="ghost" className={`font-bold transition-colors ${transparent ? 'text-white hover:bg-white/10' : 'text-muted-foreground hover:text-primary'}`}>Sign In</Button>
                 </Link>
                 <Link href="/auth/register">
-                  <Button className={`bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
+                  <Button className={`bg-foreground hover:bg-primary text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-xl transition-all ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
                     Join the Network
                   </Button>
                 </Link>
               </>
             )}
-            <div className={`pl-4 border-l ${transparent ? 'border-white/20' : 'border-stone-200'}`}>
+            <div className={`pl-4 border-l ${transparent ? 'border-white/20' : 'border-border'}`}>
               <ThemeToggle className={transparent ? 'text-white hover:bg-white/10' : ''} />
             </div>
           </div>
@@ -102,7 +102,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 transition-colors ${transparent ? 'text-[#1c1917] md:text-white' : 'text-foreground'}`}
+            className={`md:hidden p-2 transition-colors ${transparent ? 'text-foreground md:text-white' : 'text-foreground'}`}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
@@ -143,7 +143,7 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
               </Link>
               <div className="border-t border-border pt-2 mt-2 flex flex-col gap-2">
                 <div className="flex justify-between items-center px-4 py-2">
-                  <span className="font-bold text-stone-500">Theme</span>
+                  <span className="font-bold text-muted-foreground">Theme</span>
                   <ThemeToggle />
                 </div>
                 {isAuthenticated ? (

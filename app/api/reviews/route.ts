@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
+import prisma from '@/lib/prisma';
 
 interface ReviewRequest {
   batchId: string;
@@ -34,21 +34,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Save review to database
-    // For now, return mock response
-    const review = {
-      id: crypto.randomUUID(),
-      batchId,
-      userId,
-      rating,
-      text,
-      verified,
-      createdAt: new Date(),
-    };
+    const review = await prisma.review.create({
+      data: {
+        batchId,
+        userId,
+        rating,
+        text,
+        verified,
+      },
+    });
 
     return NextResponse.json(review, { status: 201 });
   } catch (error) {
-    console.error('[v0] Review creation error:', error);
+    console.error('Review creation error:', error);
     return NextResponse.json(
       { error: 'Failed to create review' },
       { status: 500 }
@@ -72,41 +70,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // TODO: Fetch reviews from database
-    // For now, return mock response
-    const reviews = [
-      {
-        id: 'rev-1',
-        batchId,
-        reviewer: 'Jane Smith',
-        rating: 5,
-        text: 'Exceptional quality honey! The QR code verification gave me confidence.',
-        verified: true,
-        date: '2 days ago',
+    const reviews = await prisma.review.findMany({
+      where: { batchId },
+      include: {
+        user: { select: { name: true } },
       },
-      {
-        id: 'rev-2',
-        batchId,
-        reviewer: 'John Davis',
-        rating: 5,
-        text: 'Love knowing exactly where my honey comes from. Great producer!',
-        verified: true,
-        date: '1 week ago',
-      },
-      {
-        id: 'rev-3',
-        batchId,
-        reviewer: 'Maria Garcia',
-        rating: 4,
-        text: 'Very good honey. Slightly grainy texture but tastes wonderful.',
-        verified: true,
-        date: '2 weeks ago',
-      },
-    ];
+      orderBy: { createdAt: 'desc' },
+    });
 
     return NextResponse.json(reviews);
   } catch (error) {
-    console.error('[v0] Review fetch error:', error);
+    console.error('Review fetch error:', error);
     return NextResponse.json(
       { error: 'Failed to fetch reviews' },
       { status: 500 }

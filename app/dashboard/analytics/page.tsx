@@ -1,44 +1,51 @@
-'use client';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  LineChart, 
-  Line, 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   AreaChart,
   Area
 } from 'recharts';
+import { getProducerAnalytics } from '@/lib/actions/analytics-actions';
 
-const scanData = [
-  { name: 'Mon', scans: 400, growth: 240 },
-  { name: 'Tue', scans: 300, growth: 139 },
-  { name: 'Wed', scans: 200, growth: 980 },
-  { name: 'Thu', scans: 278, growth: 390 },
-  { name: 'Fri', scans: 189, growth: 480 },
-  { name: 'Sat', scans: 239, growth: 380 },
-  { name: 'Sun', scans: 349, growth: 430 },
-];
+export default async function AnalyticsPage() {
+  const analytics = await getProducerAnalytics();
 
-const batchPerformance = [
-  { name: 'Batch A', scans: 2400, revenue: 4500 },
-  { name: 'Batch B', scans: 1398, revenue: 3200 },
-  { name: 'Batch C', scans: 9800, revenue: 8900 },
-  { name: 'Batch D', scans: 3908, revenue: 1200 },
-  { name: 'Batch E', scans: 4800, revenue: 5600 },
-];
+  const scanData = analytics?.scanData || [];
+  const batchPerformance = analytics?.batchPerformance || [];
 
-export default function AnalyticsPage() {
   return (
     <div className="space-y-8">
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">Analytics</h1>
         <p className="text-muted-foreground">Track performance metrics for your honey batches</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-border">
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total Batches</p>
+            <p className="text-3xl font-black mt-2">{analytics?.totalBatches || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border">
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Total Scans</p>
+            <p className="text-3xl font-black mt-2">{analytics?.totalScans || 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border">
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">Active Products</p>
+            <p className="text-3xl font-black mt-2">{analytics?.totalBatches || 0}</p>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

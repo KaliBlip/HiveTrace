@@ -204,6 +204,21 @@ model FraudAlert {
 
 
 
+// Contact Message model - stores contact form submissions
+model ContactMessage {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  subject   String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([read])
+}
+
 // --- E-commerce Models ---
 
 // Product model - makes a honey batch available for sale

@@ -24,8 +24,7 @@ export default function ScannerPage() {
       router.push(`/verify/${hash}`);
       return;
     }
-    setQrCode(data);
-    setShowResult(true);
+    router.push(`/verify/${encodeURIComponent(data.trim())}`);
   };
 
   const handleManualVerify = () => {
@@ -34,8 +33,7 @@ export default function ScannerPage() {
         const hash = manualInput.split('/verify/')[1];
         router.push(`/verify/${hash}`);
       } else {
-        setQrCode(manualInput);
-        setShowResult(true);
+        router.push(`/verify/${encodeURIComponent(manualInput.trim())}`);
       }
     }
   };

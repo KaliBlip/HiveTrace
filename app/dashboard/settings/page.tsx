@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/lib/hooks/use-auth';
-import { updateProfile } from '@/lib/actions/user-actions';
+import { updateProfile, changePassword } from '@/lib/actions/user-actions';
 import { Camera, Loader2, User as UserIcon } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -18,6 +18,15 @@ export default function SettingsPage() {
     name: user?.name || '',
     image: user?.image || '',
   });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -141,12 +150,24 @@ export default function SettingsPage() {
               <CardDescription>Manage your account security</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {passwordSuccess && (
+                <div className="bg-green-100 text-green-700 px-4 py-3 rounded-md text-sm">
+                  Password updated successfully.
+                </div>
+              )}
+              {passwordError && (
+                <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm">
+                  {passwordError}
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="currentPassword">Current Password</Label>
                 <Input
                   id="currentPassword"
                   type="password"
                   placeholder="••••••••"
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
                 />
               </div>
 
@@ -156,6 +177,8 @@ export default function SettingsPage() {
                   id="newPassword"
                   type="password"
                   placeholder="••••••••"
+                  value={passwordData.newPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
                 />
               </div>
 
@@ -165,11 +188,30 @@ export default function SettingsPage() {
                   id="confirmPassword"
                   type="password"
                   placeholder="••••••••"
+                  value={passwordData.confirmPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
                 />
               </div>
 
-              <Button variant="outline">
-                Change Password
+              <Button
+                variant="outline"
+                disabled={isChangingPassword}
+                onClick={async () => {
+                  setPasswordError('');
+                  setPasswordSuccess(false);
+                  setIsChangingPassword(true);
+                  try {
+                    await changePassword(passwordData);
+                    setPasswordSuccess(true);
+                    setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                  } catch (err: any) {
+                    setPasswordError(err.message || 'Failed to change password');
+                  } finally {
+                    setIsChangingPassword(false);
+                  }
+                }}
+              >
+                {isChangingPassword ? 'Updating...' : 'Change Password'}
               </Button>
             </CardContent>
           </Card>

@@ -20,40 +20,43 @@ export function PublicHeader() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <nav className="fixed top-0 w-full bg-white lg:bg-white/80 backdrop-blur-xl border-b border-stone-200 z-[100]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <nav className="fixed top-0 w-full bg-background/80 backdrop-blur-xl border-b border-white/10 z-[100]">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-primary-foreground font-bold text-xl">🍯</span>
           </div>
-          <span className="font-black text-2xl tracking-tighter uppercase italic text-[#1c1917]">HiveTrace</span>
+          <span className="font-heading font-black text-2xl tracking-tighter uppercase italic text-foreground">HiveTrace</span>
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-10">
+        <div className="hidden lg:flex items-center gap-8">
           <Link 
             href="/about" 
-            className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-              isActive('/about') ? 'text-primary' : 'text-stone-500 hover:text-primary'
+            className={`text-base font-normal transition-all hover:text-primary relative group ${
+              isActive('/about') ? 'text-primary' : 'text-foreground'
             }`}
           >
             About Us
+            <span className={`absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all group-hover:w-full ${isActive('/about') ? 'w-full' : ''}`} />
           </Link>
           <Link 
             href="/shop" 
-            className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-              isActive('/shop') ? 'text-primary' : 'text-stone-500 hover:text-primary'
+            className={`text-base font-normal transition-all hover:text-primary relative group ${
+              isActive('/shop') ? 'text-primary' : 'text-foreground'
             }`}
           >
             Marketplace
+            <span className={`absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all group-hover:w-full ${isActive('/shop') ? 'w-full' : ''}`} />
           </Link>
           <Link 
             href="/contact" 
-            className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-              isActive('/contact') ? 'text-primary' : 'text-stone-500 hover:text-primary'
+            className={`text-base font-normal transition-all hover:text-primary relative group ${
+              isActive('/contact') ? 'text-primary' : 'text-foreground'
             }`}
           >
             Contact
+            <span className={`absolute -bottom-1 left-0 w-0 h-[1px] bg-primary transition-all group-hover:w-full ${isActive('/contact') ? 'w-full' : ''}`} />
           </Link>
         </div>
 
@@ -61,32 +64,32 @@ export function PublicHeader() {
         <div className="hidden lg:flex items-center gap-4">
           {isAuthenticated ? (
             <Link href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'}>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-lg gap-2">
+              <Button size="sm" className="font-semibold gap-2">
                 {user?.image ? (
-                  <img src={user.image} alt="" className="w-6 h-6 rounded-full object-cover" />
+                  <img src={user.image} alt="" className="w-5 h-5 rounded-full object-cover" />
                 ) : currentRole === 'producer' || currentRole === 'admin' ? (
                   <LayoutDashboard className="w-4 h-4" />
                 ) : (
                   <User className="w-4 h-4" />
                 )}
-                {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'My Account'}
+                {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'Account'}
               </Button>
             </Link>
           ) : (
             <>
               <Link href="/auth/login">
-                <Button variant="ghost" className="font-bold text-stone-500 hover:text-primary">
+                <Button variant="ghost" size="sm" className="text-foreground/80 hover:text-foreground">
                   Sign In
                 </Button>
               </Link>
               <Link href="/auth/register">
-                <Button className="bg-stone-900 hover:bg-primary text-white h-12 px-6 rounded-xl font-bold shadow-xl transition-all">
-                  Join the Network
+                <Button size="sm" className="font-semibold">
+                  Join Now
                 </Button>
               </Link>
             </>
           )}
-          <div className="pl-4 border-l border-stone-200">
+          <div className="pl-4 border-l border-white/10">
             <ThemeToggle />
           </div>
         </div>
@@ -95,24 +98,24 @@ export function PublicHeader() {
         <div className="lg:hidden flex items-center">
           <button
             onClick={toggleMenu}
-            className="p-2 text-stone-500 hover:text-primary transition-colors focus:outline-none"
+            className="p-2 text-foreground/80 hover:text-primary transition-colors focus:outline-none"
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
+            {isMenuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Navigation Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-20 bg-white z-[90] animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex flex-col p-6 space-y-8 h-full bg-white">
+        <div className="lg:hidden fixed inset-0 top-20 bg-card z-[90] animate-in fade-in slide-in-from-top-4 duration-300">
+          <div className="flex flex-col p-6 space-y-8 h-full bg-card">
             <div className="flex flex-col space-y-6">
               <Link 
                 href="/about" 
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-2xl font-black uppercase tracking-tight transition-colors ${
-                  isActive('/about') ? 'text-primary' : 'text-stone-800 hover:text-primary'
+                  isActive('/about') ? 'text-primary' : 'text-foreground hover:text-primary'
                 }`}
               >
                 About Us
@@ -121,7 +124,7 @@ export function PublicHeader() {
                 href="/shop" 
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-2xl font-black uppercase tracking-tight transition-colors ${
-                  isActive('/shop') ? 'text-primary' : 'text-stone-800 hover:text-primary'
+                  isActive('/shop') ? 'text-primary' : 'text-foreground hover:text-primary'
                 }`}
               >
                 Marketplace
@@ -130,16 +133,16 @@ export function PublicHeader() {
                 href="/contact" 
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-2xl font-black uppercase tracking-tight transition-colors ${
-                  isActive('/contact') ? 'text-primary' : 'text-stone-800 hover:text-primary'
+                  isActive('/contact') ? 'text-primary' : 'text-foreground hover:text-primary'
                 }`}
               >
                 Contact
               </Link>
             </div>
             
-            <div className="pt-8 border-t border-stone-100 flex flex-col space-y-4">
+            <div className="pt-8 border-t border-border flex flex-col space-y-4">
               <div className="flex justify-between items-center pb-4">
-                <span className="font-bold text-stone-500">Theme</span>
+                <span className="font-bold text-muted-foreground">Theme</span>
                 <ThemeToggle />
               </div>
               {isAuthenticated ? (
@@ -161,12 +164,12 @@ export function PublicHeader() {
               ) : (
                 <>
                   <Link href="/auth/login" onClick={() => setIsMenuOpen(false)}>
-                    <Button variant="outline" className="w-full h-14 text-lg font-bold border-2 border-stone-200">
+                    <Button variant="outline" className="w-full h-14 text-lg font-bold border-2 border-border">
                       Sign In
                     </Button>
                   </Link>
                   <Link href="/auth/register" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full h-14 text-lg font-black bg-stone-900 hover:bg-primary text-white rounded-xl shadow-xl">
+                    <Button className="w-full h-14 text-lg font-black bg-foreground hover:bg-primary text-primary-foreground rounded-xl shadow-xl">
                       Join the Network
                     </Button>
                   </Link>
