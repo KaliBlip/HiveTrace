@@ -67,30 +67,30 @@ export function Sidebar() {
   return (
     <aside 
       className={cn(
-        "bg-sidebar border-r border-sidebar-border h-screen flex flex-col sticky top-0 transition-all duration-300 ease-in-out z-50",
-        isCollapsed ? "w-20" : "w-64"
+        "bg-card border-r border-border/50 h-screen flex flex-col sticky top-0 transition-all duration-300 ease-in-out z-50",
+        isCollapsed ? "w-24" : "w-72"
       )}
     >
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-20 bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform"
+        className="absolute -right-3 top-24 bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-50 border-4 border-background"
       >
         {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
 
       {/* Header */}
       <div className={cn(
-        "p-6 border-b border-sidebar-border overflow-hidden",
+        "p-8 overflow-hidden",
         isCollapsed && "flex justify-center px-4"
       )}>
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-11 h-11 bg-primary rounded-[12px] flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
             <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
           {!isCollapsed && (
-            <span className="font-bold text-lg whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
-              HiveTrace
+            <span className="font-heading font-bold text-2xl tracking-tighter italic uppercase animate-in fade-in slide-in-from-left-2 duration-300">
+              Hive<span className="text-primary not-italic">Trace</span>
             </span>
           )}
         </Link>
@@ -99,31 +99,31 @@ export function Sidebar() {
       {/* User Info */}
       {user && (
         <div className={cn(
-          "px-6 py-4 bg-sidebar-accent/5 overflow-hidden flex items-center gap-3",
+          "px-8 py-6 mb-4 overflow-hidden flex items-center gap-4",
           isCollapsed && "justify-center px-4"
         )}>
-          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0 overflow-hidden border border-sidebar-border">
+          <div className="w-11 h-11 rounded-full bg-primary/5 flex items-center justify-center shrink-0 overflow-hidden border-2 border-border/50">
             {user.image ? (
               <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
             ) : (
-              <span className="text-primary font-bold text-xs uppercase">
+              <span className="text-primary font-heading font-bold text-sm uppercase">
                 {user.name?.charAt(0) || "U"}
               </span>
             )}
           </div>
           {!isCollapsed && (
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-sidebar-foreground truncate">
+              <p className="text-sm font-bold text-foreground truncate leading-tight">
                 {user.name}
               </p>
-              <p className="text-xs text-sidebar-foreground/70 capitalize">{currentRole}</p>
+              <p className="text-[10px] text-stone-500 font-bold uppercase tracking-widest mt-0.5">{currentRole}</p>
             </div>
           )}
         </div>
       )}
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto overflow-x-hidden">
+      <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
@@ -133,16 +133,16 @@ export function Sidebar() {
               href={item.href}
               title={isCollapsed ? item.label : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all group",
+                "flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-sidebar-foreground hover:bg-primary/10 hover:text-primary",
-                isCollapsed && "justify-center px-2"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/10"
+                  : "text-stone-500 hover:bg-primary/5 hover:text-primary",
+                isCollapsed && "justify-center px-2 py-4"
               )}
             >
-              <Icon size={isCollapsed ? 22 : 18} className={cn("shrink-0", !isActive && "group-hover:scale-110 transition-transform")} />
+              <Icon size={isCollapsed ? 24 : 20} className={cn("shrink-0", !isActive && "group-hover:scale-110 transition-transform")} />
               {!isCollapsed && (
-                <span className="whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300">
+                <span className="whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 tracking-tight">
                   {item.label}
                 </span>
               )}
@@ -152,26 +152,25 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-sidebar-border mt-auto space-y-2">
-        <div className={cn(
-          "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all text-sidebar-foreground",
-          isCollapsed && "justify-center px-0"
-        )}>
-          <ThemeToggle />
-          {!isCollapsed && <span className="ml-1">Appearance</span>}
-        </div>
+      <div className="p-6 border-t border-border/50 mt-auto space-y-4">
+        {!isCollapsed && (
+          <div className="flex items-center justify-between px-2 text-stone-500">
+            <span className="text-xs font-bold uppercase tracking-widest">Theme</span>
+            <ThemeToggle />
+          </div>
+        )}
         
         <Button
-          variant="outline"
+          variant={isCollapsed ? "ghost" : "outline"}
           className={cn(
-            "w-full transition-all flex items-center gap-2",
-            isCollapsed && "p-0 h-10 w-10 mx-auto justify-center rounded-full"
+            "w-full transition-all flex items-center gap-3 h-14 rounded-xl border-2 border-border/50 font-bold",
+            isCollapsed && "p-0 h-14 w-14 mx-auto justify-center rounded-full border-0 bg-primary/5 text-primary hover:bg-primary/10"
           )}
           onClick={() => logout()}
           title={isCollapsed ? "Sign Out" : undefined}
         >
-          <LogOut size={18} />
-          {!isCollapsed && <span>Sign Out</span>}
+          <LogOut size={isCollapsed ? 24 : 20} />
+          {!isCollapsed && <span className="tracking-tight">Sign Out</span>}
         </Button>
       </div>
     </aside>

@@ -21,7 +21,7 @@ export default function AboutPage() {
             <h1 className="text-6xl md:text-8xl lg:text-[120px] font-heading font-bold tracking-[-0.03em] uppercase italic leading-[0.85] mb-12">
               PRESERVING <br className="hidden md:block" />THE <span className="text-primary not-italic">HIVE.</span>
             </h1>
-            <p className="text-xl md:text-2xl text-stone-400 font-normal max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-stone-400 font-normal max-w-[800px] mx-auto leading-relaxed">
               We started HiveTrace with a simple mission: to eliminate counterfeit honey and empower the artisan beekeepers who protect our global ecosystem.
             </p>
           </div>
@@ -30,7 +30,7 @@ export default function AboutPage() {
         {/* Content */}
         <section className="py-[80px] px-4 bg-background">
           <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] space-y-24">
-            <div className="max-w-4xl mx-auto space-y-8">
+            <div className="max-w-[900px] mx-auto space-y-8">
               <h2 className="text-4xl md:text-5xl font-heading font-bold tracking-tight uppercase italic leading-none">
                 The <span className="text-primary not-italic">Honey</span> Crisis
               </h2>
@@ -65,7 +65,7 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="max-w-4xl mx-auto space-y-8 pb-12">
+            <div className="max-w-[900px] mx-auto space-y-8 pb-12">
               <h2 className="text-4xl md:text-5xl font-heading font-bold tracking-tight uppercase italic leading-none">
                 Our <span className="text-primary not-italic">Vision</span>
               </h2>

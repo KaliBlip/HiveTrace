@@ -41,168 +41,195 @@ export default function VerifyBatchPage() {
     lookup();
   }, [hash]);
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background text-muted-foreground animate-pulse">Verifying authenticity on the HiveTrace network...</div>;
+  if (loading) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-stone-500 animate-pulse space-y-4">
+      <ShieldCheck className="w-16 h-16 text-primary animate-bounce" />
+      <p className="text-xl font-heading font-bold uppercase tracking-widest">Verifying authenticity on the HiveTrace network...</p>
+    </div>
+  );
 
   if (!batch) {
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <Card className="max-w-md w-full border-destructive/50 bg-destructive/5">
-          <CardHeader className="text-center">
-            <ShieldAlert className="w-16 h-16 text-destructive mx-auto mb-4" />
-            <CardTitle className="text-2xl text-destructive">Invalid Batch</CardTitle>
-            <CardDescription>The scanned QR code or hash could not be verified.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <p className="text-sm text-muted-foreground mb-6">
-              This honey may not be authentic HiveTrace-certified honey. Please contact support if you believe this is an error.
-            </p>
-            <Link href="/consumer/scanner">
-              <Button className="w-full">Try Scanning Again</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="max-w-xl w-full bg-rose-50 border border-rose-100 rounded-[40px] overflow-hidden shadow-2xl">
+          <div className="p-12 text-center space-y-8">
+            <div className="w-24 h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-12 h-12 text-rose-500" />
+            </div>
+            <div className="space-y-3">
+              <h1 className="text-4xl font-heading font-bold uppercase tracking-tight text-rose-900">Invalid Batch</h1>
+              <p className="text-rose-700/70 text-lg font-normal">The scanned QR code or hash could not be verified on our cryptographic ledger.</p>
+            </div>
+            <div className="p-6 bg-white/50 rounded-3xl border border-rose-200/50">
+              <p className="text-sm text-rose-800 font-normal leading-relaxed">
+                This honey may not be authentic HiveTrace-certified honey. Please contact support if you believe this is an error or report a potential fraud case.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Link href="/consumer/scanner">
+                <Button className="w-full h-16 rounded-2xl bg-rose-900 hover:bg-rose-950 text-white font-bold text-lg">Try Scanning Again</Button>
+              </Link>
+              <Link href="/contact" className="text-rose-900 font-bold uppercase text-xs tracking-widest hover:underline">Report a discrepancy</Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 pb-12">
+    <div className="min-h-screen bg-background pb-24">
       {/* Verification Banner */}
-      <div className="bg-primary py-8 text-primary-foreground text-center space-y-2">
-        <div className="flex justify-center mb-2">
-          <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
-            <ShieldCheck className="w-8 h-8 text-white" />
+      <div className="bg-[#1c1917] relative overflow-hidden py-32 text-center px-4">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=2000')] bg-cover bg-center opacity-10 grayscale mix-blend-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1c1917]"></div>
+        
+        <div className="relative z-10 space-y-8">
+          <div className="flex justify-center">
+            <div className="w-24 h-24 bg-primary rounded-[32px] flex items-center justify-center shadow-2xl shadow-primary/40 group">
+              <ShieldCheck className="w-12 h-12 text-white transition-transform duration-500 group-hover:scale-110" />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-6 rounded-full text-xs font-bold uppercase tracking-[0.3em]">
+              Origin Verified
+            </Badge>
+            <h1 className="text-6xl md:text-8xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none">
+              AUTHENTICITY <span className="text-primary not-italic">CONFIRMED.</span>
+            </h1>
+            <p className="text-stone-400 font-normal text-xl max-w-2xl mx-auto leading-relaxed">
+              This batch has been cryptographically signed and verified on the HiveTrace ledger. 100% genuine artisan honey.
+            </p>
           </div>
         </div>
-        <h1 className="text-3xl font-bold tracking-tight">Authenticity Verified</h1>
-        <p className="text-primary-foreground/80">This batch is genuine and fully traceable.</p>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 -mt-6 space-y-6">
-        {/* Main Info */}
-        <Card className="border-border shadow-xl">
-          <CardContent className="p-0">
-            <div className="p-6 border-b border-border flex justify-between items-center">
-              <div>
-                <h2 className="text-2xl font-bold">{batch.honeyType}</h2>
-                <div className="flex items-center gap-2 mt-1">
-                  <Badge variant="outline" className="text-xs">{batch.batchCode}</Badge>
-                  <span className="text-[10px] text-muted-foreground font-mono">HASH: {batch.verificationHash.slice(0, 12)}...</span>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-widest">Harvested</p>
-                <p className="font-semibold text-sm">{new Date(batch.harvestDate).toLocaleDateString()}</p>
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-[128px] -mt-16 relative z-20 space-y-12">
+        {/* Main Info Card */}
+        <div className="bg-card rounded-[48px] border border-border/50 shadow-2xl overflow-hidden">
+          <div className="p-10 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-8 bg-stone-50/50">
+            <div className="space-y-4 text-center md:text-left">
+              <h2 className="text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                <Badge className="bg-stone-900 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
+                <span className="text-xs text-stone-400 font-mono bg-white px-3 py-1.5 rounded-lg border border-border/50">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
               </div>
             </div>
-            
-            <div className="p-6 grid sm:grid-cols-3 gap-6">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-tight">Origin</span>
-                </div>
-                <p className="font-medium text-sm">{batch.producer.location}</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <Weight className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-tight">Quantity</span>
-                </div>
-                <p className="font-medium text-sm">{batch.quantity} {batch.unit}</p>
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-muted-foreground mb-1">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span className="text-xs font-bold uppercase tracking-tight">Status</span>
-                </div>
-                <p className="font-medium text-sm text-green-600 flex items-center gap-1">
-                  <Verified className="w-3 h-3" /> Fully Transparent
-                </p>
-              </div>
+            <div className="text-center md:text-right space-y-2">
+              <p className="text-[10px] font-bold uppercase text-stone-400 tracking-[0.2em]">Harvested On</p>
+              <p className="font-heading font-bold text-3xl">{new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          
+          <div className="p-10 lg:p-16 grid grid-cols-1 sm:grid-cols-3 gap-12">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-stone-400 mb-2">
+                <MapPin className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
+              </div>
+              <p className="font-heading font-bold text-2xl">{batch.producer.location}</p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-stone-400 mb-2">
+                <Weight className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em]">Batch Quantity</span>
+              </div>
+              <p className="font-heading font-bold text-2xl">{batch.quantity} <span className="text-stone-400 font-normal">{batch.unit}</span></p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 text-stone-400 mb-2">
+                <ShieldCheck className="w-5 h-5" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em]">Transparency Status</span>
+              </div>
+              <p className="font-heading font-bold text-2xl text-emerald-600 flex items-center gap-2 italic uppercase">
+                Fully Traceable
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* History */}
-          <Card className="lg:col-span-2 border-border shadow-lg">
-            <CardHeader className="border-b border-border">
-              <div className="flex items-center gap-2">
-                <History className="w-5 h-5 text-primary" />
-                <CardTitle>Chain of Custody</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-8">
+        <div className="grid lg:grid-cols-3 gap-12">
+          {/* History / Chain of Custody */}
+          <div className="lg:col-span-2 bg-card rounded-[48px] border border-border/50 shadow-xl overflow-hidden flex flex-col">
+            <div className="p-10 border-b border-border/50 bg-stone-50/50 flex items-center gap-4">
+              <History className="w-8 h-8 text-primary" />
+              <h3 className="text-2xl font-heading font-bold uppercase tracking-tight">Chain of Custody</h3>
+            </div>
+            <div className="p-10 lg:p-16 flex-1">
+              <div className="space-y-12">
                 {batch.history.map((item: any, i: number) => (
-                  <div key={i} className="flex gap-4 group">
-                    <div className="w-8 flex flex-col items-center">
-                      <div className="w-3 h-3 rounded-full bg-primary ring-4 ring-primary/20 mt-1"></div>
-                      {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-border mt-1"></div>}
+                  <div key={i} className="flex gap-8 group">
+                    <div className="w-10 flex flex-col items-center">
+                      <div className="w-6 h-6 rounded-full bg-white border-4 border-primary ring-8 ring-primary/5 mt-1 group-hover:scale-125 transition-transform duration-300"></div>
+                      {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-stone-100 mt-4 group-hover:bg-primary/20 transition-colors"></div>}
                     </div>
-                    <div className="flex-1 pb-2">
-                      <div className="flex justify-between items-start">
-                        <p className="font-bold text-sm">{item.event}</p>
-                        <span className="text-[10px] text-muted-foreground font-medium">{item.date}</span>
+                    <div className="flex-1 pb-4">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                        <p className="font-heading font-bold text-xl uppercase italic group-hover:text-primary transition-colors">{item.event}</p>
+                        <span className="text-xs text-stone-400 font-bold uppercase tracking-widest bg-stone-50 px-3 py-1 rounded-full border border-border/50 shrink-0">{item.date}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> {item.location}
+                      <p className="text-stone-500 font-normal mt-3 flex items-center gap-2 text-lg">
+                        <MapPin className="w-4 h-4 text-stone-300" /> {item.location}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Producer Profile */}
-          <div className="space-y-6">
-            <Card className="border-border shadow-lg overflow-hidden">
-              <div className="h-2 bg-primary"></div>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Producer Profile</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="font-bold">{batch.producer.name}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="flex gap-0.5 text-yellow-500">
+          {/* Sidebar Info */}
+          <div className="space-y-8">
+            {/* Producer Profile */}
+            <div className="bg-card rounded-[40px] border border-border/50 shadow-xl overflow-hidden group">
+              <div className="h-3 bg-primary w-full transition-all group-hover:h-4"></div>
+              <div className="p-10 space-y-8">
+                <p className="text-[10px] font-bold uppercase text-stone-400 tracking-[0.2em]">Verified Producer</p>
+                <div className="space-y-4">
+                  <h4 className="text-3xl font-heading font-bold uppercase italic group-hover:text-primary transition-colors">{batch.producer.name}</h4>
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-xs">★</span>
+                        <span key={i} className="text-primary text-xl">★</span>
                       ))}
                     </div>
-                    <span className="text-[10px] text-muted-foreground">({batch.producer.reviewCount})</span>
+                    <span className="text-sm text-stone-400 font-bold">({batch.producer.reviewCount} Reviews)</span>
                   </div>
                 </div>
                 <Link href="/shop" className="block">
-                  <Button variant="outline" size="sm" className="w-full text-xs gap-2 group">
-                    View More from Producer <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  <Button variant="outline" className="w-full h-14 rounded-2xl border-stone-200 hover:border-primary hover:text-primary text-sm font-bold uppercase tracking-widest gap-3 group/btn">
+                    View Producer Shop 
+                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                   </Button>
                 </Link>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-border shadow-lg bg-sidebar">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">Help Stop Fraud</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  If you found this honey in a store, ensure the packaging is sealed and matches the batch code above.
+            {/* Fraud Protection */}
+            <div className="bg-[#1c1917] rounded-[40px] border border-white/5 p-10 space-y-8 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
+              <div className="relative z-10 space-y-6">
+                <div className="flex items-center gap-3 text-primary">
+                  <ShieldAlert className="w-7 h-7" />
+                  <h4 className="text-xl font-heading font-bold uppercase tracking-tight text-white">Help Stop Fraud</h4>
+                </div>
+                <p className="text-stone-400 font-normal text-sm leading-relaxed">
+                  Ensure the physical seal matches the batch ID on this page. If you notice any discrepancy, report it immediately to protect the ecosystem.
                 </p>
-                <Button variant="destructive" size="sm" className="w-full text-xs gap-2">
-                  <ShieldAlert className="w-3 h-3" /> Report Issue
+                <Button variant="destructive" className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-xs gap-3">
+                  Report discrepancy
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="text-center pt-8">
+        {/* Global CTA */}
+        <div className="text-center pt-12">
           <Link href="/shop">
-            <Button size="lg" className="rounded-full px-8 gap-2 shadow-xl hover:scale-105 transition-transform">
-              Explore More Verified Honey <ExternalLink className="w-4 h-4" />
+            <Button className="rounded-full h-20 px-12 text-xl font-bold gap-4 shadow-[0_20px_50px_rgba(0,0,0,0.1)] hover:scale-105 transition-all group">
+              Explore More Verified Honey 
+              <ExternalLink className="w-6 h-6 group-hover:rotate-45 transition-transform" />
             </Button>
           </Link>
         </div>

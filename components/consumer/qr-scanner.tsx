@@ -158,8 +158,8 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
   };
 
   return (
-    <Card className="bg-card border-border shadow-2xl rounded-[2rem] overflow-hidden">
-      <CardContent className="p-8 lg:p-12 space-y-8">
+    <Card className="w-full min-w-0 bg-card border-border shadow-2xl rounded-[2rem] overflow-hidden">
+      <CardContent className="w-full min-w-0 p-6 lg:p-8 space-y-6">
         {error && (
           <Alert variant="destructive" className="rounded-2xl border-2">
             <AlertCircle className="h-4 w-4" />
@@ -168,15 +168,15 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
         )}
 
         {!scanning ? (
-          <div className="space-y-6">
-            <div className="aspect-square bg-secondary/50 border-4 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-muted-foreground p-12 text-center space-y-4">
+          <div className="space-y-6 w-full min-w-0">
+            <div className="aspect-[5/4] bg-secondary/50 border-4 border-dashed border-border rounded-[2rem] flex flex-col items-center justify-center text-muted-foreground p-8 text-center space-y-3">
               <div className="w-20 h-20 bg-secondary rounded-3xl flex items-center justify-center">
                 <Camera className="w-10 h-10 text-muted-foreground/50" />
               </div>
               <p className="font-bold uppercase tracking-widest text-xs">Camera Ready</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 w-full min-w-0">
               <Button
                 onClick={startCamera}
                 disabled={isLoading || !cameraSupported}
@@ -206,8 +206,8 @@ export function QRScanner({ onScan, isLoading = false }: QRScannerProps) {
             />
           </div>
         ) : (
-          <div className="space-y-6">
-            <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-black shadow-inner">
+          <div className="space-y-6 w-full min-w-0">
+            <div className="relative aspect-[5/4] rounded-[2rem] overflow-hidden bg-black shadow-inner">
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover grayscale contrast-125"

@@ -39,162 +39,165 @@ export default function ScannerPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <ConsumerHeader transparent />
 
       <main className="flex-1 relative">
         {/* Background Atmosphere */}
-        <div className="absolute inset-0 bg-stone-950 h-[600px] -z-10">
+        <div className="absolute inset-0 bg-[#1c1917] h-[600px] -z-10">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center opacity-30 grayscale mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-stone-950/50 to-background"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-background"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 pt-12 pb-24 relative z-10">
+        <div
+          className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] pt-20 pb-24 relative z-10"
+          style={{ width: "100%", minWidth: "100%" }}
+        >
           {/* Back Link */}
-          <Link href="/consumer" className="inline-flex items-center gap-2 text-stone-400 hover:text-primary transition-colors font-bold uppercase tracking-widest text-[10px] mb-8">
-            <ArrowLeft className="w-4 h-4" />
+          <Link href="/consumer" className="inline-flex items-center gap-3 text-stone-400 hover:text-primary transition-all font-bold uppercase tracking-widest text-[10px] mb-12 group">
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             Back to Dashboard
           </Link>
 
           {/* Header */}
-          <div className="text-center space-y-4 mb-12">
-            <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em]">
+          <div className="text-center space-y-6 mb-12 text-foreground">
+            <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
               Verification Protocol
             </Badge>
-            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic text-white leading-none drop-shadow-2xl">
-              SCAN YOUR <span className="text-primary not-italic">HONEY.</span>
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold tracking-[-0.03em] leading-[0.92] uppercase italic text-foreground drop-shadow-2xl">
+              SCAN YOUR <span className="text-primary not-italic tracking-tight">HONEY.</span>
             </h1>
-            <p className="text-stone-300 font-medium text-lg max-w-xl mx-auto drop-shadow-md">
-              Decrypt the story behind your jar. Every scan verifies authenticity and supports artisan beekeepers.
-            </p>
+            <div
+              className="text-muted-foreground font-normal text-xl mx-auto leading-relaxed"
+              style={{
+                display: "block",
+                width: "min(100%, 760px)",
+                maxWidth: "760px",
+                whiteSpace: "normal",
+                writingMode: "horizontal-tb",
+                textOrientation: "mixed",
+              }}
+            >
+              Decrypt the story behind your jar. Every scan verifies authenticity and supports artisan beekeepers through cryptographic trust.
+            </div>
           </div>
 
-          <div className="space-y-8">
+          <div className="w-full max-w-3xl mx-auto space-y-10">
             {/* Input Toggle */}
-            <div className="flex justify-center p-1 bg-secondary/50 backdrop-blur-xl border border-border rounded-2xl w-fit mx-auto shadow-inner">
+            <div className="w-full max-w-xl mx-auto rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md p-1.5 shadow-xl">
+              <div className="grid grid-cols-2 gap-1.5">
               <button
                 onClick={() => setInputType('camera')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${
-                  inputType === 'camera' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.12em] whitespace-nowrap transition-all ${
+                  inputType === 'camera'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <ScanLine className="w-4 h-4" />
+                <ScanLine className="w-4 h-4 sm:w-5 sm:h-5" />
                 Camera Scan
               </button>
               <button
                 onClick={() => setInputType('manual')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black uppercase tracking-widest transition-all ${
-                  inputType === 'manual' ? 'bg-primary text-primary-foreground shadow-lg' : 'text-muted-foreground hover:text-foreground'
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.12em] whitespace-nowrap transition-all ${
+                  inputType === 'manual'
+                    ? 'bg-primary text-primary-foreground shadow-md'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
-                <Keyboard className="w-4 h-4" />
+                <Keyboard className="w-4 h-4 sm:w-5 sm:h-5" />
                 Manual Entry
               </button>
+              </div>
             </div>
 
             {/* Main Interface */}
-            <div className="grid gap-8">
+            <div className="grid gap-12 w-full min-w-0">
               {inputType === 'camera' ? (
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
                   <QRScanner onScan={handleQRScan} />
                 </div>
               ) : (
-                <Card className="bg-card border-border shadow-2xl rounded-[2rem] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <CardContent className="p-8 lg:p-12 space-y-8 text-center">
-                    <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto">
-                      <Zap className="w-8 h-8 text-primary" />
+                <div className="bg-card border border-border/50 shadow-2xl rounded-[48px] overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+                  <div className="p-10 lg:p-20 space-y-10 text-center">
+                    <div className="w-20 h-20 bg-primary/5 rounded-[24px] flex items-center justify-center mx-auto">
+                      <Zap className="w-10 h-10 text-primary" />
                     </div>
-                    <div className="space-y-2">
-                      <h2 className="text-2xl font-black uppercase tracking-tight">Manual Verification</h2>
-                      <p className="text-muted-foreground font-medium">Enter the unique cryptographic hash or batch ID found on the label.</p>
+                    <div className="space-y-3">
+                      <h2 className="text-3xl font-heading font-bold uppercase tracking-tight">Manual Verification</h2>
+                      <div
+                        className="text-stone-500 font-normal text-lg"
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          whiteSpace: "normal",
+                          writingMode: "horizontal-tb",
+                          textOrientation: "mixed",
+                        }}
+                      >
+                        Enter the unique cryptographic hash or batch ID found on the label.
+                      </div>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       <input
                         type="text"
                         placeholder="e.g., HT-2024-WFB-001"
                         value={manualInput}
                         onChange={(e) => setManualInput(e.target.value)}
-                        className="w-full h-16 px-6 bg-secondary/50 border-2 border-border rounded-2xl focus:outline-none focus:border-primary transition-colors text-center text-xl font-bold uppercase tracking-widest placeholder:normal-case placeholder:font-medium placeholder:tracking-normal"
+                        className="w-full h-20 px-8 bg-stone-50/50 border-2 border-border/40 rounded-3xl focus:outline-none focus:border-primary transition-all text-center text-2xl font-bold uppercase tracking-widest placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
                       />
                       <Button
                         onClick={handleManualVerify}
-                        className="w-full h-16 bg-primary hover:bg-primary/90 text-primary-foreground text-lg font-black uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-primary/20"
+                        className="w-full h-20 bg-[#1c1917] hover:bg-primary text-white text-xl rounded-3xl transition-all shadow-2xl shadow-primary/20 font-bold"
                         disabled={!manualInput.trim()}
                       >
                         Verify Cryptographic Hash
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Results Section */}
-              {showResult && (
-                <Card className="bg-card border-2 border-green-500/20 shadow-2xl rounded-[2rem] overflow-hidden animate-in zoom-in-95 duration-500">
-                  <div className="bg-green-500 h-2 w-full"></div>
-                  <CardContent className="p-8 lg:p-12">
-                    <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
-                      <div className="w-24 h-24 bg-green-500/10 rounded-3xl flex items-center justify-center shrink-0">
-                        <ShieldCheck className="w-12 h-12 text-green-500" />
-                      </div>
-                      <div className="flex-1 text-center md:text-left space-y-6">
-                        <div className="space-y-2">
-                          <Badge className="bg-green-500/10 text-green-500 border-none uppercase tracking-widest font-black text-[10px]">Authenticity Confirmed</Badge>
-                          <h2 className="text-3xl font-black uppercase tracking-tight">Batch Verified Successfully</h2>
-                          <p className="font-mono text-muted-foreground font-bold bg-secondary/50 px-3 py-1 rounded-lg inline-block">{qrCode}</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-8 py-6 border-y border-border">
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Honey Type</p>
-                            <p className="font-bold text-lg">Wildflower Blend</p>
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Harvest Date</p>
-                            <p className="font-bold text-lg">May 2024</p>
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Producer</p>
-                            <p className="font-bold text-lg">Golden Valley Apiaries</p>
-                          </div>
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Trust Score</p>
-                            <div className="flex items-center gap-1">
-                              <span className="font-bold text-lg">4.8</span>
-                              <span className="text-primary text-sm font-black uppercase italic">Platinum</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <Link href="/consumer/batch/1" className="block">
-                          <Button className="w-full h-16 bg-stone-900 hover:bg-primary text-white text-lg font-black uppercase tracking-widest rounded-2xl">
-                            Explore Full Traceability Data
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
 
               {/* Info Tips */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="p-6 bg-card border border-border rounded-3xl flex gap-4 items-start shadow-sm">
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                    <Info className="w-5 h-5 text-primary" />
+              <div className="grid md:grid-cols-2 gap-6 w-full min-w-0">
+                <div className="w-full min-w-0 p-8 bg-card border border-border/50 rounded-[32px] flex gap-6 items-start shadow-sm hover:border-primary/30 transition-colors">
+                  <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0">
+                    <Info className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-bold uppercase text-xs tracking-widest">Scanning Tip</p>
-                    <p className="text-sm text-muted-foreground font-medium">Hold your phone steady and ensure there is enough light on the QR code.</p>
+                  <div className="space-y-1 w-full min-w-0">
+                    <p className="font-heading font-bold uppercase text-sm tracking-widest">Scanning Tip</p>
+                    <div
+                      className="text-base text-stone-500 font-normal leading-relaxed"
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        whiteSpace: "normal",
+                        writingMode: "horizontal-tb",
+                        textOrientation: "mixed",
+                      }}
+                    >
+                      Hold your phone steady and ensure there is enough light on the QR code for instant recognition.
+                    </div>
                   </div>
                 </div>
-                <div className="p-6 bg-card border border-border rounded-3xl flex gap-4 items-start shadow-sm">
-                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-5 h-5 text-primary" />
+                <div className="w-full min-w-0 p-8 bg-card border border-border/50 rounded-[32px] flex gap-6 items-start shadow-sm hover:border-primary/30 transition-colors">
+                  <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0">
+                    <ShieldCheck className="w-6 h-6 text-primary" />
                   </div>
-                  <div className="space-y-1">
-                    <p className="font-bold uppercase text-xs tracking-widest">Digital Signature</p>
-                    <p className="text-sm text-muted-foreground font-medium">Every scan checks the HMAC-SHA256 hash to ensure zero tampering.</p>
+                  <div className="space-y-1 w-full min-w-0">
+                    <p className="font-heading font-bold uppercase text-sm tracking-widest">Digital Signature</p>
+                    <div
+                      className="text-base text-stone-500 font-normal leading-relaxed"
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        whiteSpace: "normal",
+                        writingMode: "horizontal-tb",
+                        textOrientation: "mixed",
+                      }}
+                    >
+                      Every scan checks the HMAC-SHA256 hash against our reserve nodes to ensure zero tampering.
+                    </div>
                   </div>
                 </div>
               </div>
@@ -207,4 +210,3 @@ export default function ScannerPage() {
     </div>
   );
 }
-

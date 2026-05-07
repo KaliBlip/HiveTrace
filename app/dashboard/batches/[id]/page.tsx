@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, use } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,7 @@ import Link from 'next/link';
 
 export default function BatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const router = useRouter();
+  useRouter();
   
   // In a real app, fetch this from the DB using a Server Action
   // For this demo, we'll use local state and a placeholder
@@ -31,7 +31,6 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     // Placeholder fetching logic
     // We would call a server action here: const data = await getBatchById(id);
-    setLoading(true);
     setTimeout(() => {
       setBatch({
         id: id,

@@ -1,10 +1,13 @@
-import { auth } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
+const proxyMiddleware = async (req: NextRequest) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const userRole = ((req.auth?.user as any)?.role as string)?.toLowerCase();
+  const token = await getToken({ req });
+  const isLoggedIn = !!token;
+  const userRole = ((token as any)?.role as string | undefined)?.toLowerCase();
+  
   const isAuthRoute = nextUrl.pathname.startsWith("/auth");
   const isDashboard = nextUrl.pathname.startsWith("/dashboard");
   const isAdmin = nextUrl.pathname.startsWith("/admin");
@@ -34,7 +37,10 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+};
+
+export const proxy = proxyMiddleware;
+export default proxyMiddleware;
 
 export const config = {
   matcher: [

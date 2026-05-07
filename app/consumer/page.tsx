@@ -15,48 +15,55 @@ export default async function ConsumerPage() {
       <ConsumerHeader />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-24 lg:pt-48 lg:pb-32 flex items-center overflow-hidden bg-[#1c1917] text-white">
-        {/* Abstract Background Elements */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=2000')] bg-cover bg-center opacity-40 mix-blend-overlay"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1c1917] via-[#1c1917]/80 to-[#1c1917]"></div>
-        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background to-transparent"></div>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="max-w-3xl space-y-8 text-center md:text-left">
-            <h1 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase italic leading-[0.85]">
-              TRACK YOUR <br className="hidden md:block" />HONEY&apos;S <span className="text-primary not-italic tracking-tight">STORY.</span>
-            </h1>
-            <p className="text-xl text-stone-300 font-medium max-w-xl md:mx-0 mx-auto leading-relaxed">
-              Join thousands of conscious consumers using HiveTrace to verify authenticity and support transparent, ethical beekeepers.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
-              <Link href="/consumer/scanner">
-                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-3 h-16 px-10 text-lg font-black shadow-2xl shadow-primary/30 rounded-2xl group">
-                  <QrCode className="w-6 h-6" />
-                  Scan Honey QR
-                </Button>
-              </Link>
-              <Link href="/shop">
-                <Button size="lg" variant="outline" className="h-16 px-10 text-lg font-bold border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white backdrop-blur-sm rounded-2xl transition-all">
-                  Browse Marketplace
-                </Button>
-              </Link>
-            </div>
-            
-            <div className="flex flex-wrap justify-center md:justify-start gap-8 md:gap-12 pt-12 border-t border-stone-800 mt-8">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-3xl md:text-4xl font-black text-white tracking-tighter">
-                  <Package className="w-6 md:w-8 h-6 md:h-8 text-primary" />
-                  {stats.batchCount.toLocaleString()}+
-                </div>
-                <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Verified Batches</p>
+      <section className="pt-32 pb-24 lg:pt-40 lg:pb-28 bg-gradient-to-br from-[#1c1917] via-[#241e1a] to-[#2f2620] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="space-y-8 text-center lg:text-left">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.9]">
+                Track Your Honey&apos;s <span className="text-primary not-italic">Story.</span>
+              </h1>
+              <div
+                className="mx-auto lg:mx-0 text-lg md:text-xl text-stone-300 font-medium leading-relaxed"
+                style={{ width: "min(100%, 760px)", maxWidth: "760px", whiteSpace: "normal" }}
+              >
+                Join thousands of conscious consumers using HiveTrace to verify authenticity and support transparent,
+                ethical beekeepers.
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-3xl md:text-4xl font-black text-white tracking-tighter">
-                  <Star className="w-6 md:w-8 h-6 md:h-8 text-primary" />
-                  {stats.producerCount.toLocaleString()}+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link href="/consumer/scanner">
+                  <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground gap-3 h-14 px-8 text-base font-black rounded-xl">
+                    <QrCode className="w-5 h-5" />
+                    Scan Honey QR
+                  </Button>
+                </Link>
+                <Link href="/shop">
+                  <Button size="lg" variant="outline" className="h-14 px-8 text-base font-bold border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white rounded-xl">
+                    Browse Marketplace
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8 backdrop-blur-sm">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="rounded-xl bg-black/20 p-5">
+                  <div className="flex items-center gap-2 text-3xl font-black tracking-tight">
+                    <Package className="w-6 h-6 text-primary" />
+                    {stats.batchCount.toLocaleString()}+
+                  </div>
+                  <div className="mt-2 text-[11px] font-black uppercase tracking-widest text-stone-400">
+                    Verified Batches
+                  </div>
                 </div>
-                <p className="text-[10px] md:text-xs font-black uppercase tracking-widest text-stone-500">Artisan Producers</p>
+                <div className="rounded-xl bg-black/20 p-5">
+                  <div className="flex items-center gap-2 text-3xl font-black tracking-tight">
+                    <Star className="w-6 h-6 text-primary" />
+                    {stats.producerCount.toLocaleString()}+
+                  </div>
+                  <div className="mt-2 text-[11px] font-black uppercase tracking-widest text-stone-400">
+                    Artisan Producers
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -168,27 +175,30 @@ export default async function ConsumerPage() {
         </section>
 
         {/* CTA */}
-        <section className="relative overflow-hidden bg-primary/5 border border-border rounded-2xl p-12 lg:p-20 text-center space-y-8">
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-accent/10 rounded-full blur-3xl"></div>
-          
-          <div className="max-w-2xl mx-auto space-y-4 relative">
-            <h2 className="text-4xl font-black tracking-tight">Ready to verify?</h2>
-            <p className="text-xl text-muted-foreground font-medium">
-              Don&apos;t take authenticity for granted. Scan your HiveTrace QR code now and see the complete journey of your honey.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
+        <section className="relative overflow-hidden bg-primary/5 border border-border rounded-2xl p-8 lg:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+            <div className="space-y-4 text-center lg:text-left">
+              <h2 className="text-3xl md:text-4xl font-black tracking-tight">Ready to verify?</h2>
+              <div
+                className="text-lg md:text-xl text-muted-foreground font-medium mx-auto lg:mx-0"
+                style={{ width: "min(100%, 720px)", maxWidth: "720px", whiteSpace: "normal" }}
+              >
+                Don&apos;t take authenticity for granted. Scan your HiveTrace QR code now and see the complete journey
+                of your honey.
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-end">
             <Link href="/consumer/scanner">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground h-16 px-12 text-lg font-black shadow-xl">
+              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground h-14 px-8 text-base font-black shadow-xl rounded-xl">
                 Open Scanner
               </Button>
             </Link>
             <Link href="/auth/register">
-              <Button size="lg" variant="outline" className="h-16 px-12 text-lg font-black border-2">
+              <Button size="lg" variant="outline" className="h-14 px-8 text-base font-black border-2 rounded-xl">
                 Join HiveTrace
               </Button>
             </Link>
+            </div>
           </div>
         </section>
       </div>

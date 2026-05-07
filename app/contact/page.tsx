@@ -45,53 +45,60 @@ export default function ContactPage() {
     <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
       <PublicHeader />
 
-      <main className="flex-1 pt-20">
-        <section className="relative pt-24 pb-12 lg:pt-32 lg:pb-24 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div className="text-center max-w-3xl mx-auto space-y-6 mb-16">
-              <Badge className="bg-stone-200 text-stone-800 border-none py-1.5 px-4 rounded-full text-xs font-black uppercase tracking-[0.2em]">
-                Get In Touch
-              </Badge>
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase italic leading-none">
-                CONTACT <span className="text-primary not-italic">US.</span>
-              </h1>
-              <p className="text-xl text-stone-500 font-medium leading-relaxed">
-                Whether you're a producer looking to join the network or a consumer with questions about verification, we're here to help.
-              </p>
+      <main className="flex-1 pt-16">
+        <section className="relative pt-24 pb-20 overflow-hidden">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] relative z-10">
+            <div className="mb-20 flex w-full justify-center">
+              <div className="w-full px-2 text-center" style={{ maxWidth: "880px" }}>
+                <div className="flex justify-center">
+                  <Badge className="bg-primary/10 text-primary border-primary/20 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
+                    Get In Touch
+                  </Badge>
+                </div>
+                <h1 className="mt-6 text-5xl md:text-7xl font-heading font-bold tracking-[-0.02em] uppercase italic leading-none">
+                  CONTACT <span className="text-primary not-italic">US.</span>
+                </h1>
+                <div
+                  className="mx-auto mt-8 text-xl text-stone-500 font-normal leading-relaxed"
+                  style={{ width: "100%", maxWidth: "720px", whiteSpace: "normal" }}
+                >
+                  Whether you're a producer looking to join the network or a consumer with questions about verification, we're here to help.
+                </div>
+              </div>
             </div>
 
-            <div className="grid lg:grid-cols-3 gap-12">
+            <div className="grid lg:grid-cols-12 gap-16">
               {/* Contact Info */}
-              <div className="lg:col-span-1 space-y-8">
-                <div className="bg-card p-8 rounded-3xl shadow-sm border border-border space-y-8">
+              <div className="lg:col-span-4 space-y-8">
+                <div className="bg-card p-10 rounded-[24px] shadow-sm border border-border/50 space-y-10">
                   <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
                       <Mail className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-black uppercase text-lg">Email</h3>
-                      <p className="text-stone-500 font-medium">hello@hivetrace.org</p>
-                      <p className="text-stone-500 font-medium">support@hivetrace.org</p>
+                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Email</h3>
+                      <p className="text-stone-500 font-normal">hello@hivetrace.org</p>
+                      <p className="text-stone-500 font-normal">support@hivetrace.org</p>
                     </div>
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
                       <Phone className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-black uppercase text-lg">Phone</h3>
-                      <p className="text-stone-500 font-medium">+1 (555) 123-4567</p>
+                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Phone</h3>
+                      <p className="text-stone-500 font-normal">+1 (555) 123-4567</p>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
                       <MapPin className="w-6 h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="font-black uppercase text-lg">Headquarters</h3>
-                      <p className="text-stone-500 font-medium">
+                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Headquarters</h3>
+                      <p className="text-stone-500 font-normal leading-relaxed">
                         100 Verification Way<br />
                         Tech District, CA 94103<br />
                         United States
@@ -102,58 +109,60 @@ export default function ContactPage() {
               </div>
 
               {/* Form */}
-              <div className="lg:col-span-2">
-                <div className="bg-card p-8 lg:p-12 rounded-3xl shadow-xl border border-border">
+              <div className="lg:col-span-8">
+                <div className="bg-card p-8 lg:p-14 rounded-[32px] shadow-xl border border-border/50">
                   {submitted ? (
-                    <div className="text-center py-16 space-y-6">
-                      <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="text-center py-16 space-y-8">
+                      <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Send className="w-10 h-10 text-green-600 ml-1" />
                       </div>
-                      <h2 className="text-3xl font-black uppercase">Message Sent</h2>
-                      <p className="text-stone-500 font-medium max-w-md mx-auto">
-                        Thank you for reaching out. A member of our team will get back to you within 24 hours.
-                      </p>
+                      <div className="space-y-4">
+                        <h2 className="text-4xl font-heading font-bold uppercase tracking-tight">Message Sent</h2>
+                        <p className="text-lg text-stone-500 font-normal max-w-md mx-auto">
+                          Thank you for reaching out. A member of our team will get back to you within 24 hours.
+                        </p>
+                      </div>
                       <Button 
                         variant="outline" 
-                        className="mt-4 font-bold border-2"
+                        className="mt-4 font-bold border-2 rounded-full px-8"
                         onClick={() => setSubmitted(false)}
                       >
                         Send Another Message
                       </Button>
                     </div>
                   ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                       {error && (
-                        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm">
+                        <div className="bg-destructive/10 text-destructive px-6 py-4 rounded-xl text-sm font-medium">
                           {error}
                         </div>
                       )}
-                      <div className="grid sm:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">First Name</label>
-                          <Input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Jane" className="h-12 bg-background border-input" />
+                      <div className="grid sm:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                          <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">First Name</label>
+                          <Input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Jane" className="h-14 bg-background border-border/50 rounded-xl px-5" />
                         </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Last Name</label>
-                          <Input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" className="h-12 bg-background border-input" />
+                        <div className="space-y-3">
+                          <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Last Name</label>
+                          <Input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" className="h-14 bg-background border-border/50 rounded-xl px-5" />
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Email Address</label>
-                        <Input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="jane@example.com" className="h-12 bg-background border-input" />
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Email Address</label>
+                        <Input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="jane@example.com" className="h-14 bg-background border-border/50 rounded-xl px-5" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Subject</label>
-                        <Input name="subject" value={formData.subject} onChange={handleChange} required placeholder="How can we help you?" className="h-12 bg-background border-input" />
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Subject</label>
+                        <Input name="subject" value={formData.subject} onChange={handleChange} required placeholder="How can we help you?" className="h-14 bg-background border-border/50 rounded-xl px-5" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-bold uppercase text-stone-500 tracking-widest">Message</label>
-                        <Textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Tell us more about your inquiry..." className="min-h-[150px] bg-background border-input resize-none" />
+                      <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Message</label>
+                        <Textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Tell us more about your inquiry..." className="min-h-[180px] bg-background border-border/50 rounded-xl p-5 resize-none" />
                       </div>
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full h-14 text-lg font-black bg-stone-900 hover:bg-primary text-white"
+                        className="w-full h-16 text-xl font-bold rounded-full transition-all active:scale-[0.98]"
                       >
                         {isSubmitting ? 'Sending...' : 'Send Message'}
                       </Button>
