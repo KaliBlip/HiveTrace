@@ -3,35 +3,33 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/lib/hooks/use-auth";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { 
-  LayoutDashboard, 
-  Box, 
-  ShoppingBag, 
-  Package, 
-  BarChart3, 
-  Star, 
-  Settings, 
-  Home, 
-  Smartphone, 
-  Users, 
-  AlertTriangle, 
-  Search,
+import {
+  AlertTriangle,
+  BarChart3,
+  Box,
   ChevronLeft,
   ChevronRight,
+  Home,
+  LayoutDashboard,
   LogOut,
-  Moon,
-  Sun,
-  Shield
+  Package,
+  Search,
+  Settings,
+  ShieldCheck,
+  ShoppingBag,
+  Smartphone,
+  Star,
+  Users,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 const producerMenuItems = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/batches", label: "My Batches", icon: Box },
-  { href: "/dashboard/products", label: "Marketplace", icon: ShoppingBag },
+  { href: "/dashboard/batches", label: "Batches", icon: Box },
+  { href: "/dashboard/products", label: "Listings", icon: ShoppingBag },
   { href: "/dashboard/orders", label: "Orders", icon: Package },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
@@ -41,14 +39,16 @@ const producerMenuItems = [
 const consumerMenuItems = [
   { href: "/consumer", label: "Home", icon: Home },
   { href: "/shop", label: "Marketplace", icon: ShoppingBag },
-  { href: "/consumer/scanner", label: "Scan Honey", icon: Smartphone },
-  { href: "/consumer/orders", label: "My Orders", icon: Package },
+  { href: "/consumer/scanner", label: "Scanner", icon: Smartphone },
+  { href: "/consumer/orders", label: "Orders", icon: Package },
 ];
 
 const adminMenuItems = [
-  { href: "/admin", label: "Dashboard", icon: Search },
-  { href: "/admin/sellers", label: "Manage Sellers", icon: Users },
-  { href: "/admin/fraud", label: "Fraud Alerts", icon: AlertTriangle },
+  { href: "/admin", label: "Command", icon: Search },
+  { href: "/admin/producers", label: "Producers", icon: Users },
+  { href: "/admin/fraud", label: "Fraud", icon: AlertTriangle },
+  { href: "/admin/batches", label: "Batches", icon: Box },
+  { href: "/admin/reports", label: "Reports", icon: BarChart3 },
 ];
 
 export function Sidebar() {
@@ -65,112 +65,99 @@ export function Sidebar() {
         : consumerMenuItems;
 
   return (
-    <aside 
+    <aside
       className={cn(
-        "bg-card border-r border-border/50 h-screen flex flex-col sticky top-0 transition-all duration-300 ease-in-out z-50",
-        isCollapsed ? "w-24" : "w-72"
+        "sticky top-0 z-50 flex h-screen flex-col border-r border-sidebar-border/70 bg-sidebar/82 text-sidebar-foreground shadow-[var(--shadow-soft)] backdrop-blur-2xl transition-all duration-300 ease-out",
+        isCollapsed ? "w-[5.5rem]" : "w-72",
       )}
     >
-      {/* Collapse Toggle Button */}
       <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-24 bg-primary text-primary-foreground w-7 h-7 rounded-full flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-50 border-4 border-background"
+        onClick={() => setIsCollapsed((collapsed) => !collapsed)}
+        className="absolute -right-3 top-20 grid size-7 place-items-center rounded-full border border-border bg-background text-foreground shadow-sm transition-transform hover:scale-105"
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>
 
-      {/* Header */}
-      <div className={cn(
-        "p-8 overflow-hidden",
-        isCollapsed && "flex justify-center px-4"
-      )}>
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-11 h-11 bg-primary rounded-[12px] flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
-            <Shield className="w-6 h-6 text-primary-foreground" />
-          </div>
+      <div className={cn("p-5", isCollapsed && "px-4")}>
+        <Link href="/" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+          <span className="scan-line grid size-11 shrink-0 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+            <ShieldCheck className="size-5" />
+          </span>
           {!isCollapsed && (
-            <span className="font-heading font-bold text-2xl tracking-tighter italic uppercase animate-in fade-in slide-in-from-left-2 duration-300">
-              Hive<span className="text-primary not-italic">Trace</span>
+            <span className="font-heading text-2xl font-semibold tracking-tight motion-rise">
+              Hive<span className="text-primary">Trace</span>
             </span>
           )}
         </Link>
       </div>
 
-      {/* User Info */}
       {user && (
-        <div className={cn(
-          "px-8 py-6 mb-4 overflow-hidden flex items-center gap-4",
-          isCollapsed && "justify-center px-4"
-        )}>
-          <div className="w-11 h-11 rounded-full bg-primary/5 flex items-center justify-center shrink-0 overflow-hidden border-2 border-border/50">
-            {user.image ? (
-              <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-primary font-heading font-bold text-sm uppercase">
-                {user.name?.charAt(0) || "U"}
-              </span>
+        <div className={cn("mx-4 mb-4 rounded-lg border border-sidebar-border/70 bg-background/38 p-3", isCollapsed && "mx-3 p-2")}>
+          <div className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+            <div className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-md border border-sidebar-border/70 bg-card">
+              {user.image ? (
+                <img src={user.image} alt={user.name || ""} className="size-full object-cover" />
+              ) : (
+                <span className="font-heading text-sm font-semibold uppercase text-primary">
+                  {user.name?.charAt(0) || "U"}
+                </span>
+              )}
+            </div>
+            {!isCollapsed && (
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold leading-tight">{user.name}</p>
+                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                  {currentRole || "user"}
+                </p>
+              </div>
             )}
           </div>
-          {!isCollapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-bold text-foreground truncate leading-tight">
-                {user.name}
-              </p>
-              <p className="text-[10px] text-stone-500 font-bold uppercase tracking-widest mt-0.5">{currentRole}</p>
-            </div>
-          )}
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden">
-        {menuItems.map((item) => {
-          const isActive = pathname === item.href;
+      <nav className="flex-1 space-y-1 overflow-y-auto overflow-x-hidden px-3 py-2">
+        {menuItems.map((item, index) => {
+          const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
+
           return (
             <Link
               key={item.href}
               href={item.href}
               title={isCollapsed ? item.label : undefined}
               className={cn(
-                "flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
+                "motion-rise flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-all",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/10"
-                  : "text-stone-500 hover:bg-primary/5 hover:text-primary",
-                isCollapsed && "justify-center px-2 py-4"
+                  ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                isCollapsed && "justify-center px-2",
               )}
+              style={{ animationDelay: `${index * 35}ms` }}
             >
-              <Icon size={isCollapsed ? 24 : 20} className={cn("shrink-0", !isActive && "group-hover:scale-110 transition-transform")} />
-              {!isCollapsed && (
-                <span className="whitespace-nowrap animate-in fade-in slide-in-from-left-2 duration-300 tracking-tight">
-                  {item.label}
-                </span>
-              )}
+              <Icon className="size-5 shrink-0" />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-6 border-t border-border/50 mt-auto space-y-4">
+      <div className="space-y-3 border-t border-sidebar-border/70 p-4">
         {!isCollapsed && (
-          <div className="flex items-center justify-between px-2 text-stone-500">
-            <span className="text-xs font-bold uppercase tracking-widest">Theme</span>
+          <div className="flex items-center justify-between rounded-md border border-sidebar-border/70 bg-background/38 px-3 py-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Theme</span>
             <ThemeToggle />
           </div>
         )}
-        
+
         <Button
-          variant={isCollapsed ? "ghost" : "outline"}
-          className={cn(
-            "w-full transition-all flex items-center gap-3 h-14 rounded-xl border-2 border-border/50 font-bold",
-            isCollapsed && "p-0 h-14 w-14 mx-auto justify-center rounded-full border-0 bg-primary/5 text-primary hover:bg-primary/10"
-          )}
+          variant="outline"
+          className={cn("w-full gap-3", isCollapsed && "mx-auto size-11 p-0")}
           onClick={() => logout()}
-          title={isCollapsed ? "Sign Out" : undefined}
+          title={isCollapsed ? "Sign out" : undefined}
         >
-          <LogOut size={isCollapsed ? 24 : 20} />
-          {!isCollapsed && <span className="tracking-tight">Sign Out</span>}
+          <LogOut className="size-4" />
+          {!isCollapsed && <span>Sign out</span>}
         </Button>
       </div>
     </aside>

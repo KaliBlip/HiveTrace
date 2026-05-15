@@ -1,12 +1,12 @@
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const proxyMiddleware = async (req: NextRequest) => {
   const { nextUrl } = req;
-  const token = await getToken({ req });
-  const isLoggedIn = !!token;
-  const userRole = ((token as any)?.role as string | undefined)?.toLowerCase();
+  const session = await auth();
+  const isLoggedIn = !!session;
+  const userRole = (session?.user as any)?.role?.toLowerCase();
   
   const isAuthRoute = nextUrl.pathname.startsWith("/auth");
   const isDashboard = nextUrl.pathname.startsWith("/dashboard");

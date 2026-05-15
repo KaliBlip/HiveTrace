@@ -12,7 +12,10 @@ export function ThemeToggle({ className }: { className?: string }) {
     <Button
       variant="ghost"
       size="icon"
-      className={className}
+      className={[
+        'relative overflow-hidden border border-border/50 bg-card/55 text-foreground shadow-sm hover:border-primary/40',
+        className,
+      ].filter(Boolean).join(' ')}
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
       title="Toggle theme"
     >

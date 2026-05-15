@@ -24,75 +24,89 @@ export function LoginForm() {
     try {
       const result = await login(email, password);
       if (result?.error) {
-        setError("Invalid email or password");
+        setError("The credentials provided do not match our records.");
       } else {
-        // We need to wait a tiny bit for the session to be available or fetch it
-        // For simplicity, we can fetch the user by email to get the role if session isn't immediate
-        // But usually, router.push is enough if the middleware handles the next hop.
-        // However, the user wants explicit logic here.
-        
-        // Since we don't have the role yet from useAuth (it's async), 
-        // let's just push to /dashboard and let the dashboard redirect (which we already implemented!)
-        // WAIT: The user specifically asked to navigate to shop page for consumers.
-        // I already added a redirect in /dashboard for consumers, but let's make it direct here.
-        
         router.push("/dashboard"); 
-        // My previous fix in app/dashboard/page.tsx already redirects CONSUMERS to /consumer
-        // and I should probably change that to /shop as requested now.
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("A network synchronization error occurred. Please retry.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-md">
-      <FieldGroup>
-        <FieldLabel htmlFor="email">Email</FieldLabel>
-        <Input
-          id="email"
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          disabled={isLoading}
-        />
-      </FieldGroup>
+    <form onSubmit={handleSubmit} className="space-y-10 w-full">
+      <div className="space-y-8">
+        <FieldGroup>
+          <FieldLabel htmlFor="email" className="text-stone-400 font-semibold text-[10px] uppercase tracking-[0.2em] ml-1 mb-2">
+            Identity / Email
+          </FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="artisan@hivetrace.net"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            disabled={isLoading}
+            className="h-16 rounded-2xl bg-stone-950/50 border-white/5 focus:border-primary/40 focus:ring-primary/10 text-white placeholder:text-stone-700 transition-all px-6 text-base"
+          />
+        </FieldGroup>
 
-      <FieldGroup>
-        <FieldLabel htmlFor="password">Password</FieldLabel>
-        <Input
-          id="password"
-          type="password"
-          placeholder="••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={isLoading}
-        />
-      </FieldGroup>
+        <FieldGroup>
+          <div className="flex items-center justify-between ml-1 mb-2">
+            <FieldLabel htmlFor="password" className="text-stone-400 font-semibold text-[10px] uppercase tracking-[0.2em]">
+              Security Key
+            </FieldLabel>
+            <Link href="#" className="text-[10px] font-bold uppercase tracking-widest text-primary/40 hover:text-primary transition-colors">
+              Reset Key
+            </Link>
+          </div>
+          <Input
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={isLoading}
+            className="h-16 rounded-2xl bg-stone-950/50 border-white/5 focus:border-primary/40 focus:ring-primary/10 text-white placeholder:text-stone-700 transition-all px-6 text-base"
+          />
+        </FieldGroup>
+      </div>
 
       {error && (
-        <div className="bg-destructive/10 text-destructive px-4 py-3 rounded-md text-sm">
+        <div className="bg-red-500/5 border border-red-500/10 text-red-400/80 px-6 py-4 rounded-2xl text-xs font-medium tracking-tight animate-in fade-in slide-in-from-top-2 duration-300">
           {error}
         </div>
       )}
 
-      <div className="text-sm text-muted-foreground">
-        Demo: email: <code className="bg-muted px-2 py-1 rounded">demo@hivetrace.com</code> / password: <code className="bg-muted px-2 py-1 rounded">demo123</code>
+      <div className="space-y-8">
+        <Button 
+          type="submit" 
+          className="w-full h-16 rounded-2xl font-bold text-base uppercase tracking-[0.15em] shadow-2xl shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 bg-primary text-stone-950" 
+          disabled={isLoading}
+        >
+          {isLoading ? "Synchronizing..." : "Initialize Session"}
+        </Button>
+
+        <div className="p-6 rounded-3xl bg-stone-950/40 border border-white/5 flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+            <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">Sandbox Credentials</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <code className="text-xs text-stone-500 font-mono">demo@hivetrace.com</code>
+            <code className="text-xs text-primary/60 font-mono italic">demo123</code>
+          </div>
+        </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? "Signing in..." : "Sign in"}
-      </Button>
-
-      <p className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <Link href="/auth/register" className="text-primary hover:underline font-medium">
-          Register here
+      <p className="text-center text-[11px] font-bold uppercase tracking-[0.2em] text-stone-600">
+        New Participant?{" "}
+        <Link href="/auth/register" className="text-primary hover:text-white transition-all duration-300 ml-2">
+          Create Identity
         </Link>
       </p>
     </form>

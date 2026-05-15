@@ -3,308 +3,218 @@
 import Link from 'next/link';
 import {
   ArrowRight,
-  Check,
-  Zap,
-  Lock,
+  BadgeCheck,
   BarChart3,
-  ShieldCheck,
+  Fingerprint,
   Leaf,
-  Globe,
-  Gem,
-  ChevronRight,
-  Star,
-  Users,
-  Package
+  PackageCheck,
+  QrCode,
+  ShieldCheck,
+  Sparkles,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Footer } from '@/components/footer';
 import { PublicHeader } from '@/components/public-header';
 
+const trustSignals = [
+  { label: 'Verified batches', value: '12k+' },
+  { label: 'Producer trust score', value: '98%' },
+  { label: 'Scan events logged', value: '240k' },
+];
+
+const workflow = [
+  {
+    icon: Fingerprint,
+    title: 'Batch identity',
+    text: 'Producers register harvest details and sign every batch with a tamper-evident HMAC hash.',
+  },
+  {
+    icon: QrCode,
+    title: 'Smart scan trail',
+    text: 'Consumers scan packaging to see origin, producer reputation, scan history, and traceability data.',
+  },
+  {
+    icon: BarChart3,
+    title: 'Reputation loop',
+    text: 'Orders, reviews, and fraud signals feed dashboards for producers and administrators.',
+  },
+];
+
+const highlights = [
+  { icon: ShieldCheck, label: 'Cryptographic verification' },
+  { icon: PackageCheck, label: 'Batch-to-product marketplace' },
+  { icon: Leaf, label: 'Producer provenance profiles' },
+];
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans">
-      {/* Navigation */}
+    <div className="min-h-screen overflow-hidden bg-background text-foreground">
       <PublicHeader />
 
-      {/* Hero Section */}
-      <section className="min-h-[90vh] pt-28 pb-16 bg-gradient-to-br from-[#1c1917] via-[#1f1a17] to-[#2a221d] text-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
-            <div className="space-y-10">
-              <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
-                The Gold Standard of Purity
+      <main>
+        <section className="relative min-h-[92vh] px-4 pb-14 pt-28 sm:px-6 lg:px-8">
+          <div className="pointer-events-none absolute inset-0 hive-grid" />
+          <div className="pointer-events-none absolute inset-x-4 top-24 h-[34rem] rounded-[2rem] border border-border/40 bg-card/20 blur-3xl" />
+
+          <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="motion-rise space-y-8">
+              <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary shadow-sm">
+                Verified honey infrastructure
               </Badge>
-              <h1 className="text-5xl md:text-7xl lg:text-[92px] font-heading font-bold tracking-[-0.03em] leading-[0.9] uppercase italic">
-                PURE. <br />
-                <span className="text-primary not-italic tracking-tight">VERIFIED.</span> <br />
-                TRACEABLE.
-              </h1>
-              <div
-                className="text-lg md:text-xl text-stone-300 font-normal leading-relaxed"
-                style={{
-                  display: "block",
-                  width: "min(100%, 680px)",
-                  maxWidth: "680px",
-                  whiteSpace: "normal",
-                  writingMode: "horizontal-tb",
-                  textOrientation: "mixed",
-                }}
-              >
-                We're rebuilding trust in the honey industry through cryptographic verification. Every jar, every
-                batch, directly from the hive to your table.
+
+              <div className="space-y-5">
+                <h1 className="text-balance font-heading text-6xl font-semibold tracking-[-0.03em] leading-[0.88] sm:text-7xl lg:text-[6.8rem]">
+                  Trust every jar before it reaches the table.
+                </h1>
+                <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+                  HiveTrace gives honey producers a clean operating system for batch signing, marketplace listings,
+                  QR verification, consumer orders, and fraud-aware traceability.
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-5">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <Link href="/shop">
-                  <Button size="lg" className="font-bold shadow-2xl shadow-primary/30 group">
-                    Explore Marketplace
-                    <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <Button size="lg" className="w-full gap-2 sm:w-auto">
+                    Explore marketplace
+                    <ArrowRight className="size-4" />
                   </Button>
                 </Link>
                 <Link href="/auth/register?role=producer">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="font-bold border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                  >
-                    Producer Portal
+                  <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                    Register producer
                   </Button>
                 </Link>
               </div>
 
-              <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/10">
-                <div className="space-y-1">
-                  <div className="text-3xl md:text-4xl font-heading font-bold tracking-tighter">12K+</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Verified Batches</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-3xl md:text-4xl font-heading font-bold tracking-tighter">98%</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Trust Score</div>
-                </div>
-                <div className="space-y-1">
-                  <div className="text-3xl md:text-4xl font-heading font-bold tracking-tighter">500+</div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-stone-500">Artisan Beekeepers</div>
-                </div>
+              <div className="grid max-w-2xl grid-cols-3 gap-3 pt-4">
+                {trustSignals.map((signal, index) => (
+                  <div
+                    key={signal.label}
+                    className="motion-rise rounded-lg border border-border/60 bg-card/55 p-4 backdrop-blur"
+                    style={{ animationDelay: `${140 + index * 80}ms` }}
+                  >
+                    <p className="font-heading text-3xl font-semibold tracking-tight">{signal.value}</p>
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                      {signal.label}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="w-full">
-              <div className="rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl bg-black/20">
-                <div className="aspect-[4/5] bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Bar */}
-      <section className="bg-background border-b border-white/5">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] py-16 flex flex-wrap justify-between items-center gap-8 opacity-40">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] italic">Artisan Certified</p>
-          <p className="text-sm font-bold uppercase tracking-[0.3em] italic">Eco-Friendly</p>
-          <p className="text-sm font-bold uppercase tracking-[0.3em] italic">Zero Additives</p>
-          <p className="text-sm font-bold uppercase tracking-[0.3em] italic">Fair Trade</p>
-          <p className="text-sm font-bold uppercase tracking-[0.3em] italic">Bio-Security</p>
-        </div>
-      </section>
-
-      {/* Feature Section: The Technology */}
-      <section id="technology" className="py-[80px] px-4">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px]">
-          <div className="rounded-[2.5rem] border border-border/50 bg-card overflow-hidden">
-            <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative min-h-[420px] lg:min-h-full">
-                <img
-                  src="https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=2000"
-                  alt="Honey verification"
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-8 lg:p-10">
-                  <div className="inline-flex items-center gap-3 rounded-xl bg-primary px-5 py-4 shadow-xl">
-                    <ShieldCheck className="w-6 h-6 text-primary-foreground" />
-                    <div className="text-primary-foreground font-heading font-bold text-base lg:text-lg tracking-tight">
-                      Cryptographic Trust Infrastructure
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-8 md:p-12 lg:p-14 space-y-10">
-                <div className="space-y-5">
-                  <Badge className="bg-primary/10 text-primary border-none py-1 px-4 rounded-full">
-                    The Solution
-                  </Badge>
-                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold tracking-tighter leading-[0.95] uppercase italic">
-                    Eliminating <span className="text-primary not-italic">Counterfeit</span> Honey
-                  </h2>
-                  <div className="text-base md:text-lg text-stone-500 font-normal leading-relaxed">
-                    The global honey market is flooded with adulterated products. HiveTrace uses advanced digital
-                    identities to protect producers and empower consumers.
-                  </div>
-                </div>
-
-                <div className="grid gap-4">
-                  {[
-                    { icon: Lock, title: "Secure Signing", desc: "Every batch is signed with a unique key known only to the producer and our node." },
-                    { icon: Zap, title: "Instant Verification", desc: "Scan any HiveTrace QR code to see harvest location, lab tests, and harvest date." },
-                    { icon: BarChart3, title: "Reputation Engine", desc: "Trust scores are calculated from verified scan history and consumer feedback." }
-                  ].map((item, i) => (
-                    <div key={i} className="rounded-2xl border border-border/60 bg-background/60 p-5">
-                      <div className="flex items-start gap-4">
-                        <div className="mt-0.5 w-10 h-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <item.icon className="w-5 h-5 text-primary" />
-                        </div>
-                        <div className="space-y-1.5">
-                          <h3 className="text-base font-heading font-bold uppercase tracking-tight">{item.title}</h3>
-                          <div className="text-sm text-stone-500 leading-relaxed">{item.desc}</div>
-                        </div>
+            <div className="motion-rise motion-delay-2">
+              <div className="glass-panel scan-line relative overflow-hidden rounded-xl border p-3">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
+                  <img
+                    src="https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=1800"
+                    alt="Honey jars and hive frames"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 rounded-lg border border-white/18 bg-black/38 p-4 text-white backdrop-blur-xl">
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">Live verification</p>
+                        <p className="mt-1 font-heading text-2xl font-semibold">HT-2026-GVA-041</p>
+                      </div>
+                      <div className="grid size-12 place-items-center rounded-md bg-primary text-primary-foreground">
+                        <BadgeCheck className="size-6" />
                       </div>
                     </div>
-                  ))}
+                    <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                      <span className="rounded-md bg-white/10 px-3 py-2">Origin signed</span>
+                      <span className="rounded-md bg-white/10 px-3 py-2">Scan logged</span>
+                      <span className="rounded-md bg-white/10 px-3 py-2">Fraud clear</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Mission Section: Artisan Spotlight Style */}
-      <section id="mission" className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] py-24">
-        <div className="bg-[#1c1917] rounded-[3rem] p-10 lg:p-24 relative overflow-hidden text-white">
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[150px] -z-0"></div>
+        <section className="border-y border-border/60 bg-card/38 px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+            {highlights.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.label} className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/40 p-4">
+                  <span className="grid size-10 place-items-center rounded-md bg-primary/12 text-primary">
+                    <Icon className="size-5" />
+                  </span>
+                  <span className="font-semibold">{item.label}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-16 lg:gap-20 items-start">
-            <div className="w-full min-w-0 space-y-10 text-center lg:text-left">
-              <div className="w-full min-w-0 space-y-6">
-                <Badge className="bg-white/10 text-white border-white/20 px-6 py-2 rounded-full uppercase tracking-widest text-[10px] font-bold">
-                  Our Philosophy
-                </Badge>
-                <h2 className="text-4xl md:text-5xl lg:text-8xl font-heading font-bold leading-[0.9] tracking-tighter uppercase italic">
-                  BEE THE <br />
-                  <span className="text-primary not-italic">CHANGE.</span>
+        <section className="px-4 py-24 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div className="max-w-2xl space-y-4">
+                <Badge className="rounded-full bg-muted text-muted-foreground">Traceability workflow</Badge>
+                <h2 className="text-balance font-heading text-4xl font-semibold tracking-tight sm:text-6xl">
+                  One platform for the whole honey chain.
                 </h2>
-                <div className="block w-full min-w-full max-w-none whitespace-normal text-stone-400 text-xl font-normal leading-relaxed">
-                  Every HiveTrace purchase directly funds conservation efforts and supports independent, local
-                  beekeepers who prioritize bee health over mass production.
-                </div>
               </div>
-
-              <div className="w-full min-w-0 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-8 text-left">
-                  <div className="space-y-3">
-                    <Globe className="w-8 h-8 text-primary" />
-                    <p className="font-heading font-bold text-xl">Global Impact</p>
-                    <p className="text-sm text-stone-500 font-normal">Supporting biodiversity worldwide.</p>
-                  </div>
-                </div>
-                <div className="w-full rounded-2xl border border-white/10 bg-white/5 p-8 text-left">
-                  <div className="space-y-3">
-                    <Users className="w-8 h-8 text-primary" />
-                    <p className="font-heading font-bold text-xl">Community</p>
-                    <p className="text-sm text-stone-500 font-normal">Direct connection to producers.</p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="w-full space-y-6">
-              <div className="relative w-full">
-                <div className="aspect-square w-full bg-[url('https://images.unsplash.com/photo-1550051631-097561872124?q=80&w=1500')] bg-cover bg-center rounded-[2rem] shadow-2xl" />
-                <div className="pointer-events-none absolute inset-0 border-4 border-primary/30 rounded-[2rem] translate-x-4 translate-y-4 -z-10" />
-              </div>
-              <div className="flex justify-center lg:justify-start">
-                <Link href="/shop">
-                  <Button
-                    size="lg"
-                    className="bg-white text-stone-900 hover:bg-primary hover:text-white font-bold shadow-2xl w-full sm:w-auto"
-                  >
-                    View Verified Producers
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Market Section */}
-      <section className="py-[80px] px-4 bg-background">
-        <div className="max-w-[1440px] mx-auto space-y-16 px-4 sm:px-8 lg:px-[128px]">
-          <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-            <div className="space-y-4">
-              <Badge className="bg-primary/5 text-primary border-none rounded-full px-4 py-1">Selected Batches</Badge>
-              <h2 className="text-4xl md:text-5xl lg:text-7xl font-heading font-bold tracking-tighter leading-none italic uppercase">
-                FROM THE <br />
-                <span className="text-primary not-italic tracking-tight">RESERVE.</span>
-              </h2>
-            </div>
-            <Link href="/shop">
-              <Button variant="ghost" className="h-16 px-8 text-lg font-bold uppercase tracking-widest gap-3 hover:text-primary group">
-                Enter Marketplace <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {[
-              { name: "Acacia Reserve", price: "GH₵15,000", img: "https://images.unsplash.com/photo-1471943311424-646960669fba?q=80&w=1000" },
-              { name: "Wildflower Gold", price: "GH₵12,500", img: "https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=1000" },
-              { name: "Plateau Premium", price: "GH₵18,000", img: "https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=1000" }
-            ].map((product, i) => (
-              <Link key={i} href="/shop" className="group space-y-6 block">
-                <div className="aspect-[4/5] rounded-3xl overflow-hidden bg-secondary relative shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2">
-                  <img src={product.img} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700" alt={product.name} />
-                  <div className="absolute bottom-6 left-6">
-                    <Badge className="bg-background/90 backdrop-blur text-[10px] font-bold uppercase py-1.5 px-3 rounded-full">Artisan Grade</Badge>
-                  </div>
-                </div>
-                <div className="flex justify-between items-start px-2">
-                  <div className="space-y-1">
-                    <h3 className="text-2xl font-heading font-bold tracking-tight">{product.name}</h3>
-                    <p className="text-stone-500 font-bold uppercase tracking-widest text-[10px]">Small Batch Limited</p>
-                  </div>
-                  <p className="text-2xl font-heading font-bold text-primary italic leading-none">{product.price}</p>
-                </div>
+              <Link href="/consumer/scanner">
+                <Button variant="outline" className="gap-2">
+                  Try scanner
+                  <QrCode className="size-4" />
+                </Button>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* CTA Final */}
-      <section className="py-24 px-4 bg-[#1c1917] text-white">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px]">
-          <div className="text-center space-y-12 py-24 border border-white/10 rounded-[3rem] relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1471943311424-646960669fba?q=80&w=2000')] bg-cover bg-center opacity-5"></div>
-            <div className="relative z-10 space-y-8">
-              <h2 className="text-4xl md:text-6xl lg:text-8xl font-heading font-bold tracking-tighter uppercase italic leading-[0.85]">
-                TRUST. <br />
-                <span className="text-primary not-italic tracking-tight">DELIVERED.</span>
+            <div className="grid gap-4 lg:grid-cols-3">
+              {workflow.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.title}
+                    className="motion-rise rounded-xl border border-border/60 bg-card/70 p-6 shadow-[var(--shadow-soft)] backdrop-blur"
+                    style={{ animationDelay: `${index * 90}ms` }}
+                  >
+                    <span className="mb-10 grid size-12 place-items-center rounded-md bg-foreground text-background">
+                      <Icon className="size-6" />
+                    </span>
+                    <p className="font-heading text-2xl font-semibold tracking-tight">{item.title}</p>
+                    <p className="mt-3 leading-7 text-muted-foreground">{item.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 pb-24 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl overflow-hidden rounded-xl border border-border/60 bg-foreground text-background shadow-[var(--shadow-lift)] lg:grid-cols-[0.92fr_1.08fr]">
+            <div className="p-8 sm:p-12 lg:p-16">
+              <Sparkles className="mb-8 size-10 text-primary" />
+              <h2 className="text-balance font-heading text-4xl font-semibold tracking-tight sm:text-6xl">
+                Built for real producers, not generic storefronts.
               </h2>
-              <p className="text-xl text-stone-400 max-w-[600px] mx-auto font-normal">
-                Whether you're a producer seeking verification or a consumer looking for purity, the HiveTrace network is open.
+              <p className="mt-6 max-w-xl text-lg leading-8 text-background/70">
+                Dashboards focus on batch registration, listings, scan analytics, orders, and reputation signals so
+                daily operations stay fast and auditable.
               </p>
-              <div className="flex flex-col sm:flex-row gap-6 justify-center pt-8">
-                <Link href="/auth/register">
-                  <Button size="lg" className="font-bold shadow-2xl shadow-primary/30">
-                    Register Now
-                  </Button>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link href="/auth/register?role=producer">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Start as producer</Button>
                 </Link>
-                <Link href="/auth/login">
-                  <Button size="lg" variant="outline" className="font-bold border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white backdrop-blur-sm transition-all">
-                    Member Portal
+                <Link href="/about">
+                  <Button variant="outline" className="border-background/20 bg-transparent text-background hover:bg-background/10">
+                    Learn more
                   </Button>
                 </Link>
               </div>
             </div>
+            <div className="min-h-[360px] bg-[url('https://images.unsplash.com/photo-1471943311424-646960669fba?q=80&w=1600')] bg-cover bg-center" />
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

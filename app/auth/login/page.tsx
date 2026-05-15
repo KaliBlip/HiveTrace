@@ -4,37 +4,81 @@ import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { LoginForm } from '@/components/auth/login-form';
 import { Badge } from '@/components/ui/badge';
+import { ShieldCheck, History, Globe } from 'lucide-react';
 
 export default function LoginPage() {
   return (
-    <div className="space-y-8">
-      <div className="text-center space-y-6">
-        <Link href="/" className="inline-flex items-center gap-3 group transition-all">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-2xl shadow-primary/30 group-hover:rotate-12 transition-transform">
-            <span className="text-3xl">🍯</span>
+    <div className="w-full">
+      <div className="grid lg:grid-cols-12 gap-16 items-start">
+        {/* Left Column: Branding & Info */}
+        <div className="lg:col-span-5 space-y-10">
+          <div className="space-y-6">
+            <Link href="/" className="inline-flex items-center gap-3 group transition-all">
+              <div className="w-16 h-16 bg-stone-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl group-hover:border-primary/50 transition-all duration-500">
+                <span className="text-3xl">🍯</span>
+              </div>
+            </Link>
+            <div className="space-y-4">
+              <Badge className="bg-primary/10 text-primary border border-primary/20 py-1 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em]">
+                SECURE GATEWAY
+              </Badge>
+              <h1 className="text-6xl md:text-7xl font-heading font-bold tracking-[-0.02em] text-white uppercase italic leading-none">
+                ACCESS <span className="text-primary not-italic">LEDGER.</span>
+              </h1>
+              <p className="text-xl text-stone-400 font-medium leading-relaxed max-w-md">
+                Sign in to the global cryptographic network for honey provenance and artisan stewardship.
+              </p>
+            </div>
           </div>
-        </Link>
-        <div className="space-y-2">
-          <Badge className="bg-primary/20 text-primary border-none py-1 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-2">
-            Secure Access
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-heading font-bold tracking-tighter uppercase italic text-white">
-            WELCOME <span className="text-primary not-italic">BACK.</span>
-          </h1>
-          <p className="text-stone-400 font-normal">Sign in to the cryptographic ledger.</p>
+
+          <div className="grid gap-6">
+            <div className="flex gap-4 items-start">
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
+                <ShieldCheck className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Encrypted Identity</h3>
+                <p className="text-xs text-stone-500 mt-1">Your credentials are protected by hardware-grade encryption.</p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
+                <History className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Full Audit Trail</h3>
+                <p className="text-xs text-stone-500 mt-1">Monitor all activity across your producer dashboard.</p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
+                <Globe className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Global Network</h3>
+                <p className="text-xs text-stone-500 mt-1">Connect with verified artisans and consumers worldwide.</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <Card className="bg-white/5 border-white/10 rounded-[48px] shadow-2xl backdrop-blur-xl overflow-hidden">
-        <CardContent className="p-10 flex justify-center">
-          <LoginForm />
-        </CardContent>
-      </Card>
-
-      <div className="text-center">
-        <Link href="/" className="text-xs font-bold uppercase tracking-widest text-stone-500 hover:text-primary transition-colors flex items-center justify-center gap-2">
-          <span className="text-lg">←</span> Back to Network Home
-        </Link>
+        {/* Right Column: The Form */}
+        <div className="lg:col-span-7">
+          <Card className="w-full bg-stone-900/40 border-white/5 rounded-[40px] shadow-3xl backdrop-blur-2xl overflow-hidden ring-1 ring-white/10">
+            <CardContent className="p-10 md:p-14">
+              <LoginForm />
+            </CardContent>
+          </Card>
+          
+          <div className="mt-10 flex justify-center lg:justify-start px-4">
+             <Link 
+              href="/" 
+              className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-500 hover:text-white transition-all duration-300 flex items-center gap-3 border-b border-transparent hover:border-stone-700 pb-1"
+            >
+              <span>Return to Gateway</span>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

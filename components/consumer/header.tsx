@@ -1,183 +1,116 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/hooks/use-auth';
-import { LayoutDashboard, User } from 'lucide-react';
+
+const navItems = [
+  { href: '/shop', label: 'Marketplace', icon: ShoppingBag },
+  { href: '/consumer/scanner', label: 'Scanner', icon: ScanLine },
+  { href: '/consumer/orders', label: 'Orders', icon: Package },
+];
 
 export function ConsumerHeader({ transparent = false }: { transparent?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, role, user } = useAuth();
   const currentRole = role?.toLowerCase();
-
-  const isActive = (path: string) => pathname === path;
+  const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
+  const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
 
   return (
-    <>
-      <header className={`sticky top-0 z-50 backdrop-blur transition-all duration-300 ${
-        transparent 
-          ? 'bg-card md:bg-transparent border-b border-border md:border-white/10 text-foreground md:text-white' 
-          : 'bg-card lg:bg-card/80 border-b border-border text-foreground'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
-              <span className="text-primary-foreground font-bold text-xl">🍯</span>
-            </div>
-            <span className={`hidden sm:inline font-black text-2xl tracking-tighter uppercase italic ${transparent ? 'text-foreground md:text-white' : 'text-foreground'}`}>HiveTrace</span>
-          </Link>
+    <header className={`sticky top-0 z-50 border-b backdrop-blur-2xl transition-colors ${
+      transparent ? 'border-white/10 bg-background/20' : 'border-border/60 bg-background/76'
+    }`}>
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <Link href="/" className="flex items-center gap-3">
+          <span className="grid size-10 place-items-center rounded-md bg-foreground text-background">
+            <ShieldCheck className="size-5" />
+          </span>
+          <span className="font-heading text-xl font-semibold tracking-tight">
+            Hive<span className="text-primary">Trace</span>
+          </span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-10">
-            <Link
-              href="/shop"
-              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                isActive('/shop') 
-                  ? 'text-primary' 
-                  : transparent ? 'text-muted-foreground/80 hover:text-white' : 'text-muted-foreground hover:text-primary'
-              }`}
-            >
-              Marketplace
-            </Link>
-            <Link
-              href="/consumer/scanner"
-              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                isActive('/consumer/scanner') 
-                  ? 'text-primary' 
-                  : transparent ? 'text-muted-foreground/70 hover:text-white' : 'text-muted-foreground hover:text-primary'
-              }`}
-            >
-              QR Scanner
-            </Link>
-            <Link
-              href="/consumer"
-              className={`text-sm font-bold uppercase tracking-widest transition-colors ${
-                isActive('/consumer') 
-                  ? 'text-primary' 
-                  : transparent ? 'text-muted-foreground/70 hover:text-white' : 'text-muted-foreground hover:text-primary'
-              }`}
-            >
-              Reputation
-            </Link>
-          </nav>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            {isAuthenticated ? (
-              <Link href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'}>
-                <Button className="bg-foreground hover:bg-primary text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-xl transition-all flex items-center gap-2">
-                  {user?.image ? (
-                    <img src={user.image} alt="" className="w-6 h-6 rounded-full object-cover" />
-                  ) : currentRole === 'producer' || currentRole === 'admin' ? (
-                    <LayoutDashboard className="w-4 h-4" />
-                  ) : (
-                    <User className="w-4 h-4" />
-                  )}
-                  {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'My Account'}
-                </Button>
+        <nav className="hidden items-center gap-1 rounded-full border border-border/60 bg-card/45 p-1 md:flex">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={[
+                  'flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-all',
+                  isActive(item.href)
+                    ? 'bg-foreground text-background'
+                    : 'text-muted-foreground hover:bg-muted/70 hover:text-foreground',
+                ].join(' ')}
+              >
+                <Icon className="size-3.5" />
+                {item.label}
               </Link>
-            ) : (
-              <>
-                <Link href="/auth/login">
-                  <Button variant="ghost" className={`font-bold transition-colors ${transparent ? 'text-white hover:bg-white/10' : 'text-muted-foreground hover:text-primary'}`}>Sign In</Button>
-                </Link>
-                <Link href="/auth/register">
-                  <Button className={`bg-foreground hover:bg-primary text-primary-foreground h-12 px-6 rounded-xl font-bold shadow-xl transition-all ${transparent ? 'shadow-lg shadow-primary/20 border-none' : ''}`}>
-                    Join the Network
-                  </Button>
-                </Link>
-              </>
-            )}
-            <div className={`pl-4 border-l ${transparent ? 'border-white/20' : 'border-border'}`}>
-              <ThemeToggle className={transparent ? 'text-white hover:bg-white/10' : ''} />
-            </div>
-          </div>
+            );
+          })}
+        </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className={`md:hidden p-2 transition-colors ${transparent ? 'text-foreground md:text-white' : 'text-foreground'}`}
-            aria-label="Toggle menu"
-          >
-            {mobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+        <div className="hidden items-center gap-2 md:flex">
+          <ThemeToggle />
+          {isAuthenticated ? (
+            <Link href={accountHref}>
+              <Button className="gap-2">
+                {user?.image ? (
+                  <img src={user.image} alt="" className="size-5 rounded-full object-cover" />
+                ) : currentRole === 'producer' || currentRole === 'admin' ? (
+                  <LayoutDashboard className="size-4" />
+                ) : (
+                  <User className="size-4" />
+                )}
+                {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'Account'}
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/auth/login">
+              <Button variant="outline">Sign in</Button>
+            </Link>
+          )}
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border bg-card">
-            <nav className="flex flex-col p-4 gap-2">
-              <Link 
-                href="/shop" 
-                className={`px-4 py-2 rounded font-bold transition-colors ${
-                  isActive('/shop') ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
-                }`}
+        <button
+          onClick={() => setMobileMenuOpen((open) => !open)}
+          className="grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 md:hidden"
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </button>
+      </div>
+
+      {mobileMenuOpen && (
+        <div className="border-t border-border/60 bg-background/96 p-3 md:hidden motion-rise">
+          <nav className="grid gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={[
+                  'rounded-md px-4 py-3 font-semibold transition-colors',
+                  isActive(item.href) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ].join(' ')}
               >
-                Marketplace
+                {item.label}
               </Link>
-              <Link 
-                href="/consumer/scanner" 
-                className={`px-4 py-2 rounded font-bold transition-colors ${
-                  isActive('/consumer/scanner') ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
-                }`}
-              >
-                QR Scanner
-              </Link>
-              <Link 
-                href="/consumer" 
-                className={`px-4 py-2 rounded font-bold transition-colors ${
-                  isActive('/consumer') ? 'bg-primary/10 text-primary' : 'hover:bg-muted'
-                }`}
-              >
-                Reputation
-              </Link>
-              <div className="border-t border-border pt-2 mt-2 flex flex-col gap-2">
-                <div className="flex justify-between items-center px-4 py-2">
-                  <span className="font-bold text-muted-foreground">Theme</span>
-                  <ThemeToggle />
-                </div>
-                {isAuthenticated ? (
-                  <Link href={currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer'} className="w-full">
-                    <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground gap-2 h-14 text-lg font-black rounded-xl">
-                    {user?.image ? (
-                      <img src={user.image} alt="" className="w-8 h-8 rounded-full object-cover" />
-                    ) : currentRole === 'producer' || currentRole === 'admin' ? (
-                      <LayoutDashboard className="w-5 h-5" />
-                    ) : (
-                      <User className="w-5 h-5" />
-                    )}
-                    {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'My Account'}
-                  </Button>
-                  </Link>
-                ) : (
-                  <>
-                    <Link href="/auth/login" className="w-full">
-                      <Button variant="outline" className="w-full h-12">
-                        Sign In
-                      </Button>
-                    </Link>
-                    <Link href="/auth/register" className="w-full">
-                      <Button className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground">
-                        Join the Network
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </div>
-            </nav>
+            ))}
+          </nav>
+          <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
+            <span className="text-sm font-semibold text-muted-foreground">Theme</span>
+            <ThemeToggle />
           </div>
-        )}
-      </header>
-    </>
+        </div>
+      )}
+    </header>
   );
 }
