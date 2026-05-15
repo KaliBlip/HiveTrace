@@ -92,17 +92,6 @@ export function LoginForm() {
         {isLoading ? "Signing in..." : "Sign in"}
         <ArrowRight className="size-4" />
       </Button>
-
-      <div className="rounded-lg border border-border/60 bg-background/45 p-4">
-        <div className="flex items-center gap-2">
-          <Sparkles className="size-4 text-primary" />
-          <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Demo credentials</span>
-        </div>
-        <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
-          <code className="rounded-md bg-muted/70 px-3 py-2 text-muted-foreground">demo@hivetrace.com</code>
-          <code className="rounded-md bg-muted/70 px-3 py-2 text-muted-foreground">demo123</code>
-        </div>
-      </div>
     </form>
   );
 }
