@@ -2,211 +2,133 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Info, Keyboard, ScanLine, ShieldCheck, Zap } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, ShieldCheck, Zap, Info, ScanLine, Keyboard } from 'lucide-react';
 import { QRScanner } from '@/components/consumer/qr-scanner';
 import { ConsumerHeader } from '@/components/consumer/header';
 import { Footer } from '@/components/footer';
-import { Badge } from '@/components/ui/badge';
 
 export default function ScannerPage() {
   const router = useRouter();
-  const [qrCode, setQrCode] = useState('');
   const [manualInput, setManualInput] = useState('');
-  const [showResult, setShowResult] = useState(false);
   const [inputType, setInputType] = useState<'camera' | 'manual'>('camera');
 
-  const handleQRScan = (data: string) => {
-    if (data.includes('/verify/')) {
-      const hash = data.split('/verify/')[1];
-      router.push(`/verify/${hash}`);
+  const verifyValue = (value: string) => {
+    const trimmed = value.trim();
+    if (!trimmed) return;
+
+    if (trimmed.includes('/verify/')) {
+      router.push(`/verify/${trimmed.split('/verify/')[1]}`);
       return;
     }
-    router.push(`/verify/${encodeURIComponent(data.trim())}`);
-  };
 
-  const handleManualVerify = () => {
-    if (manualInput.trim()) {
-      if (manualInput.includes('/verify/')) {
-        const hash = manualInput.split('/verify/')[1];
-        router.push(`/verify/${hash}`);
-      } else {
-        router.push(`/verify/${encodeURIComponent(manualInput.trim())}`);
-      }
-    }
+    router.push(`/verify/${encodeURIComponent(trimmed)}`);
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      <ConsumerHeader transparent />
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <ConsumerHeader />
 
-      <main className="flex-1 relative">
-        {/* Background Atmosphere */}
-        <div className="absolute inset-0 bg-[#1c1917] h-[600px] -z-10">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558583055-d7ac00b1adca?q=80&w=2000')] bg-cover bg-center opacity-30 grayscale mix-blend-overlay"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1c1917]/50 to-background"></div>
-        </div>
-
-        <div
-          className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] pt-20 pb-24 relative z-10"
-          style={{ width: "100%", minWidth: "100%" }}
-        >
-          {/* Back Link */}
-          <Link href="/consumer" className="inline-flex items-center gap-3 text-stone-400 hover:text-primary transition-all font-bold uppercase tracking-widest text-[10px] mb-12 group">
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            Back to Dashboard
-          </Link>
-
-          {/* Header */}
-          <div className="text-center space-y-6 mb-12 text-foreground">
-            <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
-              Verification Protocol
+      <main className="relative flex-1 pb-24 md:pb-0">
+        <section className="relative overflow-hidden px-4 pb-10 pt-16 sm:px-6 lg:px-8">
+          <div className="pointer-events-none absolute inset-0 hive-grid" />
+          <div className="relative mx-auto max-w-5xl text-center">
+            <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+              Verification scanner
             </Badge>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold tracking-[-0.03em] leading-[0.92] uppercase italic text-foreground drop-shadow-2xl">
-              SCAN YOUR <span className="text-primary not-italic tracking-tight">HONEY.</span>
+            <h1 className="mx-auto mt-6 max-w-4xl text-balance font-heading text-5xl font-semibold leading-[0.9] tracking-[-0.03em] sm:text-7xl">
+              Scan the code. Read the batch.
             </h1>
-            <div
-              className="text-muted-foreground font-normal text-xl mx-auto leading-relaxed"
-              style={{
-                display: "block",
-                width: "min(100%, 760px)",
-                maxWidth: "760px",
-                whiteSpace: "normal",
-                writingMode: "horizontal-tb",
-                textOrientation: "mixed",
-              }}
-            >
-              Decrypt the story behind your jar. Every scan verifies authenticity and supports artisan beekeepers through cryptographic trust.
-            </div>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-muted-foreground">
+              Use your camera or enter a batch code manually to check HiveTrace verification data.
+            </p>
           </div>
+        </section>
 
-          <div className="w-full max-w-3xl mx-auto space-y-10">
-            {/* Input Toggle */}
-            <div className="w-full max-w-xl mx-auto rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md p-1.5 shadow-xl">
-              <div className="grid grid-cols-2 gap-1.5">
+        <section className="px-4 pb-12 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl space-y-6">
+            <div className="mx-auto grid max-w-md grid-cols-2 gap-1 rounded-xl border border-border/60 bg-card/70 p-1.5 shadow-[var(--shadow-soft)] backdrop-blur">
               <button
                 onClick={() => setInputType('camera')}
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.12em] whitespace-nowrap transition-all ${
-                  inputType === 'camera'
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
+                className={[
+                  'flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-xs font-semibold uppercase tracking-[0.14em] transition-all',
+                  inputType === 'camera' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ].join(' ')}
               >
-                <ScanLine className="w-4 h-4 sm:w-5 sm:h-5" />
-                Camera Scan
+                <ScanLine className="size-4" />
+                Camera
               </button>
               <button
                 onClick={() => setInputType('manual')}
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-[0.12em] whitespace-nowrap transition-all ${
-                  inputType === 'manual'
-                    ? 'bg-primary text-primary-foreground shadow-md'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                }`}
+                className={[
+                  'flex items-center justify-center gap-2 rounded-lg px-3 py-3 text-xs font-semibold uppercase tracking-[0.14em] transition-all',
+                  inputType === 'manual' ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                ].join(' ')}
               >
-                <Keyboard className="w-4 h-4 sm:w-5 sm:h-5" />
-                Manual Entry
+                <Keyboard className="size-4" />
+                Manual
               </button>
-              </div>
             </div>
 
-            {/* Main Interface */}
-            <div className="grid gap-12 w-full min-w-0">
-              {inputType === 'camera' ? (
-                <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
-                  <QRScanner onScan={handleQRScan} />
-                </div>
-              ) : (
-                <div className="bg-card border border-border/50 shadow-2xl rounded-[48px] overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-                  <div className="p-10 lg:p-20 space-y-10 text-center">
-                    <div className="w-20 h-20 bg-primary/5 rounded-[24px] flex items-center justify-center mx-auto">
-                      <Zap className="w-10 h-10 text-primary" />
-                    </div>
-                    <div className="space-y-3">
-                      <h2 className="text-3xl font-heading font-bold uppercase tracking-tight">Manual Verification</h2>
-                      <div
-                        className="text-stone-500 font-normal text-lg"
-                        style={{
-                          display: "block",
-                          width: "100%",
-                          whiteSpace: "normal",
-                          writingMode: "horizontal-tb",
-                          textOrientation: "mixed",
-                        }}
-                      >
-                        Enter the unique cryptographic hash or batch ID found on the label.
-                      </div>
-                    </div>
-                    <div className="space-y-6">
-                      <input
-                        type="text"
-                        placeholder="e.g., HT-2024-WFB-001"
-                        value={manualInput}
-                        onChange={(e) => setManualInput(e.target.value)}
-                        className="w-full h-20 px-8 bg-stone-50/50 border-2 border-border/40 rounded-3xl focus:outline-none focus:border-primary transition-all text-center text-2xl font-bold uppercase tracking-widest placeholder:normal-case placeholder:font-normal placeholder:tracking-normal"
-                      />
-                      <Button
-                        onClick={handleManualVerify}
-                        className="w-full h-20 bg-[#1c1917] hover:bg-primary text-white text-xl rounded-3xl transition-all shadow-2xl shadow-primary/20 font-bold"
-                        disabled={!manualInput.trim()}
-                      >
-                        Verify Cryptographic Hash
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Info Tips */}
-              <div className="grid md:grid-cols-2 gap-6 w-full min-w-0">
-                <div className="w-full min-w-0 p-8 bg-card border border-border/50 rounded-[32px] flex gap-6 items-start shadow-sm hover:border-primary/30 transition-colors">
-                  <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0">
-                    <Info className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="space-y-1 w-full min-w-0">
-                    <p className="font-heading font-bold uppercase text-sm tracking-widest">Scanning Tip</p>
-                    <div
-                      className="text-base text-stone-500 font-normal leading-relaxed"
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        whiteSpace: "normal",
-                        writingMode: "horizontal-tb",
-                        textOrientation: "mixed",
-                      }}
-                    >
-                      Hold your phone steady and ensure there is enough light on the QR code for instant recognition.
-                    </div>
-                  </div>
-                </div>
-                <div className="w-full min-w-0 p-8 bg-card border border-border/50 rounded-[32px] flex gap-6 items-start shadow-sm hover:border-primary/30 transition-colors">
-                  <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-6 h-6 text-primary" />
-                  </div>
-                  <div className="space-y-1 w-full min-w-0">
-                    <p className="font-heading font-bold uppercase text-sm tracking-widest">Digital Signature</p>
-                    <div
-                      className="text-base text-stone-500 font-normal leading-relaxed"
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        whiteSpace: "normal",
-                        writingMode: "horizontal-tb",
-                        textOrientation: "mixed",
-                      }}
-                    >
-                      Every scan checks the HMAC-SHA256 hash against our reserve nodes to ensure zero tampering.
-                    </div>
-                  </div>
+            {inputType === 'camera' ? (
+              <div className="motion-rise">
+                <QRScanner onScan={verifyValue} />
+              </div>
+            ) : (
+              <div className="motion-rise rounded-xl border border-border/60 bg-card/72 p-6 text-center shadow-[var(--shadow-soft)] backdrop-blur sm:p-10">
+                <span className="mx-auto mb-6 grid size-14 place-items-center rounded-lg bg-primary/12 text-primary">
+                  <Zap className="size-7" />
+                </span>
+                <h2 className="font-heading text-3xl font-semibold tracking-tight">Manual verification</h2>
+                <p className="mx-auto mt-3 max-w-lg leading-7 text-muted-foreground">
+                  Enter the unique verification hash, scan URL, or batch ID printed on the product label.
+                </p>
+                <div className="mx-auto mt-8 max-w-xl space-y-3">
+                  <input
+                    type="text"
+                    placeholder="HT-2026-GVA-041"
+                    value={manualInput}
+                    onChange={(event) => setManualInput(event.target.value)}
+                    className="h-14 w-full rounded-lg border border-border/70 bg-background/70 px-5 text-center font-mono text-base uppercase tracking-[0.08em] outline-none transition-colors focus:border-primary"
+                  />
+                  <Button onClick={() => verifyValue(manualInput)} disabled={!manualInput.trim()} className="w-full">
+                    Verify batch
+                  </Button>
                 </div>
               </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <InfoCard
+                icon={Info}
+                title="Scanning tip"
+                text="Hold your phone steady, keep the QR code inside the frame, and avoid glare from jar labels."
+              />
+              <InfoCard
+                icon={ShieldCheck}
+                title="Signature check"
+                text="HiveTrace compares the code against signed batch records and opens the verification page."
+              />
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       <Footer />
+    </div>
+  );
+}
+
+function InfoCard({ icon: Icon, title, text }: { icon: LucideIcon; title: string; text: string }) {
+  return (
+    <div className="rounded-xl border border-border/60 bg-card/60 p-5 shadow-[var(--shadow-soft)] backdrop-blur">
+      <span className="mb-5 grid size-11 place-items-center rounded-md bg-primary/12 text-primary">
+        <Icon className="size-5" />
+      </span>
+      <p className="font-heading text-xl font-semibold tracking-tight">{title}</p>
+      <p className="mt-2 leading-7 text-muted-foreground">{text}</p>
     </div>
   );
 }

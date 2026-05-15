@@ -168,6 +168,7 @@
     min-height: 100vh;
     background: var(--surface-wash);
     letter-spacing: 0;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   ::selection {

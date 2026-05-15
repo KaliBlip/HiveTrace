@@ -1,6 +1,6 @@
-import Image from "next/image";
-import { PublicHeader } from '@/components/public-header';
-import { Footer } from '@/components/footer';
+import Link from 'next/link';
+import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function AuthLayout({
   children,
@@ -8,38 +8,37 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-stone-950 text-foreground font-sans flex flex-col relative overflow-hidden">
-      {/* Immersive Background Image - Fixed to background */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <Image
-          src="/auth-bg.png"
-          alt="Luxury Honey Background"
-          fill
-          className="object-cover opacity-30 mix-blend-luminosity scale-105 blur-[1px]"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-stone-950 via-stone-950/90 to-stone-950"></div>
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <div className="pointer-events-none absolute inset-0 hive-grid" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-primary/12 blur-[120px]" />
 
-      {/* Atmospheric Glows */}
-      <div className="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[10%] left-[10%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[160px]"></div>
-        <div className="absolute bottom-[20%] right-[10%] w-[50%] h-[50%] bg-amber-500/5 rounded-full blur-[140px]"></div>
-      </div>
+      <header className="fixed inset-x-0 top-0 z-50 px-3 pt-3">
+        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-lg border border-border/60 bg-background/76 px-3 shadow-[var(--shadow-soft)] backdrop-blur-2xl sm:px-5">
+          <Link href="/" className="group flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-md bg-foreground text-background transition-transform group-hover:-rotate-6">
+              <ShieldCheck className="size-5" />
+            </span>
+            <span className="font-heading text-xl font-semibold tracking-tight">
+              Hive<span className="text-primary">Trace</span>
+            </span>
+          </Link>
 
-      <PublicHeader />
-      
-      <main className="flex-1 relative z-10 pt-16">
-        <section className="relative pt-24 pb-20 overflow-hidden">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px]">
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              {children}
-            </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="hidden items-center gap-2 rounded-md px-3 py-2 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground sm:flex"
+            >
+              <ArrowLeft className="size-4" />
+              Home
+            </Link>
+            <ThemeToggle />
           </div>
-        </section>
-      </main>
+        </nav>
+      </header>
 
-      <Footer />
+      <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl items-center px-4 pb-14 pt-28 sm:px-6 lg:px-8">
+        {children}
+      </main>
     </div>
   );
 }

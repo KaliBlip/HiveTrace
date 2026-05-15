@@ -1,85 +1,93 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import { RegisterForm } from '@/components/auth/register-form';
+import { ArrowRight, BadgeCheck, Database, Sprout, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { Fingerprint, Database, Users } from 'lucide-react';
+import { RegisterForm } from '@/components/auth/register-form';
+
+const details = [
+  {
+    icon: BadgeCheck,
+    title: 'Create one identity',
+    text: 'Use the same account for consumer verification or producer batch operations.',
+  },
+  {
+    icon: Database,
+    title: 'Prepare signed records',
+    text: 'Producer accounts receive a profile that can register and publish traceable honey batches.',
+  },
+  {
+    icon: Sprout,
+    title: 'Support clean provenance',
+    text: 'Verified orders and reviews help ethical producers build a reputation consumers can inspect.',
+  },
+];
 
 export default function RegisterPage() {
   return (
-    <div className="w-full">
-      <div className="grid lg:grid-cols-12 gap-16 items-start">
-        {/* Left Column: Branding & Info */}
-        <div className="lg:col-span-5 space-y-10">
-          <div className="space-y-6">
-            <Link href="/" className="inline-flex items-center gap-3 group transition-all">
-              <div className="w-16 h-16 bg-stone-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl group-hover:border-primary/50 transition-all duration-500">
-                <span className="text-3xl">🍯</span>
+    <div className="grid w-full gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
+      <section className="motion-rise space-y-8">
+        <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          Network enrollment
+        </Badge>
+
+        <div className="space-y-5">
+          <h1 className="text-balance font-heading text-5xl font-semibold leading-[0.9] tracking-[-0.03em] sm:text-7xl">
+            Create your HiveTrace identity.
+          </h1>
+          <p className="max-w-xl text-lg leading-8 text-muted-foreground">
+            Join as a consumer to verify purchases, or as a producer to register batches and sell traceable honey.
+          </p>
+        </div>
+
+        <div className="grid gap-3">
+          {details.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="motion-rise flex gap-4 rounded-lg border border-border/60 bg-card/55 p-4 backdrop-blur"
+                style={{ animationDelay: `${index * 70}ms` }}
+              >
+                <span className="grid size-11 shrink-0 place-items-center rounded-md bg-primary/12 text-primary">
+                  <Icon className="size-5" />
+                </span>
+                <div>
+                  <h2 className="font-semibold">{item.title}</h2>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{item.text}</p>
+                </div>
               </div>
-            </Link>
-            <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary border border-primary/20 py-1 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em]">
-                NETWORK ENROLLMENT
-              </Badge>
-              <h1 className="text-6xl md:text-7xl font-heading font-bold tracking-[-0.02em] text-white uppercase italic leading-none">
-                ESTABLISH <span className="text-primary not-italic">IDENTITY.</span>
-              </h1>
-              <p className="text-xl text-stone-400 font-medium leading-relaxed max-w-md">
-                Join the decentralized ledger of premium honey artisans and ethical consumers.
-              </p>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="motion-rise motion-delay-2">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-card/76 shadow-[var(--shadow-lift)] backdrop-blur-2xl">
+          <div className="border-b border-border/60 p-6 sm:p-8">
+            <div className="flex items-center gap-3">
+              <span className="grid size-11 place-items-center rounded-md bg-foreground text-background">
+                <Users className="size-5" />
+              </span>
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Account setup</p>
+                <h2 className="font-heading text-3xl font-semibold tracking-tight">Register</h2>
+              </div>
             </div>
           </div>
-
-          <div className="grid gap-6">
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <Fingerprint className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Biometric Ready</h3>
-                <p className="text-xs text-stone-500 mt-1">Optional Passkey support for seamless, passwordless verification.</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <Database className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Immutable Records</h3>
-                <p className="text-xs text-stone-500 mt-1">Your batches and reviews are etched into the cryptographic ledger.</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <Users className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Community Driven</h3>
-                <p className="text-xs text-stone-500 mt-1">Part of a global movement towards transparent agriculture.</p>
-              </div>
-            </div>
+          <div className="p-6 sm:p-8">
+            <RegisterForm />
           </div>
         </div>
 
-        {/* Right Column: The Form */}
-        <div className="lg:col-span-7">
-          <Card className="w-full bg-stone-900/40 border-white/5 rounded-[40px] shadow-3xl backdrop-blur-2xl overflow-hidden ring-1 ring-white/10">
-            <CardContent className="p-10 md:p-14">
-              <RegisterForm />
-            </CardContent>
-          </Card>
-          
-          <div className="mt-10 flex justify-center lg:justify-start px-4">
-             <Link 
-              href="/" 
-              className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-500 hover:text-white transition-all duration-300 flex items-center gap-3 border-b border-transparent hover:border-stone-700 pb-1"
-            >
-              <span>Return to Gateway</span>
-            </Link>
-          </div>
-        </div>
-      </div>
+        <Link
+          href="/auth/login"
+          className="mt-5 flex items-center justify-center gap-2 rounded-lg border border-border/60 bg-card/45 px-4 py-4 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+        >
+          Already have an account? Sign in
+          <ArrowRight className="size-4" />
+        </Link>
+      </section>
     </div>
   );
 }

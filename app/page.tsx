@@ -107,8 +107,8 @@ export default function Home() {
               <div className="glass-panel scan-line relative overflow-hidden rounded-xl border p-3">
                 <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
                   <img
-                    src="https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=1800"
-                    alt="Honey jars and hive frames"
+                    src="/hero-beehive.jpg"
+                    alt="Honeycomb frames from a beehive"
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/72 via-black/10 to-transparent" />
@@ -210,7 +210,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="min-h-[360px] bg-[url('https://images.unsplash.com/photo-1471943311424-646960669fba?q=80&w=1600')] bg-cover bg-center" />
+            <div className="min-h-[360px] bg-[url('/verification-badge.jpg')] bg-cover bg-center" />
           </div>
         </section>
       </main>

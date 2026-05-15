@@ -8,11 +8,16 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/hooks/use-auth';
 
-const navItems = [
+const desktopNavItems = [
   { href: '/about', label: 'About' },
   { href: '/shop', label: 'Marketplace' },
   { href: '/consumer/scanner', label: 'Scan' },
   { href: '/contact', label: 'Contact' },
+];
+
+const mobileMenuItems = [
+  { href: '/about', label: 'About HiveTrace' },
+  { href: '/contact', label: 'Contact support' },
 ];
 
 export function PublicHeader() {
@@ -38,7 +43,7 @@ export function PublicHeader() {
         </Link>
 
         <div className="hidden items-center rounded-full border border-border/60 bg-card/45 p-1 lg:flex">
-          {navItems.map((item) => (
+          {desktopNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -99,7 +104,7 @@ export function PublicHeader() {
       {isMenuOpen && (
         <div className="mx-auto mt-2 max-w-7xl rounded-lg border border-border/60 bg-background/92 p-3 shadow-[var(--shadow-lift)] backdrop-blur-2xl lg:hidden motion-rise">
           <div className="grid gap-1">
-            {navItems.map((item) => (
+            {mobileMenuItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

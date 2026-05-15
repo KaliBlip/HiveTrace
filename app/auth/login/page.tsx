@@ -1,85 +1,86 @@
 'use client';
 
 import Link from 'next/link';
-import { Card, CardContent } from '@/components/ui/card';
-import { LoginForm } from '@/components/auth/login-form';
+import { ArrowRight, Fingerprint, History, ShieldCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, History, Globe } from 'lucide-react';
+import { LoginForm } from '@/components/auth/login-form';
+
+const details = [
+  {
+    icon: ShieldCheck,
+    title: 'Protected account access',
+    text: 'Credentials are checked through HiveTrace auth before dashboard and checkout routes open.',
+  },
+  {
+    icon: History,
+    title: 'Operational continuity',
+    text: 'Return to batches, orders, reviews, analytics, or consumer verification history from one session.',
+  },
+  {
+    icon: Fingerprint,
+    title: 'Role-aware routing',
+    text: 'Producer, admin, and consumer accounts land in the right workspace after sign in.',
+  },
+];
 
 export default function LoginPage() {
   return (
-    <div className="w-full">
-      <div className="grid lg:grid-cols-12 gap-16 items-start">
-        {/* Left Column: Branding & Info */}
-        <div className="lg:col-span-5 space-y-10">
-          <div className="space-y-6">
-            <Link href="/" className="inline-flex items-center gap-3 group transition-all">
-              <div className="w-16 h-16 bg-stone-900 border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl group-hover:border-primary/50 transition-all duration-500">
-                <span className="text-3xl">🍯</span>
-              </div>
-            </Link>
-            <div className="space-y-4">
-              <Badge className="bg-primary/10 text-primary border border-primary/20 py-1 px-4 rounded-full text-[10px] font-bold uppercase tracking-[0.3em]">
-                SECURE GATEWAY
-              </Badge>
-              <h1 className="text-6xl md:text-7xl font-heading font-bold tracking-[-0.02em] text-white uppercase italic leading-none">
-                ACCESS <span className="text-primary not-italic">LEDGER.</span>
-              </h1>
-              <p className="text-xl text-stone-400 font-medium leading-relaxed max-w-md">
-                Sign in to the global cryptographic network for honey provenance and artisan stewardship.
-              </p>
-            </div>
-          </div>
+    <div className="grid w-full gap-8 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
+      <section className="motion-rise space-y-8">
+        <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+          Secure sign in
+        </Badge>
 
-          <div className="grid gap-6">
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <ShieldCheck className="w-5 h-5 text-primary" />
+        <div className="space-y-5">
+          <h1 className="text-balance font-heading text-5xl font-semibold leading-[0.9] tracking-[-0.03em] sm:text-7xl">
+            Reopen your traceability workspace.
+          </h1>
+          <p className="max-w-xl text-lg leading-8 text-muted-foreground">
+            Sign in to manage producer batches, inspect orders, scan honey labels, or continue marketplace activity.
+          </p>
+        </div>
+
+        <div className="grid gap-3">
+          {details.map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className="motion-rise flex gap-4 rounded-lg border border-border/60 bg-card/55 p-4 backdrop-blur"
+                style={{ animationDelay: `${index * 70}ms` }}
+              >
+                <span className="grid size-11 shrink-0 place-items-center rounded-md bg-primary/12 text-primary">
+                  <Icon className="size-5" />
+                </span>
+                <div>
+                  <h2 className="font-semibold">{item.title}</h2>
+                  <p className="mt-1 text-sm leading-6 text-muted-foreground">{item.text}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Encrypted Identity</h3>
-                <p className="text-xs text-stone-500 mt-1">Your credentials are protected by hardware-grade encryption.</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <History className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Full Audit Trail</h3>
-                <p className="text-xs text-stone-500 mt-1">Monitor all activity across your producer dashboard.</p>
-              </div>
-            </div>
-            <div className="flex gap-4 items-start">
-              <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                <Globe className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold uppercase tracking-wider text-white">Global Network</h3>
-                <p className="text-xs text-stone-500 mt-1">Connect with verified artisans and consumers worldwide.</p>
-              </div>
-            </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="motion-rise motion-delay-2">
+        <div className="overflow-hidden rounded-xl border border-border/60 bg-card/76 shadow-[var(--shadow-lift)] backdrop-blur-2xl">
+          <div className="border-b border-border/60 p-6 sm:p-8">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Account gateway</p>
+            <h2 className="mt-2 font-heading text-3xl font-semibold tracking-tight">Sign in</h2>
+          </div>
+          <div className="p-6 sm:p-8">
+            <LoginForm />
           </div>
         </div>
 
-        {/* Right Column: The Form */}
-        <div className="lg:col-span-7">
-          <Card className="w-full bg-stone-900/40 border-white/5 rounded-[40px] shadow-3xl backdrop-blur-2xl overflow-hidden ring-1 ring-white/10">
-            <CardContent className="p-10 md:p-14">
-              <LoginForm />
-            </CardContent>
-          </Card>
-          
-          <div className="mt-10 flex justify-center lg:justify-start px-4">
-             <Link 
-              href="/" 
-              className="text-[10px] font-bold uppercase tracking-[0.25em] text-stone-500 hover:text-white transition-all duration-300 flex items-center gap-3 border-b border-transparent hover:border-stone-700 pb-1"
-            >
-              <span>Return to Gateway</span>
-            </Link>
-          </div>
-        </div>
-      </div>
+        <Link
+          href="/auth/register"
+          className="mt-5 flex items-center justify-center gap-2 rounded-lg border border-border/60 bg-card/45 px-4 py-4 text-sm font-semibold text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+        >
+          New to HiveTrace? Create an account
+          <ArrowRight className="size-4" />
+        </Link>
+      </section>
     </div>
   );
 }

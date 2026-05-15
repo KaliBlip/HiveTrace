@@ -3,6 +3,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/providers/auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CartOverlay } from '@/components/shop/cart-overlay'
+import { MobileTabBar } from '@/components/mobile-tab-bar'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -45,6 +46,7 @@ export default function RootLayout({
           >
             {children}
             <CartOverlay />
+            <MobileTabBar />
           </ThemeProvider>
         </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

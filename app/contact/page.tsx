@@ -1,14 +1,20 @@
 'use client';
 
+import { useState } from 'react';
+import { Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react';
 import { PublicHeader } from '@/components/public-header';
 import { Footer } from '@/components/footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import { useState } from 'react';
 import { submitContactMessage } from '@/lib/actions/contact-actions';
+
+const contactMethods = [
+  { icon: Mail, title: 'Email', lines: ['hello@hivetrace.org', 'support@hivetrace.org'] },
+  { icon: Phone, title: 'Phone', lines: ['+1 (555) 123-4567'] },
+  { icon: MapPin, title: 'Office', lines: ['100 Verification Way', 'Tech District, CA 94103'] },
+];
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -22,154 +28,131 @@ export default function ContactPage() {
   });
   const [error, setError] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
     setError('');
     setIsSubmitting(true);
+
     try {
       await submitContactMessage(formData);
       setSubmitted(true);
       setFormData({ firstName: '', lastName: '', email: '', subject: '', message: '' });
-    } catch (err: any) {
-      setError(err.message || 'Failed to send message. Please try again.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground font-sans flex flex-col">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <PublicHeader />
 
-      <main className="flex-1 pt-16">
-        <section className="relative pt-24 pb-20 overflow-hidden">
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[128px] relative z-10">
-            <div className="mb-20 flex w-full justify-center">
-              <div className="w-full px-2 text-center" style={{ maxWidth: "880px" }}>
-                <div className="flex justify-center">
-                  <Badge className="bg-primary/10 text-primary border-primary/20 py-1.5 px-4 rounded-full text-xs font-bold uppercase tracking-[0.2em]">
-                    Get In Touch
-                  </Badge>
-                </div>
-                <h1 className="mt-6 text-5xl md:text-7xl font-heading font-bold tracking-[-0.02em] uppercase italic leading-none">
-                  CONTACT <span className="text-primary not-italic">US.</span>
-                </h1>
-                <div
-                  className="mx-auto mt-8 text-xl text-stone-500 font-normal leading-relaxed"
-                  style={{ width: "100%", maxWidth: "720px", whiteSpace: "normal" }}
-                >
-                  Whether you're a producer looking to join the network or a consumer with questions about verification, we're here to help.
-                </div>
-              </div>
+      <main className="flex-1 pb-24 md:pb-0">
+        <section className="relative overflow-hidden px-4 pb-12 pt-28 sm:px-6 lg:px-8">
+          <div className="pointer-events-none absolute inset-0 hive-grid" />
+          <div className="relative mx-auto max-w-7xl">
+            <div className="max-w-3xl space-y-6">
+              <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                Contact
+              </Badge>
+              <h1 className="text-balance font-heading text-5xl font-semibold leading-[0.9] tracking-[-0.03em] sm:text-7xl">
+                Tell us what you need to verify.
+              </h1>
+              <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
+                Producer onboarding, verification questions, suspicious labels, marketplace support: send the signal and
+                the team will route it.
+              </p>
             </div>
+          </div>
+        </section>
 
-            <div className="grid lg:grid-cols-12 gap-16">
-              {/* Contact Info */}
-              <div className="lg:col-span-4 space-y-8">
-                <div className="bg-card p-10 rounded-[24px] shadow-sm border border-border/50 space-y-10">
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
-                      <Mail className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Email</h3>
-                      <p className="text-stone-500 font-normal">hello@hivetrace.org</p>
-                      <p className="text-stone-500 font-normal">support@hivetrace.org</p>
+        <section className="px-4 py-8 sm:px-6 lg:px-8">
+          <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[0.72fr_1.28fr]">
+            <aside className="space-y-4">
+              {contactMethods.map((method) => {
+                const Icon = method.icon;
+                return (
+                  <div key={method.title} className="rounded-xl border border-border/60 bg-card/72 p-5 shadow-[var(--shadow-soft)] backdrop-blur">
+                    <span className="mb-5 grid size-11 place-items-center rounded-md bg-primary/12 text-primary">
+                      <Icon className="size-5" />
+                    </span>
+                    <h2 className="font-heading text-xl font-semibold tracking-tight">{method.title}</h2>
+                    <div className="mt-2 space-y-1 text-muted-foreground">
+                      {method.lines.map((line) => (
+                        <p key={line}>{line}</p>
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
-                      <Phone className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Phone</h3>
-                      <p className="text-stone-500 font-normal">+1 (555) 123-4567</p>
-                    </div>
-                  </div>
+                );
+              })}
+            </aside>
 
-                  <div className="space-y-4">
-                    <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-heading font-bold uppercase text-lg tracking-tight">Headquarters</h3>
-                      <p className="text-stone-500 font-normal leading-relaxed">
-                        100 Verification Way<br />
-                        Tech District, CA 94103<br />
-                        United States
-                      </p>
-                    </div>
+            <div className="rounded-xl border border-border/60 bg-card/72 p-5 shadow-[var(--shadow-soft)] backdrop-blur sm:p-8 lg:p-10">
+              {submitted ? (
+                <div className="grid min-h-[520px] place-items-center text-center">
+                  <div className="max-w-md">
+                    <span className="mx-auto mb-6 grid size-16 place-items-center rounded-lg bg-primary/12 text-primary">
+                      <Send className="size-7" />
+                    </span>
+                    <h2 className="font-heading text-4xl font-semibold tracking-tight">Message sent</h2>
+                    <p className="mt-4 leading-7 text-muted-foreground">
+                      Thanks for reaching out. A HiveTrace team member will get back to you within 24 hours.
+                    </p>
+                    <Button variant="outline" className="mt-8" onClick={() => setSubmitted(false)}>
+                      Send another message
+                    </Button>
                   </div>
                 </div>
-              </div>
-
-              {/* Form */}
-              <div className="lg:col-span-8">
-                <div className="bg-card p-8 lg:p-14 rounded-[32px] shadow-xl border border-border/50">
-                  {submitted ? (
-                    <div className="text-center py-16 space-y-8">
-                      <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Send className="w-10 h-10 text-green-600 ml-1" />
-                      </div>
-                      <div className="space-y-4">
-                        <h2 className="text-4xl font-heading font-bold uppercase tracking-tight">Message Sent</h2>
-                        <p className="text-lg text-stone-500 font-normal max-w-md mx-auto">
-                          Thank you for reaching out. A member of our team will get back to you within 24 hours.
-                        </p>
-                      </div>
-                      <Button 
-                        variant="outline" 
-                        className="mt-4 font-bold border-2 rounded-full px-8"
-                        onClick={() => setSubmitted(false)}
-                      >
-                        Send Another Message
-                      </Button>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="flex items-center gap-3 border-b border-border/60 pb-6">
+                    <span className="grid size-11 place-items-center rounded-md bg-foreground text-background">
+                      <MessageSquare className="size-5" />
+                    </span>
+                    <div>
+                      <h2 className="font-heading text-2xl font-semibold tracking-tight">Support request</h2>
+                      <p className="text-sm text-muted-foreground">We usually reply within one business day.</p>
                     </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                      {error && (
-                        <div className="bg-destructive/10 text-destructive px-6 py-4 rounded-xl text-sm font-medium">
-                          {error}
-                        </div>
-                      )}
-                      <div className="grid sm:grid-cols-2 gap-8">
-                        <div className="space-y-3">
-                          <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">First Name</label>
-                          <Input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Jane" className="h-14 bg-background border-border/50 rounded-xl px-5" />
-                        </div>
-                        <div className="space-y-3">
-                          <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Last Name</label>
-                          <Input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" className="h-14 bg-background border-border/50 rounded-xl px-5" />
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Email Address</label>
-                        <Input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="jane@example.com" className="h-14 bg-background border-border/50 rounded-xl px-5" />
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Subject</label>
-                        <Input name="subject" value={formData.subject} onChange={handleChange} required placeholder="How can we help you?" className="h-14 bg-background border-border/50 rounded-xl px-5" />
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-xs font-bold uppercase text-stone-400 tracking-[0.1em] ml-1">Message</label>
-                        <Textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Tell us more about your inquiry..." className="min-h-[180px] bg-background border-border/50 rounded-xl p-5 resize-none" />
-                      </div>
-                      <Button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full h-16 text-xl font-bold rounded-full transition-all active:scale-[0.98]"
-                      >
-                        {isSubmitting ? 'Sending...' : 'Send Message'}
-                      </Button>
-                    </form>
+                  </div>
+
+                  {error && (
+                    <div className="rounded-md border border-destructive/25 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
+                      {error}
+                    </div>
                   )}
-                </div>
-              </div>
+
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    <Field label="First name">
+                      <Input name="firstName" value={formData.firstName} onChange={handleChange} required placeholder="Jane" className="h-12 bg-background/70" />
+                    </Field>
+                    <Field label="Last name">
+                      <Input name="lastName" value={formData.lastName} onChange={handleChange} required placeholder="Doe" className="h-12 bg-background/70" />
+                    </Field>
+                  </div>
+
+                  <Field label="Email address">
+                    <Input name="email" value={formData.email} onChange={handleChange} required type="email" placeholder="jane@example.com" className="h-12 bg-background/70" />
+                  </Field>
+
+                  <Field label="Subject">
+                    <Input name="subject" value={formData.subject} onChange={handleChange} required placeholder="Producer onboarding" className="h-12 bg-background/70" />
+                  </Field>
+
+                  <Field label="Message">
+                    <Textarea name="message" value={formData.message} onChange={handleChange} required placeholder="Tell us what happened, what you scanned, or what you want to set up..." className="min-h-44 resize-none bg-background/70" />
+                  </Field>
+
+                  <Button type="submit" disabled={isSubmitting} className="w-full gap-2">
+                    <Send className="size-4" />
+                    {isSubmitting ? 'Sending...' : 'Send message'}
+                  </Button>
+                </form>
+              )}
             </div>
           </div>
         </section>
@@ -177,5 +160,14 @@ export default function ContactPage() {
 
       <Footer />
     </div>
+  );
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <label className="grid gap-2">
+      <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</span>
+      {children}
+    </label>
   );
 }

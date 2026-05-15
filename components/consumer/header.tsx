@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, LayoutDashboard } from 'lucide-react';
+import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X } from 'lucide-react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,12 @@ const navItems = [
   { href: '/shop', label: 'Marketplace', icon: ShoppingBag },
   { href: '/consumer/scanner', label: 'Scanner', icon: ScanLine },
   { href: '/consumer/orders', label: 'Orders', icon: Package },
+];
+
+const mobileMenuItems = [
+  { href: '/', label: 'HiveTrace home' },
+  { href: '/about', label: 'About HiveTrace' },
+  { href: '/contact', label: 'Contact support' },
 ];
 
 export function ConsumerHeader({ transparent = false }: { transparent?: boolean }) {
@@ -91,23 +97,34 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
       {mobileMenuOpen && (
         <div className="border-t border-border/60 bg-background/96 p-3 md:hidden motion-rise">
           <nav className="grid gap-1">
-            {navItems.map((item) => (
+            {mobileMenuItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={[
                   'rounded-md px-4 py-3 font-semibold transition-colors',
-                  isActive(item.href) ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  pathname === item.href ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                 ].join(' ')}
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="mt-3 flex items-center justify-between border-t border-border/60 pt-3">
-            <span className="text-sm font-semibold text-muted-foreground">Theme</span>
-            <ThemeToggle />
+          <div className="mt-3 grid gap-2 border-t border-border/60 pt-3">
+            <div className="flex items-center justify-between rounded-md border border-border/60 bg-card/50 px-4 py-3">
+              <span className="text-sm font-semibold text-muted-foreground">Theme</span>
+              <ThemeToggle />
+            </div>
+            {isAuthenticated ? (
+              <Link href={accountHref} onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full">Open account</Button>
+              </Link>
+            ) : (
+              <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
+                <Button variant="outline" className="w-full">Sign in</Button>
+              </Link>
+            )}
           </div>
         </div>
       )}
