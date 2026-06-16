@@ -27,6 +27,9 @@ export async function createBatch(data: {
   quantity: number;
   harvestDate: Date;
   description?: string;
+  honeyImage?: string;
+  packagingImage?: string;
+  price?: number;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');
@@ -51,11 +54,31 @@ export async function createBatch(data: {
       ...data,
       producerId: producer.id,
       verificationHash,
-      verified: true, // Auto-verify for now since it's signed
-      verifiedAt: new Date(),
+      verified: false, // Set to false so it requires Admin quality approval
+      verifiedAt: null,
     },
   });
 
   revalidatePath('/dashboard/batches');
   return batch;
 }
+
+export async function getBatchById(id: string) {
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
+  return await prisma.honeyBatch.findUnique({
+    where: { id },
+    include: {
+      producer: {
+        include: {
+          user: {
+            select: { name: true }
+          }
+        }
+      },
+      qrCodes: true,
+    }
+  });
+}
+

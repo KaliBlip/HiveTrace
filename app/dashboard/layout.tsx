@@ -1,4 +1,4 @@
-import { Sidebar } from '@/components/dashboard/sidebar';
+import { DashboardLayoutClient } from '@/components/dashboard/dashboard-layout-client';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -20,14 +20,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
-      <Sidebar />
-      <main className="relative flex-1 overflow-y-auto">
-        <div className="pointer-events-none absolute inset-0 hive-grid opacity-70" />
-        <div className="relative p-4 sm:p-6 lg:p-8">
-          {children}
-        </div>
-      </main>
-    </div>
+    <DashboardLayoutClient>
+      {children}
+    </DashboardLayoutClient>
   );
 }

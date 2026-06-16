@@ -115,60 +115,81 @@ export function ShopClient({ products }: { products: ShopProduct[] }) {
           {filtered.map((product, index) => (
             <article
               key={product.id}
-              className="motion-rise group overflow-hidden rounded-xl border border-border/60 bg-card/72 shadow-[var(--shadow-soft)] backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
+              className="motion-rise group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card/60 shadow-[var(--shadow-soft)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.35)]"
               style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
             >
-              <Link href={`/shop/${product.id}`} className="relative block aspect-[4/3] overflow-hidden bg-muted">
+              {/* Image Container */}
+              <Link href={`/shop/${product.id}`} className="relative block aspect-[4/3] w-full overflow-hidden bg-muted">
                 {product.imageUrl ? (
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
                   />
                 ) : (
                   <div className="h-full w-full bg-[url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=1200')] bg-cover bg-center" />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/58 via-transparent to-transparent opacity-80" />
-                <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-                  <Badge className="rounded-full bg-background/86 text-foreground backdrop-blur">Verified</Badge>
+                {/* Subtle Image Overlay */}
+                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300" />
+                
+                {/* Badges on Top */}
+                <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+                  <Badge className="rounded-full border border-primary/20 bg-background/90 text-foreground font-semibold px-2.5 py-0.5 backdrop-blur-sm shadow-sm text-[10px] uppercase tracking-wider">
+                    Verified
+                  </Badge>
                   {product.stock < 10 && (
-                    <Badge variant="destructive" className="rounded-full">Low stock</Badge>
+                    <Badge variant="destructive" className="rounded-full font-semibold px-2.5 py-0.5 text-[10px] uppercase tracking-wider">
+                      Low stock
+                    </Badge>
                   )}
                 </div>
-                <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3 text-white">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">Batch listing</p>
-                    <p className="mt-1 line-clamp-1 font-heading text-2xl font-semibold">{product.name}</p>
-                  </div>
-                  <span className="grid size-11 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-                    <ShoppingCart className="size-5" />
+
+                {/* View Details Hover Reveal */}
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px] bg-black/10">
+                  <span className="rounded-full bg-background/90 text-foreground border border-border/80 px-4 py-2 text-xs font-bold uppercase tracking-widest shadow-md">
+                    View Details
                   </span>
                 </div>
               </Link>
 
-              <div className="space-y-5 p-5">
+              {/* Content Details */}
+              <div className="flex flex-col flex-1 p-5 space-y-4">
+                {/* Producer and Rating Row */}
                 <div className="flex items-center justify-between gap-3">
-                  <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="size-4 shrink-0" />
+                  <div className="flex min-w-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    <MapPin className="size-3.5 shrink-0 text-primary" />
                     <span className="truncate">{product.producerName}</span>
                   </div>
                   <div className="flex items-center gap-1 text-primary">
-                    <Star className="size-4 fill-current" />
-                    <span className="text-sm font-semibold text-foreground">5.0</span>
+                    <Star className="size-3.5 fill-current" />
+                    <span className="text-xs font-bold text-foreground">5.0</span>
                   </div>
                 </div>
 
-                <p className="line-clamp-2 min-h-14 leading-7 text-muted-foreground">
-                  {product.description || 'Traceable honey listed from a registered HiveTrace batch.'}
-                </p>
+                {/* Product Name */}
+                <div className="flex-grow min-h-[2.5rem]">
+                  <Link href={`/shop/${product.id}`} className="block">
+                    <h3 className="font-heading text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary leading-snug">
+                      {product.name}
+                    </h3>
+                  </Link>
+                </div>
 
-                <div className="flex items-end justify-between gap-3 border-t border-border/60 pt-5">
-                  <div>
-                    <p className="font-heading text-3xl font-semibold tracking-tight">GH₵{product.price.toLocaleString()}</p>
-                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Per {product.unit}</p>
+                {/* Price and Add Button Row */}
+                <div className="flex items-center justify-between gap-3 border-t border-border/40 pt-4 mt-auto">
+                  <div className="space-y-0.5">
+                    <p className="font-heading text-2xl font-extrabold tracking-tight text-foreground">
+                      GH₵{product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
+                      Per {product.unit}
+                    </p>
                   </div>
-                  <Button onClick={() => addItem(product)} className="gap-2">
-                    <ShoppingCart className="size-4" />
+                  <Button
+                    onClick={() => addItem(product)}
+                    className="h-10 px-4 gap-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
+                  >
+                    <ShoppingCart className="size-3.5" />
                     Add
                   </Button>
                 </div>

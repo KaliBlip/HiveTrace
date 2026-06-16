@@ -1,15 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Sidebar } from '@/components/dashboard/sidebar';
-import { Menu, Shield } from 'lucide-react';
+import { Sidebar } from './sidebar';
+import { Menu, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
@@ -24,10 +20,10 @@ export default function AdminLayout({
         <header className="flex h-16 w-full items-center justify-between border-b border-border/60 bg-background/80 px-6 backdrop-blur-md lg:hidden shrink-0 z-30">
           <div className="flex items-center gap-2.5 font-bold">
             <span className="grid size-9 place-items-center rounded-md bg-primary text-primary-foreground">
-              <Shield className="size-4.5" />
+              <ShieldCheck className="size-4.5" />
             </span>
             <span className="font-heading text-lg tracking-tight">
-              Hive<span className="text-primary">Trace</span> <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-mono">Admin</span>
+              Hive<span className="text-primary">Trace</span>
             </span>
           </div>
           <Button

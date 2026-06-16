@@ -35,7 +35,7 @@ The application comes with mock data and supports three user types:
 
 ### 🛡️ Admin Account
 - **Email**: `admin@hivetrace.com`
-- **Password**: `password`
+- **Password**: `admin123`
 - **Access**: `/admin`
 - **Features**: Fraud monitoring, producer approval, batch audit
 

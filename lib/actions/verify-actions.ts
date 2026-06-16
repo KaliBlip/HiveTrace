@@ -50,6 +50,10 @@ export async function verifyBatchByHash(hash: string) {
     description: batch.description || 'No description provided.',
     verified: batch.verified,
     verificationHash: batch.verificationHash,
+    honeyImage: batch.honeyImage,
+    packagingImage: batch.packagingImage,
+    price: batch.price,
+    blockchainTx: batch.blockchainTx,
     producer: {
       name: batch.producer.user.name || batch.producer.businessName,
       location: batch.producer.location || 'Unknown',

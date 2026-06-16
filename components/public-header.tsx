@@ -16,8 +16,11 @@ const desktopNavItems = [
 ];
 
 const mobileMenuItems = [
+  { href: '/', label: 'Home' },
   { href: '/about', label: 'About HiveTrace' },
-  { href: '/contact', label: 'Contact support' },
+  { href: '/shop', label: 'Marketplace' },
+  { href: '/consumer/scanner', label: 'Scan Packaging' },
+  { href: '/contact', label: 'Contact Support' },
 ];
 
 export function PublicHeader() {
