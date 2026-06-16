@@ -11,7 +11,7 @@ const tabs = [
   { href: '/consumer/orders', label: 'Orders', icon: Package },
 ];
 
-const hiddenPrefixes = ['/auth', '/admin', '/dashboard', '/checkout'];
+const hiddenPrefixes = ['/auth', '/admin', '/dashboard', '/checkout', '/consumer/scanner'];
 
 export function MobileTabBar() {
   const pathname = usePathname();
