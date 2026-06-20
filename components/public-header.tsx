@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Menu, ScanLine, ShieldCheck, User, X } from 'lucide-react';
+import { LayoutDashboard, Menu, ScanLine, ShieldCheck, User, X, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/hooks/use-auth';
+import { useCart } from '@/lib/hooks/use-cart';
 
 const desktopNavItems = [
   { href: '/about', label: 'About' },
@@ -27,8 +28,10 @@ export function PublicHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, role, user } = useAuth();
+  const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
   const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
+  const cartItemsCount = totalItems();
 
   const isActive = (path: string) => pathname === path || (path !== '/' && pathname.startsWith(path));
 
@@ -94,6 +97,18 @@ export function PublicHeader() {
 
         <div className="flex items-center gap-2 lg:hidden">
           <ThemeToggle />
+          <button
+            onClick={toggleOpen}
+            className="relative grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 text-foreground active:scale-[0.98] transition-transform"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="size-5" />
+            {cartItemsCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground font-bold min-w-[20px] h-5 flex items-center justify-center rounded-full text-[9px] shadow ring-2 ring-background animate-in zoom-in duration-200">
+                {cartItemsCount}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => setIsMenuOpen((open) => !open)}
             className="grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 text-foreground"

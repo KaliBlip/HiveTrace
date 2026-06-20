@@ -9,31 +9,21 @@ import { useCart } from '@/lib/hooks/use-cart';
 import Link from 'next/link';
 
 export function CartOverlay() {
-  const [isOpen, setIsOpen] = useState(false);
-  const { items, removeItem, updateQuantity, totalItems, totalPrice } = useCart();
-
+  const { isOpen, toggleOpen, items, removeItem, updateQuantity, totalItems, totalPrice } = useCart();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const toggleOpen = () => setIsOpen(!isOpen);
-
-  if (!mounted) return (
-    <button
-      className="fixed bottom-8 right-8 z-[100] w-20 h-20 bg-stone-900 text-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-center border-2 border-white/5"
-    >
-      <ShoppingCart className="w-8 h-8" />
-    </button>
-  );
+  if (!mounted) return null;
 
   return (
     <>
-      {/* Floating Cart Button */}
+      {/* Floating Cart Button (hidden on mobile, visible on desktop) */}
       <button
         onClick={toggleOpen}
-        className="fixed bottom-8 right-8 z-[100] w-20 h-20 bg-stone-900 text-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-center group transition-all duration-500 hover:scale-110 active:scale-95 border-2 border-white/5"
+        className="hidden sm:flex fixed bottom-8 right-8 z-[100] w-20 h-20 bg-stone-900 text-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] items-center justify-center group transition-all duration-500 hover:scale-110 active:scale-95 border-2 border-white/5"
       >
         <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
         <ShoppingCart className="w-8 h-8 group-hover:text-primary transition-colors" />

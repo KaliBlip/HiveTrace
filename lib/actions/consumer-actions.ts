@@ -39,7 +39,11 @@ export async function getConsumerOrders() {
     include: {
       items: {
         include: {
-          product: true
+          product: {
+            include: {
+              batch: true
+            }
+          }
         }
       }
     },

@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X } from 'lucide-react';
+import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/hooks/use-auth';
+import { useCart } from '@/lib/hooks/use-cart';
 
 const navItems = [
   { href: '/shop', label: 'Marketplace', icon: ShoppingBag },
@@ -24,8 +25,10 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
   const { isAuthenticated, role, user } = useAuth();
+  const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
   const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
+  const cartItemsCount = totalItems();
   const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
 
   return (
@@ -85,13 +88,28 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
           )}
         </div>
 
-        <button
-          onClick={() => setMobileMenuOpen((open) => !open)}
-          className="grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 md:hidden"
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            onClick={toggleOpen}
+            className="relative grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 text-foreground active:scale-[0.98] transition-transform"
+            aria-label="Open cart"
+          >
+            <ShoppingCart className="size-5" />
+            {cartItemsCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-primary text-primary-foreground font-bold min-w-[20px] h-5 flex items-center justify-center rounded-full text-[9px] shadow ring-2 ring-background animate-in zoom-in duration-200">
+                {cartItemsCount}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setMobileMenuOpen((open) => !open)}
+            className="grid size-11 place-items-center rounded-md border border-border/60 bg-card/55 text-foreground"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
       </div>
 
       {mobileMenuOpen && (
