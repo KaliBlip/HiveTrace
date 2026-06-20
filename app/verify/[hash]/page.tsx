@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { verifyBatchByHash } from '@/lib/actions/verify-actions';
+import { registerScanByHash } from '@/lib/actions/scan-actions';
 
 export default function VerifyBatchPage() {
   const params = useParams();
@@ -26,20 +27,47 @@ export default function VerifyBatchPage() {
 
   const [batch, setBatch] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [geoState, setGeoState] = useState<'prompting' | 'acquired' | 'denied' | 'unsupported'>('prompting');
 
   useEffect(() => {
-    async function lookup() {
+    async function lookupAndLog() {
       setLoading(true);
+      
+      let coords: { lat?: number; lng?: number } = {};
+      if (typeof window !== 'undefined' && navigator.geolocation) {
+        try {
+          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+              enableHighAccuracy: true,
+              timeout: 5000,
+            });
+          });
+          coords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setGeoState('acquired');
+        } catch {
+          setGeoState('denied');
+        }
+      } else {
+        setGeoState('unsupported');
+      }
+
       try {
         const result = await verifyBatchByHash(hash);
         setBatch(result);
+        
+        if (result) {
+          await registerScanByHash(hash, coords);
+        }
       } catch {
         setBatch(null);
       } finally {
         setLoading(false);
       }
     }
-    lookup();
+    lookupAndLog();
   }, [hash]);
 
   if (loading) return (
@@ -178,13 +206,26 @@ export default function VerifyBatchPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Transparency Status</span>
               </div>
               {batch.verified ? (
-                <p className="font-heading font-bold text-2xl text-emerald-600 flex items-center gap-2 italic uppercase">
-                  Fully Verified
-                </p>
+                <div className="space-y-1">
+                  <p className="font-heading font-bold text-2xl text-emerald-600 flex items-center gap-2 italic uppercase">
+                    Fully Verified
+                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                    {geoState === 'acquired' && '✓ GPS Verified Scan'}
+                    {geoState === 'denied' && '⚠ Scan Logged (GPS Denied)'}
+                    {geoState === 'prompting' && '⌛ Resolving Location...'}
+                    {geoState === 'unsupported' && '⚠ Location Unsupported'}
+                  </p>
+                </div>
               ) : (
-                <p className="font-heading font-bold text-2xl text-amber-600 flex items-center gap-2 italic uppercase">
-                  Unverified
-                </p>
+                <div className="space-y-1">
+                  <p className="font-heading font-bold text-2xl text-amber-600 flex items-center gap-2 italic uppercase">
+                    Unverified
+                  </p>
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                    Awaiting admin quality check
+                  </p>
+                </div>
               )}
             </div>
           </div>

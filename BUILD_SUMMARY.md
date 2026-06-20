@@ -14,7 +14,7 @@ The complete HiveTrace honey traceability platform has been successfully built f
 - **API Routes**: 6 (batch, QR, producer, reviews)
 - **Utilities**: 8 (crypto, QR, helpers, config, store, auth, etc.)
 - **Documentation**: 4 comprehensive guides
-- **Configuration**: 3 (layout, middleware, auth)
+- **Configuration**: 3 (layout, proxy, auth)
 
 ### Lines of Code: 10,000+
 - TypeScript/React: 7,000+
@@ -125,7 +125,7 @@ Landing Page
 ### Authentication & Authorization
 - NextAuth.js integration
 - Role-based access control (RBAC)
-- Protected routes with middleware
+- Protected routes with proxy
 - Session management
 - Password hashing preparation
 
@@ -360,7 +360,7 @@ The application is production-ready with:
 - 8 utility/library files
 - 6 API routes
 - 3 configuration files
-- 1 middleware file
+- 1 proxy file
 
 ### Documentation
 - README.md (comprehensive guide)

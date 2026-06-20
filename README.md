@@ -73,7 +73,7 @@ A modern Next.js application for tracking honey from hive to table with cryptogr
 │   ├── store.ts                  # Mock data store
 │   ├── config.ts                 # App configuration
 │   └── utils.ts                  # Shared utilities
-├── middleware.ts                 # Next.js middleware for route protection
+├── proxy.ts                      # Next.js proxy for route protection
 ├── public/                       # Static assets
 └── prisma/                       # Database schema (prepared)
 ```

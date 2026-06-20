@@ -154,7 +154,7 @@ pnpm db:studio        # Open Prisma Studio
 ### Authentication
 - [x] Login page with email/password
 - [x] Register page with role selection
-- [x] Protected routes with middleware
+- [x] Protected routes with proxy
 - [x] NextAuth.js integration
 
 ### Producer Features

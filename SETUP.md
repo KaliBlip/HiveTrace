@@ -88,7 +88,7 @@ prisma/
 - User registration with role selection (producer, consumer, admin)
 - Email-based login
 - NextAuth.js integration
-- Protected routes with middleware
+- Protected routes with proxy
 - Session management
 
 ### Producer Dashboard

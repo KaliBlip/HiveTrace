@@ -77,7 +77,7 @@ hivetrace/
 │   ├── providers/
 │   │   └── auth-provider.tsx
 │   └── utils.ts (existing)
-├── middleware.ts
+├── proxy.ts
 ├── public/
 │   ├── hero-beehive.jpg (generated)
 │   ├── verification-badge.jpg (generated)
@@ -172,8 +172,8 @@ hivetrace/
 8. **lib/hooks/use-auth.ts** - Authentication hook
 9. **lib/providers/auth-provider.tsx** - Auth provider wrapper
 
-### Middleware
-10. **middleware.ts** - Next.js route protection middleware
+### Proxy
+10. **proxy.ts** - Next.js route protection proxy
 
 ---
 
@@ -320,7 +320,7 @@ Grand Total:           11,700+ lines
 4. **components/dashboard/sidebar.tsx** - Navigation pattern
 
 ### Production Ready
-1. **middleware.ts** - Route protection
+1. **proxy.ts** - Route protection
 2. **lib/auth.ts** - Authentication setup
 3. **prisma/schema.prisma** - Database structure
 4. **.env.example** - Configuration template
@@ -373,7 +373,7 @@ zustand               - State management (prepared)
 - [x] All API routes created
 - [x] All documentation written
 - [x] Configuration files set up
-- [x] Middleware implemented
+- [x] Proxy implemented
 - [x] Error handling added
 - [x] Loading states included
 - [x] Design system applied
