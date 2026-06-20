@@ -1,8 +1,9 @@
 import { getProductById } from '@/lib/actions/product-actions';
 import { ProductDetailClient } from '@/components/shop/product-detail-client';
+import { ConsumerHeader } from '@/components/consumer/header';
+import { Footer } from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -10,14 +11,17 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-20">
-        <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">Product Not Found</h1>
-          <Link href="/shop">
-            <Button variant="outline">Back to Shop</Button>
-          </Link>
+      <>
+        <ConsumerHeader />
+        <div className="min-h-screen flex items-center justify-center pt-20">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold">Product Not Found</h1>
+            <Link href="/shop">
+              <Button variant="outline">Back to Marketplace</Button>
+            </Link>
+          </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -34,14 +38,21 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     producerId: product.producerId,
     createdAt: product.createdAt.toISOString(),
     producerName: product.producer?.businessName || product.producer?.user?.name || 'Unknown',
-    producerLocation: typeof product.producer?.location === 'object' 
-      ? (product.producer.location as any)?.address || 'Unknown Location'
-      : 'Unknown Location',
+    producerLocation:
+      typeof product.producer?.location === 'object'
+        ? (product.producer.location as any)?.address || 'Unknown Location'
+        : 'Unknown Location',
     batchCode: product.batch?.batchCode || '',
     batchHarvestDate: product.batch?.harvestDate?.toISOString() || '',
     honeyType: product.batch?.honeyType || '',
     verified: product.batch?.verified || false,
   };
 
-  return <ProductDetailClient product={serialized} />;
+  return (
+    <>
+      <ConsumerHeader />
+      <ProductDetailClient product={serialized} />
+      <Footer />
+    </>
+  );
 }

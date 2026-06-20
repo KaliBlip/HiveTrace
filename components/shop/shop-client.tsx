@@ -1,26 +1,23 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { 
-  BadgeCheck, 
-  Filter, 
-  MapPin, 
-  Search, 
-  ShieldCheck, 
-  ShoppingCart, 
-  SlidersHorizontal, 
-  Star,
+import {
+  Archive,
+  BadgeCheck,
   ChevronDown,
-  ChevronUp,
-  RotateCcw,
+  ChevronRight,
   Lock,
-  ArrowUpDown,
-  Archive
+  MapPin,
+  RotateCcw,
+  Search,
+  ShieldCheck,
+  ShoppingCart,
+  SlidersHorizontal,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/lib/hooks/use-cart';
 
 interface ShopProduct {
@@ -38,351 +35,356 @@ interface ShopProduct {
   producerName: string;
 }
 
-export function ShopClient({ products }: { products: ShopProduct[] }) {
-  const { addItem } = useCart();
+const HONEY_VARIETIES = ['All', 'Wildflower', 'Clover', 'Acacia', 'Manuka', 'Raw'];
+const STOCK_OPTIONS = [
+  { key: 'All', label: 'All items' },
+  { key: 'InStock', label: 'In stock' },
+  { key: 'LowStock', label: 'Low stock' },
+];
+const SORT_OPTIONS = [
+  { key: 'newest', label: 'Newest first' },
+  { key: 'priceAsc', label: 'Price: low to high' },
+  { key: 'priceDesc', label: 'Price: high to low' },
+  { key: 'stock', label: 'Most available' },
+];
 
-  // State Management
+/* ─────────────────────────────────────────────────────── */
+/* Minimal Product Card                                    */
+/* ─────────────────────────────────────────────────────── */
+function ProductCard({ product, index }: { product: ShopProduct; index: number }) {
+  const { addItem } = useCart();
+  const isLowStock = product.stock > 0 && product.stock < 10;
+  const isOutOfStock = product.stock === 0;
+
+  return (
+    <article
+      className="group relative flex flex-col bg-card border border-border/60 rounded-2xl overflow-hidden transition-all duration-300 hover:border-primary/40 hover:shadow-[0_8px_32px_-8px_oklch(0.76_0.17_76/0.18)] motion-rise"
+      style={{ animationDelay: `${Math.min(index, 10) * 40}ms` }}
+    >
+      {/* Image */}
+      <Link href={`/shop/${product.id}`} className="relative block aspect-[5/4] overflow-hidden bg-muted shrink-0">
+        {product.imageUrl ? (
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+          />
+        ) : (
+          <div
+            className="h-full w-full bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=900')" }}
+          />
+        )}
+
+        {/* Status badge */}
+        <div className="absolute top-3 left-3 flex gap-1.5">
+          {isOutOfStock ? (
+            <span className="rounded-full bg-background/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground border border-border/60 backdrop-blur-sm">
+              Out of stock
+            </span>
+          ) : isLowStock ? (
+            <span className="rounded-full bg-amber-500/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+              Only {product.stock} left
+            </span>
+          ) : (
+            <span className="rounded-full bg-background/90 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary border border-primary/20 backdrop-blur-sm flex items-center gap-1">
+              <ShieldCheck className="size-2.5" />
+              Verified
+            </span>
+          )}
+        </div>
+
+        {/* Quick view hover */}
+        <div className="absolute inset-0 flex items-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <span className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-background/95 backdrop-blur-md border border-border/60 py-2.5 text-xs font-bold uppercase tracking-widest text-foreground shadow-sm">
+            View details <ChevronRight className="size-3" />
+          </span>
+        </div>
+      </Link>
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-4 gap-3">
+        {/* Producer */}
+        <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <MapPin className="size-3 shrink-0 text-primary" />
+          <span className="truncate">{product.producerName}</span>
+        </div>
+
+        {/* Name */}
+        <Link href={`/shop/${product.id}`} className="block">
+          <h3 className="font-heading text-base font-bold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary line-clamp-2">
+            {product.name}
+          </h3>
+        </Link>
+
+        {/* Description */}
+        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed flex-1">
+          {product.description}
+        </p>
+
+        {/* Footer: Price + CTA */}
+        <div className="flex items-center justify-between gap-2 pt-2 border-t border-border/40 mt-auto">
+          <div>
+            <p className="font-heading text-xl font-extrabold tracking-tight text-foreground leading-none">
+              GH₵{product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+            <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mt-1">
+              per {product.unit}
+            </p>
+          </div>
+
+          <button
+            onClick={() => addItem(product as any)}
+            disabled={isOutOfStock}
+            className="grid size-10 place-items-center rounded-xl border border-border/70 bg-background text-foreground transition-all hover:border-primary hover:bg-primary hover:text-primary-foreground active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+            aria-label={`Add ${product.name} to cart`}
+          >
+            <ShoppingCart className="size-4" />
+          </button>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* Filter Chip                                             */
+/* ─────────────────────────────────────────────────────── */
+function FilterChip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
+        active
+          ? 'bg-foreground text-background border-foreground shadow-sm'
+          : 'border-border/70 bg-background text-muted-foreground hover:border-foreground/40 hover:text-foreground'
+      }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* Main ShopClient                                         */
+/* ─────────────────────────────────────────────────────── */
+export function ShopClient({ products }: { products: ShopProduct[] }) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilterPanel, setShowFilterPanel] = useState(false);
   const [selectedVariety, setSelectedVariety] = useState('All');
   const [selectedStock, setSelectedStock] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
 
-  // Filter Reset Check
-  const hasActiveFilters = useMemo(() => {
-    return selectedVariety !== 'All' || selectedStock !== 'All' || sortBy !== 'newest';
-  }, [selectedVariety, selectedStock, sortBy]);
+  const hasActiveFilters = selectedVariety !== 'All' || selectedStock !== 'All' || sortBy !== 'newest' || searchQuery.trim() !== '';
 
-  const handleResetFilters = () => {
+  const handleReset = () => {
     setSelectedVariety('All');
     setSelectedStock('All');
     setSortBy('newest');
     setSearchQuery('');
   };
 
-  // Filtering & Sorting Logic
   const filtered = useMemo(() => {
     let result = products;
 
-    // 1. Text Search Query
     const query = searchQuery.trim().toLowerCase();
     if (query) {
-      result = result.filter((product) =>
-        [product.name, product.description, product.producerName]
-          .filter(Boolean)
-          .some((value) => value.toLowerCase().includes(query))
+      result = result.filter((p) =>
+        [p.name, p.description, p.producerName].filter(Boolean).some((v) => v.toLowerCase().includes(query))
       );
     }
-
-    // 2. Honey Variety Filter
     if (selectedVariety !== 'All') {
-      result = result.filter((product) => {
-        const matchesName = product.name.toLowerCase().includes(selectedVariety.toLowerCase());
-        const matchesDesc = product.description.toLowerCase().includes(selectedVariety.toLowerCase());
-        return matchesName || matchesDesc;
-      });
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(selectedVariety.toLowerCase()) ||
+          p.description.toLowerCase().includes(selectedVariety.toLowerCase())
+      );
     }
+    if (selectedStock === 'InStock') result = result.filter((p) => p.stock > 0);
+    else if (selectedStock === 'LowStock') result = result.filter((p) => p.stock > 0 && p.stock < 10);
 
-    // 3. Stock Availability Filter
-    if (selectedStock === 'InStock') {
-      result = result.filter((product) => product.stock > 0);
-    } else if (selectedStock === 'LowStock') {
-      result = result.filter((product) => product.stock < 10 && product.stock > 0);
-    }
-
-    // 4. Sorting Logic
     const sorted = [...result];
-    if (sortBy === 'priceAsc') {
-      sorted.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'priceDesc') {
-      sorted.sort((a, b) => b.price - a.price);
-    } else if (sortBy === 'newest') {
-      sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    } else if (sortBy === 'stock') {
-      sorted.sort((a, b) => b.stock - a.stock);
-    }
+    if (sortBy === 'priceAsc') sorted.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'priceDesc') sorted.sort((a, b) => b.price - a.price);
+    else if (sortBy === 'newest') sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    else if (sortBy === 'stock') sorted.sort((a, b) => b.stock - a.stock);
 
     return sorted;
   }, [products, searchQuery, selectedVariety, selectedStock, sortBy]);
 
-  // Derived mock batch code mapping (since products don't directly serialize batchCode in this route)
-  const getMockBatchCode = (productId: string) => {
-    if (productId === 'prod-1') return 'HT-2024-WFB-001';
-    if (productId === 'prod-2') return 'HT-2024-CLP-002';
-    return 'HT-2024-GEN-999';
-  };
-
   return (
-    <main className="min-h-screen bg-background pb-20 text-foreground">
-      {/* Header & Search Controls */}
-      <section className="relative overflow-hidden px-4 pb-14 pt-28 sm:px-6 lg:px-8">
-        <div className="pointer-events-none absolute inset-0 hive-grid" />
-        
-        <div className="relative mx-auto max-w-7xl">
-          <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-end">
-            
-            <div className="motion-rise space-y-6">
-              <Badge className="rounded-full border border-primary/25 bg-primary/12 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-primary w-fit flex items-center gap-1.5">
-                <Lock className="size-3 text-primary" />
-                Direct Cryptographic Marketplace
-              </Badge>
-              <div className="space-y-4">
-                <h1 className="text-balance font-heading text-5xl font-bold leading-[0.92] tracking-tight sm:text-6xl">
-                  Verified honey, direct from signed batches.
-                </h1>
-                <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-                  Browse products directly connected to active apiaries, laboratory purity logs, and tamper-proof ledger codes.
-                </p>
-              </div>
+    <main className="min-h-screen bg-background text-foreground pb-24">
+
+      {/* ── Hero Bar ─────────────────────────────────────── */}
+      <section className="relative overflow-hidden border-b border-border/50 bg-card/40 pt-24 pb-10 px-4 sm:px-6 lg:px-8">
+        <div className="pointer-events-none absolute inset-0 hive-grid opacity-40" />
+        <div className="relative mx-auto max-w-7xl flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="motion-rise space-y-2">
+            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-primary">
+              <Lock className="size-3" />
+              Cryptographic Marketplace
             </div>
-
-            <div className="motion-rise motion-delay-2 rounded-xl border border-border/60 bg-card/65 p-4 shadow-[var(--shadow-soft)] backdrop-blur">
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search honey type, beekeeper, notes..."
-                    className="h-[52px] rounded-md border-border/70 bg-background/70 pl-12 text-base focus-visible:ring-primary focus-visible:border-primary focus-visible:outline-none"
-                    value={searchQuery}
-                    onChange={(event) => setSearchQuery(event.target.value)}
-                  />
-                </div>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFilters(!showFilters)} 
-                  className={`h-[52px] gap-2 px-6 active:scale-[0.98] transition-transform ${showFilters ? 'bg-primary/10 border-primary/30 text-primary' : 'border-border/80 text-muted-foreground hover:text-foreground'}`}
-                >
-                  <SlidersHorizontal className="size-4" />
-                  Filters
-                  {showFilters ? <ChevronUp className="size-4 shrink-0" /> : <ChevronDown className="size-4 shrink-0" />}
-                </Button>
-              </div>
-
-              {/* Dynamic Active Indicators */}
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground border-t border-border/30 pt-3">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-foreground font-mono">{filtered.length}</span>
-                  <span>listings matching criteria</span>
-                </div>
-                {hasActiveFilters && (
-                  <button 
-                    onClick={handleResetFilters}
-                    className="text-xs text-primary font-semibold flex items-center gap-1.5 hover:underline"
-                  >
-                    <RotateCcw className="size-3" />
-                    Reset Search & Filters
-                  </button>
-                )}
-              </div>
-            </div>
-
+            <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl">
+              Verified Honey
+            </h1>
+            <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
+              Every listing is signed and linked to a tamper-proof batch record — hive to doorstep.
+            </p>
           </div>
 
-          {/* Expandable Glassmorphic Filter Panel */}
-          {showFilters && (
-            <div className="mt-6 glass-panel border rounded-xl p-6 sm:p-8 animate-rise-in relative z-20">
-              <div className="grid gap-6 sm:grid-cols-3">
-                
-                {/* 1. Honey Varieties */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Honey Variety</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {['All', 'Wildflower', 'Clover'].map((variety) => (
-                      <button
-                        key={variety}
-                        onClick={() => setSelectedVariety(variety)}
-                        className={`text-xs px-3 py-1.5 rounded-full font-semibold border transition-all ${selectedVariety === variety ? 'bg-primary border-primary text-primary-foreground shadow-sm' : 'border-border bg-background/50 text-muted-foreground hover:text-foreground'}`}
-                      >
-                        {variety === 'All' ? 'All Varieties' : variety}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2. Availability / Stock */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Availability</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {['All', 'InStock', 'LowStock'].map((stockOption) => (
-                      <button
-                        key={stockOption}
-                        onClick={() => setSelectedStock(stockOption)}
-                        className={`text-xs px-3 py-1.5 rounded-full font-semibold border transition-all ${selectedStock === stockOption ? 'bg-primary border-primary text-primary-foreground shadow-sm' : 'border-border bg-background/50 text-muted-foreground hover:text-foreground'}`}
-                      >
-                        {stockOption === 'All' ? 'All Stock' : stockOption === 'InStock' ? 'In Stock Only' : 'Low Stock (<10)'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Sort Order */}
-                <div className="space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sort By</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {[
-                      { key: 'newest', label: 'Newest First' },
-                      { key: 'priceAsc', label: 'Price: Low to High' },
-                      { key: 'priceDesc', label: 'Price: High to Low' },
-                      { key: 'stock', label: 'Availability Count' },
-                    ].map((sortOption) => (
-                      <button
-                        key={sortOption.key}
-                        onClick={() => setSortBy(sortOption.key)}
-                        className={`text-xs px-3 py-1.5 rounded-full font-semibold border transition-all ${sortBy === sortOption.key ? 'bg-primary border-primary text-primary-foreground shadow-sm' : 'border-border bg-background/50 text-muted-foreground hover:text-foreground'}`}
-                      >
-                        {sortOption.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          )}
-
+          {/* Trust pills */}
+          <div className="motion-rise motion-delay-2 flex flex-wrap gap-2">
+            {[
+              { icon: ShieldCheck, text: 'Signed provenance' },
+              { icon: BadgeCheck, text: 'Verified beekeepers' },
+              { icon: ShoppingCart, text: 'Secure checkout' },
+            ].map(({ icon: Icon, text }) => (
+              <span key={text} className="flex items-center gap-1.5 rounded-full border border-border/70 bg-background px-3 py-1.5 text-xs font-semibold text-muted-foreground">
+                <Icon className="size-3.5 text-primary" />
+                {text}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Safety / Feature Ribbons */}
-      <section className="border-y border-border/60 bg-card/38 px-4 py-5 sm:px-6 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
-          {[
-            { icon: ShieldCheck, title: 'Signed provenance', text: 'HMAC-SHA256 signature linked' },
-            { icon: BadgeCheck, title: 'Apiary Authenticity', text: '100% verified beekeeper registry' },
-            { icon: ShoppingCart, title: 'Secure Paystack Checkouts', text: 'Secured transaction gateway' },
-          ].map((item) => {
-            const Icon = item.icon;
-            return (
-              <div key={item.title} className="flex items-center gap-3 rounded-lg border border-border/50 bg-background/38 p-4">
-                <span className="grid size-10 place-items-center rounded-md bg-primary/12 text-primary">
-                  <Icon className="size-5" />
-                </span>
-                <div>
-                  <h4 className="font-semibold text-sm">{item.title}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">{item.text}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      {/* ── Controls bar ─────────────────────────────────── */}
+      <div className="sticky top-16 z-30 border-b border-border/50 bg-background/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl flex items-center gap-3 py-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search honey, beekeeper…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-10 pl-10 pr-4 rounded-xl border-border/70 bg-card/50 text-sm focus-visible:ring-primary focus-visible:border-primary"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                <X className="size-3.5" />
+              </button>
+            )}
+          </div>
 
-      {/* Product Grid Section */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((product, index) => (
-            <article
-              key={product.id}
-              className="motion-rise group flex flex-col overflow-hidden rounded-2xl border border-border/50 bg-card/60 shadow-[var(--shadow-soft)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_20px_40px_rgba(0,0,0,0.35)]"
-              style={{ animationDelay: `${Math.min(index, 8) * 45}ms` }}
+          {/* Filter toggle */}
+          <button
+            onClick={() => setShowFilterPanel(!showFilterPanel)}
+            className={`flex items-center gap-2 rounded-xl border px-4 h-10 text-xs font-semibold transition-all ${
+              showFilterPanel || hasActiveFilters
+                ? 'border-primary/50 bg-primary/10 text-primary'
+                : 'border-border/70 text-muted-foreground hover:text-foreground hover:border-border'
+            }`}
+          >
+            <SlidersHorizontal className="size-3.5" />
+            <span className="hidden sm:inline">Filters</span>
+            {hasActiveFilters && !showFilterPanel && (
+              <span className="size-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold grid place-items-center">
+                •
+              </span>
+            )}
+            <ChevronDown className={`size-3.5 transition-transform ${showFilterPanel ? 'rotate-180' : ''}`} />
+          </button>
+
+          {/* Count + reset */}
+          <span className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground whitespace-nowrap">
+            <span className="font-bold text-foreground font-mono">{filtered.length}</span>
+            {filtered.length === 1 ? 'result' : 'results'}
+          </span>
+
+          {hasActiveFilters && (
+            <button
+              onClick={handleReset}
+              className="flex items-center gap-1 text-xs text-primary font-semibold hover:underline whitespace-nowrap"
             >
-              {/* Image Container */}
-              <Link href={`/shop/${product.id}`} className="relative block aspect-[4/3] w-full overflow-hidden bg-muted">
-                {product.imageUrl ? (
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition duration-700 ease-out group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-[url('https://images.unsplash.com/photo-1587334206516-951e046a5ef0?q=80&w=1200')] bg-cover bg-center" />
-                )}
-                {/* Subtle Image Overlay */}
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors duration-300" />
-                
-                {/* Badges on Top */}
-                <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-                  <Badge className="rounded-full border border-primary/20 bg-background/90 text-primary font-bold px-2.5 py-0.5 backdrop-blur-sm shadow-sm text-[9px] uppercase tracking-wider flex items-center gap-1">
-                    <ShieldCheck className="size-3 text-primary" />
-                    Verified
-                  </Badge>
-                  {product.stock < 10 && (
-                    <Badge variant="destructive" className="rounded-full font-bold px-2.5 py-0.5 text-[9px] uppercase tracking-wider">
-                      Low stock
-                    </Badge>
-                  )}
-                </div>
-
-                {/* View Details Hover Reveal */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-[2px] bg-black/15">
-                  <span className="rounded-full bg-background/95 text-foreground border border-border/80 px-4 py-2.5 text-xs font-bold uppercase tracking-widest shadow-md active:scale-95 transition-transform">
-                    Inspect Registry Details
-                  </span>
-                </div>
-              </Link>
-
-              {/* Content Details */}
-              <div className="flex flex-col flex-1 p-5 space-y-4">
-                
-                {/* Producer and Rating Row */}
-                <div className="flex items-center justify-between gap-3 border-b border-border/30 pb-3">
-                  <div className="flex min-w-0 items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    <MapPin className="size-3.5 shrink-0 text-primary" />
-                    <span className="truncate">{product.producerName}</span>
-                  </div>
-                  <div className="flex items-center gap-1 text-primary">
-                    <Star className="size-3.5 fill-current text-primary" />
-                    <span className="text-xs font-bold text-foreground">4.8</span>
-                  </div>
-                </div>
-
-                {/* Product Name & Description */}
-                <div className="flex-grow space-y-2">
-                  <Link href={`/shop/${product.id}`} className="block">
-                    <h3 className="font-heading text-lg font-bold tracking-tight text-foreground transition-colors group-hover:text-primary leading-snug">
-                      {product.name}
-                    </h3>
-                  </Link>
-                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-
-                {/* Cryptographic Batch Code Label */}
-                <div className="flex items-center gap-1.5 bg-muted/60 border px-2.5 py-1 rounded-md text-[10px] font-mono text-muted-foreground w-fit select-all">
-                  <Lock className="size-3 text-primary shrink-0" />
-                  <span>Batch:</span>
-                  <span className="font-semibold text-foreground">{getMockBatchCode(product.id)}</span>
-                </div>
-
-                {/* Price and Add Button Row */}
-                <div className="flex items-center justify-between gap-3 border-t border-border/40 pt-4 mt-auto">
-                  <div className="space-y-0.5">
-                    <p className="font-heading text-2xl font-extrabold tracking-tight text-foreground">
-                      GH₵{product.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </p>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">
-                      Per {product.unit}
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => addItem(product as any)}
-                    className="h-10 px-4 gap-2 rounded-xl text-xs font-bold uppercase tracking-widest shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all bg-primary text-primary-foreground hover:bg-primary/95"
-                  >
-                    <ShoppingCart className="size-3.5" />
-                    Add to Cart
-                  </Button>
-                </div>
-
-              </div>
-            </article>
-          ))}
+              <RotateCcw className="size-3" />
+              <span className="hidden sm:inline">Reset</span>
+            </button>
+          )}
         </div>
 
-        {/* Empty Search Fallback */}
-        {filtered.length === 0 && (
-          <div className="rounded-xl border border-dashed border-border/70 bg-card/55 px-6 py-20 text-center max-w-2xl mx-auto space-y-4">
-            <Archive className="mx-auto size-12 text-muted-foreground animate-pulse" />
-            <h2 className="font-heading text-2xl font-bold tracking-tight">No listings found</h2>
-            <p className="mx-auto max-w-md text-sm text-muted-foreground leading-relaxed">
-              No honey listings match your active filters or query. Try resetting your search or expanding the variety selections.
-            </p>
-            <div className="pt-2">
-              <Button variant="outline" className="gap-2 mx-auto active:scale-[0.98]" onClick={handleResetFilters}>
-                <RotateCcw className="size-3.5" />
-                Clear all filters
-              </Button>
+        {/* Filter Panel (inline dropdown) */}
+        {showFilterPanel && (
+          <div className="border-t border-border/40 py-4">
+            <div className="mx-auto max-w-7xl grid gap-6 sm:grid-cols-3">
+              {/* Variety */}
+              <div className="space-y-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Variety</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {HONEY_VARIETIES.map((v) => (
+                    <FilterChip
+                      key={v}
+                      label={v === 'All' ? 'All varieties' : v}
+                      active={selectedVariety === v}
+                      onClick={() => setSelectedVariety(v)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Availability */}
+              <div className="space-y-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Availability</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {STOCK_OPTIONS.map((o) => (
+                    <FilterChip
+                      key={o.key}
+                      label={o.label}
+                      active={selectedStock === o.key}
+                      onClick={() => setSelectedStock(o.key)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Sort */}
+              <div className="space-y-2.5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">Sort by</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SORT_OPTIONS.map((o) => (
+                    <FilterChip
+                      key={o.key}
+                      label={o.label}
+                      active={sortBy === o.key}
+                      onClick={() => setSortBy(o.key)}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
+          </div>
+        )}
+      </div>
+
+      {/* ── Product Grid ─────────────────────────────────── */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+        {filtered.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+            {filtered.map((product, i) => (
+              <ProductCard key={product.id} product={product} index={i} />
+            ))}
+          </div>
+        ) : (
+          <div className="mx-auto max-w-sm py-24 text-center space-y-4">
+            <div className="mx-auto size-14 rounded-2xl border border-border/60 bg-card grid place-items-center">
+              <Archive className="size-6 text-muted-foreground" />
+            </div>
+            <h2 className="font-heading text-xl font-bold">No listings found</h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              No honey listings match your filters. Try adjusting your search or clearing the filters.
+            </p>
+            <Button variant="outline" className="gap-2 mt-2" onClick={handleReset}>
+              <RotateCcw className="size-3.5" />
+              Clear all filters
+            </Button>
           </div>
         )}
       </section>

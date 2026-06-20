@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -28,7 +28,9 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
   const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
   const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
-  const cartItemsCount = totalItems();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const cartItemsCount = mounted ? totalItems() : 0;
   const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
 
   return (

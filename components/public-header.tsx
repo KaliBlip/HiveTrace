@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { LayoutDashboard, Menu, ScanLine, ShieldCheck, User, X, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,9 @@ export function PublicHeader() {
   const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
   const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
-  const cartItemsCount = totalItems();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  const cartItemsCount = mounted ? totalItems() : 0;
 
   const isActive = (path: string) => pathname === path || (path !== '/' && pathname.startsWith(path));
 
