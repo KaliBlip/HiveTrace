@@ -16,6 +16,17 @@ export function CartOverlay() {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!mounted) return null;
 
   return (
@@ -63,7 +74,7 @@ export function CartOverlay() {
           </div>
 
           {/* Items List */}
-          <ScrollArea className="flex-1 px-10 py-6">
+          <ScrollArea className="flex-1 min-h-0 px-10 py-6">
             {items.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-8 py-24">
                 <div className="w-24 h-24 bg-muted/50 rounded-[32px] flex items-center justify-center text-muted-foreground/30 border border-dashed border-border">
