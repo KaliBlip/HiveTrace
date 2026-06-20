@@ -64,7 +64,7 @@ export default function Home() {
               </Badge>
 
               <div className="space-y-5">
-                <h1 className="text-balance font-heading text-6xl font-semibold tracking-[-0.03em] leading-[0.88] sm:text-7xl lg:text-[6.8rem]">
+                <h1 className="text-balance font-heading text-5xl font-semibold tracking-[-0.03em] leading-[0.88] sm:text-7xl lg:text-[6.8rem]">
                   Trust every jar before it reaches the table.
                 </h1>
                 <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">

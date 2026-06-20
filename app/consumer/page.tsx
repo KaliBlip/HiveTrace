@@ -19,7 +19,7 @@ export default async function ConsumerPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div className="space-y-8 text-center lg:text-left">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.9]">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter uppercase italic leading-[0.9]">
                 Track Your Honey&apos;s <span className="text-primary not-italic">Story.</span>
               </h1>
               <div

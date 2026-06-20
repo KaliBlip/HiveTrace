@@ -125,7 +125,7 @@ export default function VerifyBatchPage() {
               <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-6 rounded-full text-xs font-bold uppercase tracking-[0.3em]">
                 Origin Verified
               </Badge>
-              <h1 className="text-6xl md:text-8xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none">
+              <h1 className="text-4xl sm:text-6xl md:text-8xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
                 AUTHENTICITY <span className="text-primary not-italic">CONFIRMED.</span>
               </h1>
               <p className="text-stone-400 font-normal text-xl max-w-2xl mx-auto leading-relaxed">
@@ -150,7 +150,7 @@ export default function VerifyBatchPage() {
               <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 py-1.5 px-6 rounded-full text-xs font-bold uppercase tracking-[0.3em]">
                 Review Pending
               </Badge>
-              <h1 className="text-5xl md:text-7xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none">
+              <h1 className="text-4xl sm:text-6xl md:text-7xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
                 QUALITY <span className="text-amber-500 not-italic">UNVERIFIED.</span>
               </h1>
               <p className="text-amber-200/70 font-normal text-xl max-w-2xl mx-auto leading-relaxed">
@@ -166,7 +166,7 @@ export default function VerifyBatchPage() {
         <div className="bg-card rounded-[48px] border border-border/50 shadow-2xl overflow-hidden">
           <div className="p-10 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-8 bg-stone-50/50">
             <div className="space-y-4 text-center md:text-left">
-              <h2 className="text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
+              <h2 className="text-3xl sm:text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                 <Badge className="bg-stone-900 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
                 <span className="text-xs text-stone-400 font-mono bg-white px-3 py-1.5 rounded-lg border border-border/50">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
