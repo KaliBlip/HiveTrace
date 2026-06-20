@@ -37,7 +37,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Footer } from '@/components/footer';
 import { PublicHeader } from '@/components/public-header';
-import { mockBatches, getProducerById } from '@/lib/store';
+import { mockBatches, getProducerById, mockProducers } from '@/lib/store';
 
 const trustSignals = [
   { label: 'Verified batches', value: '12k+', icon: BadgeCheck },

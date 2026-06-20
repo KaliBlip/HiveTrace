@@ -188,10 +188,10 @@ export default async function ConsumerOrdersPage() {
                           <span className="text-emerald-500 font-bold">SECURE & SETTLED</span>
                         </div>
                         
-                        {order.paymentReference && (
+                        {order.paymentId && (
                           <div className="space-y-0.5">
                             <span className="text-[10px] font-mono text-muted-foreground block uppercase">TRANSACTION REF</span>
-                            <span className="font-mono text-foreground select-all break-all">{order.paymentReference}</span>
+                            <span className="font-mono text-foreground select-all break-all">{order.paymentId}</span>
                           </div>
                         )}
 
