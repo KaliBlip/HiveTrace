@@ -23,7 +23,7 @@ export function CartOverlay() {
       {/* Floating Cart Button (hidden on mobile, visible on desktop) */}
       <button
         onClick={toggleOpen}
-        className="hidden sm:flex fixed bottom-8 right-8 z-[100] w-20 h-20 bg-stone-900 text-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] items-center justify-center group transition-all duration-500 hover:scale-110 active:scale-95 border-2 border-white/5"
+        className="hidden md:flex fixed bottom-8 right-8 z-[100] w-20 h-20 bg-stone-900 text-white rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.3)] items-center justify-center group transition-all duration-500 hover:scale-110 active:scale-95 border-2 border-white/5"
       >
         <div className="absolute inset-0 bg-primary opacity-0 group-hover:opacity-10 rounded-full transition-opacity"></div>
         <ShoppingCart className="w-8 h-8 group-hover:text-primary transition-colors" />
