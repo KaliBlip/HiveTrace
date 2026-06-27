@@ -24,3 +24,4 @@ node_modules
 .pnpm
 /.pnpm
 .pnpm-store/v10/files/
+.pnpm-store/v10/
