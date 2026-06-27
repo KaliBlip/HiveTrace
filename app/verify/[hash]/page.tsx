@@ -19,7 +19,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { verifyBatchByHash } from '@/lib/actions/verify-actions';
-import { registerScanByHash } from '@/lib/actions/scan-actions';
+import { registerScanByHash, reportBatchDiscrepancy } from '@/lib/actions/scan-actions';
+import { toast } from 'sonner';
+import { PublicHeader } from '@/components/public-header';
 
 export default function VerifyBatchPage() {
   const params = useParams();
@@ -28,6 +30,8 @@ export default function VerifyBatchPage() {
   const [batch, setBatch] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [geoState, setGeoState] = useState<'prompting' | 'acquired' | 'denied' | 'unsupported'>('prompting');
+  const [reporting, setReporting] = useState(false);
+  const [reported, setReported] = useState(false);
 
   useEffect(() => {
     async function lookupAndLog() {
@@ -71,7 +75,7 @@ export default function VerifyBatchPage() {
   }, [hash]);
 
   if (loading) return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-stone-500 animate-pulse space-y-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-muted-foreground animate-pulse space-y-4">
       <ShieldCheck className="w-16 h-16 text-primary animate-bounce" />
       <p className="text-xl font-heading font-bold uppercase tracking-widest">Verifying authenticity on the HiveTrace network...</p>
     </div>
@@ -79,35 +83,40 @@ export default function VerifyBatchPage() {
 
   if (!batch) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="max-w-xl w-full bg-rose-50 border border-rose-100 rounded-[40px] overflow-hidden shadow-2xl">
+      <>
+        <PublicHeader />
+        <div className="min-h-screen flex items-center justify-center p-6 bg-background pt-28">
+        <div className="max-w-xl w-full bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 rounded-[40px] overflow-hidden shadow-2xl">
           <div className="p-12 text-center space-y-8">
-            <div className="w-24 h-24 bg-rose-100 rounded-3xl flex items-center justify-center mx-auto">
-              <ShieldAlert className="w-12 h-12 text-rose-500" />
+            <div className="w-24 h-24 bg-rose-100 dark:bg-rose-900/30 rounded-3xl flex items-center justify-center mx-auto">
+              <ShieldAlert className="w-12 h-12 text-rose-500 dark:text-rose-400" />
             </div>
             <div className="space-y-3">
-              <h1 className="text-4xl font-heading font-bold uppercase tracking-tight text-rose-900">Invalid Batch</h1>
-              <p className="text-rose-700/70 text-lg font-normal">The scanned QR code or hash could not be verified on our cryptographic ledger.</p>
+              <h1 className="text-4xl font-heading font-bold uppercase tracking-tight text-rose-900 dark:text-rose-100">Invalid Batch</h1>
+              <p className="text-rose-700/70 dark:text-rose-300/70 text-lg font-normal">The scanned QR code or hash could not be verified on our cryptographic ledger.</p>
             </div>
-            <div className="p-6 bg-white/50 rounded-3xl border border-rose-200/50">
-              <p className="text-sm text-rose-800 font-normal leading-relaxed">
+            <div className="p-6 bg-card/80 dark:bg-card/40 rounded-3xl border border-rose-200/50 dark:border-rose-900/30">
+              <p className="text-sm text-rose-800 dark:text-rose-200 font-normal leading-relaxed">
                 This honey may not be authentic HiveTrace-certified honey. Please contact support if you believe this is an error or report a potential fraud case.
               </p>
             </div>
             <div className="flex flex-col gap-4">
               <Link href="/consumer/scanner">
-                <Button className="w-full h-16 rounded-2xl bg-rose-900 hover:bg-rose-950 text-white font-bold text-lg">Try Scanning Again</Button>
+                <Button className="w-full h-16 rounded-2xl bg-rose-900 hover:bg-rose-950 dark:bg-rose-700 dark:hover:bg-rose-800 text-white font-bold text-lg">Try Scanning Again</Button>
               </Link>
-              <Link href="/contact" className="text-rose-900 font-bold uppercase text-xs tracking-widest hover:underline">Report a discrepancy</Link>
+              <Link href="/contact" className="text-rose-900 dark:text-rose-300 font-bold uppercase text-xs tracking-widest hover:underline">Report a discrepancy</Link>
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <>
+      <PublicHeader />
+    <div className="min-h-screen bg-background pb-24 pt-24">
       {/* Verification Banner */}
       {batch.verified ? (
         // VERIFIED STATE BANNER
@@ -164,50 +173,50 @@ export default function VerifyBatchPage() {
       <div className="max-w-[1440px] mx-auto px-4 lg:px-[128px] -mt-16 relative z-20 space-y-12">
         {/* Main Info Card */}
         <div className="bg-card rounded-[48px] border border-border/50 shadow-2xl overflow-hidden">
-          <div className="p-10 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-8 bg-stone-50/50">
+          <div className="p-10 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-8 bg-muted/30">
             <div className="space-y-4 text-center md:text-left">
               <h2 className="text-3xl sm:text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                <Badge className="bg-stone-900 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
-                <span className="text-xs text-stone-400 font-mono bg-white px-3 py-1.5 rounded-lg border border-border/50">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
+                <Badge className="bg-foreground text-background px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
+                <span className="text-xs text-muted-foreground font-mono bg-card px-3 py-1.5 rounded-lg border border-border/50">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
               </div>
             </div>
             <div className="text-center md:text-right space-y-2">
-              <p className="text-[10px] font-bold uppercase text-stone-400 tracking-[0.2em]">Harvested On</p>
+              <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-[0.2em]">Harvested On</p>
               <p className="font-heading font-bold text-3xl">{new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
             </div>
           </div>
           
           <div className="p-10 lg:p-16 grid grid-cols-1 sm:grid-cols-4 gap-12">
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-stone-400 mb-2">
+              <div className="flex items-center gap-3 text-muted-foreground mb-2">
                 <MapPin className="w-5 h-5" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
               </div>
               <p className="font-heading font-bold text-2xl">{batch.producer.location}</p>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-stone-400 mb-2">
+              <div className="flex items-center gap-3 text-muted-foreground mb-2">
                 <Weight className="w-5 h-5" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Batch Quantity</span>
               </div>
-              <p className="font-heading font-bold text-2xl">{batch.quantity} <span className="text-stone-400 font-normal">{batch.unit}</span></p>
+              <p className="font-heading font-bold text-2xl">{batch.quantity} <span className="text-muted-foreground font-normal">{batch.unit}</span></p>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-stone-400 mb-2">
+              <div className="flex items-center gap-3 text-muted-foreground mb-2">
                 <DollarSign className="w-5 h-5" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Retail Price</span>
               </div>
               <p className="font-heading font-bold text-2xl">GH₵{batch.price?.toFixed(2) || 'N/A'}</p>
             </div>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 text-stone-400 mb-2">
+              <div className="flex items-center gap-3 text-muted-foreground mb-2">
                 <ShieldCheck className="w-5 h-5" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Transparency Status</span>
               </div>
               {batch.verified ? (
                 <div className="space-y-1">
-                  <p className="font-heading font-bold text-2xl text-emerald-600 flex items-center gap-2 italic uppercase">
+                  <p className="font-heading font-bold text-2xl text-emerald-600 dark:text-emerald-400 flex items-center gap-2 italic uppercase">
                     Fully Verified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
@@ -219,7 +228,7 @@ export default function VerifyBatchPage() {
                 </div>
               ) : (
                 <div className="space-y-1">
-                  <p className="font-heading font-bold text-2xl text-amber-600 flex items-center gap-2 italic uppercase">
+                  <p className="font-heading font-bold text-2xl text-amber-600 dark:text-amber-400 flex items-center gap-2 italic uppercase">
                     Unverified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
@@ -243,7 +252,7 @@ export default function VerifyBatchPage() {
                     <ImageIcon className="w-4 h-4 text-primary" /> Honey Product Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[200px]">
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
                   {batch.honeyImage ? (
                     <img src={batch.honeyImage} alt="Honey product" className="w-full h-[200px] object-cover" />
                   ) : (
@@ -258,7 +267,7 @@ export default function VerifyBatchPage() {
                     <ImageIcon className="w-4 h-4 text-primary" /> Packaging & Label Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[200px]">
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
                   {batch.packagingImage ? (
                     <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[200px] object-cover" />
                   ) : (
@@ -270,7 +279,7 @@ export default function VerifyBatchPage() {
 
             {/* History / Chain of Custody */}
             <Card className="rounded-[48px] border border-border/50 shadow-xl overflow-hidden flex flex-col">
-              <div className="p-10 border-b border-border/50 bg-stone-50/50 flex items-center gap-4">
+              <div className="p-10 border-b border-border/50 bg-muted/30 flex items-center gap-4">
                 <History className="w-8 h-8 text-primary" />
                 <h3 className="text-2xl font-heading font-bold uppercase tracking-tight">Chain of Custody</h3>
               </div>
@@ -279,16 +288,16 @@ export default function VerifyBatchPage() {
                   {batch.history.map((item: any, i: number) => (
                     <div key={i} className="flex gap-8 group">
                       <div className="w-10 flex flex-col items-center">
-                        <div className="w-6 h-6 rounded-full bg-white border-4 border-primary ring-8 ring-primary/5 mt-1 group-hover:scale-125 transition-transform duration-300"></div>
-                        {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-stone-100 mt-4 group-hover:bg-primary/20 transition-colors"></div>}
+                        <div className="w-6 h-6 rounded-full bg-card border-4 border-primary ring-8 ring-primary/5 mt-1 group-hover:scale-125 transition-transform duration-300"></div>
+                        {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-border mt-4 group-hover:bg-primary/20 transition-colors"></div>}
                       </div>
                       <div className="flex-1 pb-4">
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
                           <p className="font-heading font-bold text-xl uppercase italic group-hover:text-primary transition-colors">{item.event}</p>
-                          <span className="text-xs text-stone-400 font-bold uppercase tracking-widest bg-stone-50 px-3 py-1 rounded-full border border-border/50 shrink-0">{item.date}</span>
+                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest bg-muted px-3 py-1 rounded-full border border-border/50 shrink-0">{item.date}</span>
                         </div>
-                        <p className="text-stone-500 font-normal mt-3 flex items-center gap-2 text-lg">
-                          <MapPin className="w-4 h-4 text-stone-300" /> {item.location}
+                        <p className="text-muted-foreground font-normal mt-3 flex items-center gap-2 text-lg">
+                          <MapPin className="w-4 h-4 text-muted-foreground/60" /> {item.location}
                         </p>
                       </div>
                     </div>
@@ -304,7 +313,7 @@ export default function VerifyBatchPage() {
             <div className="bg-card rounded-[40px] border border-border/50 shadow-xl overflow-hidden group">
               <div className="h-3 bg-primary w-full transition-all group-hover:h-4"></div>
               <div className="p-10 space-y-8">
-                <p className="text-[10px] font-bold uppercase text-stone-400 tracking-[0.2em]">Verified Producer</p>
+                <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-[0.2em]">Verified Producer</p>
                 <div className="space-y-4">
                   <h4 className="text-3xl font-heading font-bold uppercase italic group-hover:text-primary transition-colors">{batch.producer.name}</h4>
                   <div className="flex items-center gap-3">
@@ -313,12 +322,12 @@ export default function VerifyBatchPage() {
                         <span key={i} className="text-primary text-xl">★</span>
                       ))}
                     </div>
-                    <span className="text-sm text-stone-400 font-bold">({batch.producer.reviewCount} Reviews)</span>
+                    <span className="text-sm text-muted-foreground font-bold">({batch.producer.reviewCount} Reviews)</span>
                   </div>
                 </div>
                 {batch.verified && (
                   <Link href="/shop" className="block">
-                    <Button variant="outline" className="w-full h-14 rounded-2xl border-stone-200 hover:border-primary hover:text-primary text-sm font-bold uppercase tracking-widest gap-3 group/btn">
+                    <Button variant="outline" className="w-full h-14 rounded-2xl border-border hover:border-primary hover:text-primary text-sm font-bold uppercase tracking-widest gap-3 group/btn">
                       View Producer Shop 
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </Button>
@@ -342,6 +351,11 @@ export default function VerifyBatchPage() {
                   <code className="block text-[10px] font-mono text-emerald-300 break-all bg-black/40 p-3 rounded-lg border border-white/10 select-all">
                     {batch.blockchainTx}
                   </code>
+                  <Link href={`/api/blockchain/verify?hash=${encodeURIComponent(batch.blockchainTx)}`} target="_blank">
+                    <Button variant="outline" size="sm" className="w-full mt-3 border-emerald-500/30 text-emerald-300 hover:bg-emerald-950/30">
+                      Verify on Ledger API
+                    </Button>
+                  </Link>
                 </div>
               </div>
             )}
@@ -352,11 +366,32 @@ export default function VerifyBatchPage() {
                 <ShieldAlert className="w-6 h-6 animate-bounce" />
                 <h4 className="text-lg font-heading font-bold uppercase tracking-tight">Help Stop Fraud</h4>
               </div>
-              <p className="text-rose-700/80 dark:text-rose-450/80 font-normal text-xs leading-relaxed">
+              <p className="text-rose-700/80 dark:text-rose-400/80 font-normal text-xs leading-relaxed">
                 Check that the physical honey bottle container label matches the packaging image previewed on this page. If you spot anomalies, report it to our team immediately.
               </p>
-              <Button variant="destructive" className="w-full h-12 rounded-2xl font-bold uppercase tracking-widest text-[10px] gap-3">
-                Report discrepancy
+              <Button
+                variant="destructive"
+                className="w-full h-12 rounded-2xl font-bold uppercase tracking-widest text-[10px] gap-3"
+                disabled={reporting || reported}
+                onClick={async () => {
+                  if (!batch) return;
+                  setReporting(true);
+                  try {
+                    await reportBatchDiscrepancy({
+                      batchCode: batch.batchCode,
+                      hash,
+                      reason: 'Consumer reported label or packaging mismatch during verification.',
+                    });
+                    setReported(true);
+                    toast.success('Discrepancy reported. Our admin team will investigate.');
+                  } catch {
+                    toast.error('Failed to submit report. Please try again.');
+                  } finally {
+                    setReporting(false);
+                  }
+                }}
+              >
+                {reported ? 'Report Submitted' : reporting ? 'Submitting...' : 'Report discrepancy'}
               </Button>
             </div>
           </div>
@@ -376,5 +411,6 @@ export default function VerifyBatchPage() {
         )}
       </div>
     </div>
+    </>
   );
 }

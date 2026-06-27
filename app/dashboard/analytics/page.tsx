@@ -31,7 +31,7 @@ export default async function AnalyticsPage() {
         <Card className="border-border">
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Active Products</p>
-            <p className="text-3xl font-black mt-2">{analytics?.totalBatches || 0}</p>
+            <p className="text-3xl font-black mt-2">{analytics?.activeProducts || 0}</p>
           </CardContent>
         </Card>
       </div>

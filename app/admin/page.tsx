@@ -17,13 +17,17 @@ export default async function AdminPage() {
     {
       title: 'Total Producers',
       value: statsData.producerCount.toLocaleString(),
-      change: '+0', // Mock change for now
+      change: statsData.trends?.producers
+        ? `+${statsData.trends.producers} this week`
+        : '—',
       icon: Users,
     },
     {
       title: 'Verified Batches',
       value: statsData.batchCount.toLocaleString(),
-      change: '+0',
+      change: statsData.trends?.batches
+        ? `+${statsData.trends.batches} this week`
+        : '—',
       icon: Package,
     },
     {
@@ -36,7 +40,9 @@ export default async function AdminPage() {
     {
       title: 'Total Scans',
       value: statsData.scanCount.toLocaleString(),
-      change: '+0',
+      change: statsData.trends?.scans
+        ? `+${statsData.trends.scans} this week`
+        : '—',
       icon: TrendingUp,
     },
   ];
@@ -158,8 +164,10 @@ export default async function AdminPage() {
                         Joined {new Date(producer.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm" className="w-full text-xs font-bold border-2 hover:bg-primary hover:text-primary-foreground transition-all">
-                      Review Application
+                    <Button variant="outline" size="sm" className="w-full text-xs font-bold border-2 hover:bg-primary hover:text-primary-foreground transition-all" asChild>
+                      <Link href={`/admin/producers?highlight=${producer.id}`}>
+                        Review Application
+                      </Link>
                     </Button>
                   </div>
                 ))

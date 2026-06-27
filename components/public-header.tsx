@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useAuth } from '@/lib/hooks/use-auth';
 import { useCart } from '@/lib/hooks/use-cart';
+import { getRoleHomePath } from '@/lib/helpers';
 
 const desktopNavItems = [
   { href: '/about', label: 'About' },
@@ -30,7 +31,9 @@ export function PublicHeader() {
   const { isAuthenticated, role, user } = useAuth();
   const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
-  const accountHref = currentRole === 'producer' || currentRole === 'admin' ? '/dashboard' : '/consumer';
+  const accountHref = getRoleHomePath(currentRole);
+  const accountLabel =
+    currentRole === 'admin' ? 'Admin' : currentRole === 'producer' ? 'Dashboard' : 'Account';
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
   const cartItemsCount = mounted ? totalItems() : 0;
@@ -79,7 +82,7 @@ export function PublicHeader() {
                 ) : (
                   <User className="size-4" />
                 )}
-                {currentRole === 'producer' || currentRole === 'admin' ? 'Dashboard' : 'Account'}
+                {accountLabel}
               </Button>
             </Link>
           ) : (

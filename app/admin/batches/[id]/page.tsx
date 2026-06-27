@@ -93,13 +93,9 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
       return;
     }
     setApproving(true);
-    // Generate a random high-fidelity transaction hash
-    const mockTxHash = '0x' + Array.from({ length: 64 }, () => 
-      Math.floor(Math.random() * 16).toString(16)
-    ).join('');
 
     try {
-      await verifyAndApproveBatch(id, mockTxHash);
+      await verifyAndApproveBatch(id, scanMetrics ?? undefined);
       toast.success('Batch cryptographically signed and registered on blockchain!');
       await fetchBatch();
     } catch (err: any) {
@@ -177,7 +173,7 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                   <ImageIcon className="w-4 h-4 text-primary" /> Honey Image Upload
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
                 {batch.honeyImage ? (
                   <img src={batch.honeyImage} alt="Honey product" className="w-full h-[220px] object-cover" />
                 ) : (
@@ -192,7 +188,7 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                   <ImageIcon className="w-4 h-4 text-primary" /> Packaging & Label Image
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
                 {batch.packagingImage ? (
                   <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[220px] object-cover" />
                 ) : (

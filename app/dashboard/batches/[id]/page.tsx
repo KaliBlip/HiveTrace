@@ -151,7 +151,7 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                   <ImageIcon className="w-4 h-4 text-primary" /> Honey Product Image
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
                 {batch.honeyImage ? (
                   <img src={batch.honeyImage} alt="Honey product" className="w-full h-[220px] object-cover" />
                 ) : (
@@ -166,7 +166,7 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                   <ImageIcon className="w-4 h-4 text-primary" /> Packaging & Label Image
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-stone-50 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
                 {batch.packagingImage ? (
                   <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[220px] object-cover" />
                 ) : (
@@ -298,7 +298,7 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                 <CardDescription>Ready for packaging label integration</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col items-center gap-6 pt-2">
-                <div className="p-4 bg-white rounded-xl shadow-inner border border-sidebar-border">
+                <div className="p-4 bg-card rounded-xl shadow-inner border border-sidebar-border">
                   <QRCodeSVG 
                     id="batch-qr"
                     value={qrUrl} 

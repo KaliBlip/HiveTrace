@@ -15,7 +15,7 @@ export default async function BatchesPage() {
     quantity: batch.quantity,
     unit: 'kg',
     status: batch.verified ? "verified" : "pending",
-    qrScans: 0, // Placeholder until we count actual scans
+    qrScans: batch.scanCount,
     createdAt: batch.createdAt.toISOString(),
   }));
 

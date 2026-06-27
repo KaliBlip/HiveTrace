@@ -37,13 +37,45 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Footer } from '@/components/footer';
 import { PublicHeader } from '@/components/public-header';
-import { mockBatches, getProducerById, mockProducers } from '@/lib/store';
+import { searchPublicBatch, getFeaturedVerifiedBatch, getPlatformStats } from '@/lib/actions/consumer-actions';
 
-const trustSignals = [
-  { label: 'Verified batches', value: '12k+', icon: BadgeCheck },
-  { label: 'Producer trust score', value: '98%', icon: Star },
-  { label: 'Scan events logged', value: '240k', icon: Activity },
-];
+type DisplayBatch = {
+  id: string;
+  batchCode: string;
+  producerId: string;
+  name: string;
+  type: string;
+  harvestDate: string;
+  quantity: number;
+  integrityHash: string;
+  blockchainTx?: string | null;
+  scanCount: number;
+  verified?: boolean;
+  producer?: {
+    businessName: string;
+    location: string;
+    rating: number;
+    reviewCount: number;
+  };
+};
+
+function mapBatchToDisplay(batch: NonNullable<Awaited<ReturnType<typeof searchPublicBatch>>>): DisplayBatch {
+  return {
+    id: batch.id,
+    batchCode: batch.batchCode,
+    producerId: batch.producerId,
+    name: batch.honeyType,
+    type: batch.honeyType,
+    harvestDate: batch.harvestDate.split('T')[0],
+    quantity: batch.quantity,
+    integrityHash: batch.verificationHash,
+    blockchainTx: batch.blockchainTx,
+    scanCount: batch.scanCount ?? 0,
+    verified: batch.verified,
+    producer: batch.producer,
+  };
+}
+
 
 const workflow = [
   {
@@ -104,8 +136,10 @@ export default function Home() {
   const [activeLogIndex, setActiveLogIndex] = useState(0);
 
   // Batch Trace Search State
-  const [searchInput, setSearchInput] = useState('HT-2024-WFB-001');
-  const [currentBatch, setCurrentBatch] = useState(mockBatches[0]);
+  const [currentBatch, setCurrentBatch] = useState<DisplayBatch | null>(null);
+  const [searchInput, setSearchInput] = useState('');
+  const [platformStats, setPlatformStats] = useState({ batchCount: 0, producerCount: 0, scanCount: 0, verifiedBatchCount: 0 });
+  const [featuredHash, setFeaturedHash] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [timelineDetail, setTimelineDetail] = useState<number | null>(null);
 
@@ -123,6 +157,45 @@ export default function Home() {
     'Checking location coordinates: 40.7128, -74.006...',
     'Authenticity confirmed: Signature is valid & secure.'
   ];
+
+  useEffect(() => {
+    async function loadInitialData() {
+      const [stats, featured] = await Promise.all([
+        getPlatformStats(),
+        getFeaturedVerifiedBatch(),
+      ]);
+      setPlatformStats(stats);
+      if (featured) {
+        const mapped = mapBatchToDisplay({
+          id: featured.id,
+          batchCode: featured.batchCode,
+          honeyType: featured.honeyType,
+          quantity: featured.quantity,
+          harvestDate: featured.harvestDate.toISOString(),
+          verified: featured.verified,
+          verificationHash: featured.verificationHash,
+          blockchainTx: featured.blockchainTx,
+          producerId: featured.producerId,
+          scanCount: featured.scanCount,
+          producer: {
+            businessName: featured.producer.businessName,
+            location: featured.producer.location,
+            rating:
+              featured.reviews.length > 0
+                ? featured.reviews.reduce((s, r) => s + r.rating, 0) / featured.reviews.length
+                : featured.producer.ratings?.averageRating ?? 0,
+            reviewCount:
+              featured.reviews.length || featured.producer.ratings?.totalReviews || 0,
+          },
+          history: [],
+        });
+        setCurrentBatch(mapped);
+        setSearchInput(featured.batchCode);
+        setFeaturedHash(featured.verificationHash);
+      }
+    }
+    loadInitialData();
+  }, []);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -158,21 +231,27 @@ export default function Home() {
     setActiveLogIndex(0);
   };
 
-  const handleTraceSearch = (e: React.FormEvent) => {
+  const handleTraceSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setSearchError(null);
     const cleanedCode = searchInput.trim().toUpperCase();
-    const found = mockBatches.find((b) => b.batchCode === cleanedCode);
+    const found = await searchPublicBatch(cleanedCode);
 
     if (found) {
-      setCurrentBatch(found);
+      setCurrentBatch(mapBatchToDisplay(found));
       setTimelineDetail(null);
     } else {
       setSearchError(`Warning: Batch code "${cleanedCode}" was not found in the HiveTrace registry. Integrity check failed.`);
     }
   };
 
-  const currentProducer = getProducerById(currentBatch?.producerId || '');
+  const currentProducer = currentBatch?.producer;
+
+  const trustSignals = [
+    { label: 'Verified batches', value: `${platformStats.verifiedBatchCount || platformStats.batchCount}+`, icon: BadgeCheck },
+    { label: 'Verified producers', value: `${platformStats.producerCount}+`, icon: Star },
+    { label: 'Scan events logged', value: `${platformStats.scanCount}+`, icon: Activity },
+  ];
 
   return (
     <div className="min-h-screen overflow-hidden bg-background text-foreground">
@@ -289,7 +368,7 @@ export default function Home() {
                       <div className="space-y-2">
                         <h3 className="font-heading text-lg font-semibold">Simulate Honey Verification</h3>
                         <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                          Click below to trigger a live cryptographic audit check on honey jar batch HT-2024-WFB-001.
+                          Click below to trigger a live cryptographic audit check on batch {currentBatch?.batchCode ?? 'from the HiveTrace ledger'}.
                         </p>
                       </div>
 
@@ -347,7 +426,7 @@ export default function Home() {
                             </span>
                             <div>
                               <p className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">Purity Confirmed</p>
-                              <p className="font-heading text-lg font-semibold mt-0.5">HT-2024-WFB-001</p>
+                              <p className="font-heading text-lg font-semibold mt-0.5">{currentBatch?.batchCode ?? 'Verified Batch'}</p>
                             </div>
                           </div>
                           <Badge className="bg-emerald-500 hover:bg-emerald-500/90 text-white font-mono text-[9px] uppercase tracking-wider px-2 py-0.5">
@@ -358,32 +437,32 @@ export default function Home() {
                         <div className="grid grid-cols-2 gap-y-4 gap-x-6 pt-4 text-xs font-mono">
                           <div>
                             <span className="text-[10px] text-muted-foreground block uppercase">Beekeeper</span>
-                            <span className="font-semibold block mt-0.5 text-foreground">Golden Valley Apiaries</span>
+                            <span className="font-semibold block mt-0.5 text-foreground">{currentBatch?.producer?.businessName ?? 'Verified Producer'}</span>
                           </div>
                           <div>
                             <span className="text-[10px] text-muted-foreground block uppercase">Origin</span>
-                            <span className="font-semibold block mt-0.5 text-foreground">New York, NY</span>
+                            <span className="font-semibold block mt-0.5 text-foreground">{currentBatch?.producer?.location ?? 'Registered Apiary'}</span>
                           </div>
                           <div>
                             <span className="text-[10px] text-muted-foreground block uppercase">Purity Rating</span>
-                            <span className="font-semibold block mt-0.5 text-emerald-600 dark:text-emerald-400">100% Organic</span>
+                            <span className="font-semibold block mt-0.5 text-emerald-600 dark:text-emerald-400">{currentBatch?.verified !== false ? 'Verified' : 'Pending'}</span>
                           </div>
                           <div>
                             <span className="text-[10px] text-muted-foreground block uppercase">Consumer Rating</span>
                             <span className="font-semibold block mt-0.5 text-foreground flex items-center gap-1">
-                              ★ 4.8 <span className="text-muted-foreground font-normal text-[10px]">(128 reviews)</span>
+                              ★ {currentBatch?.producer?.rating?.toFixed(1) ?? '5.0'} <span className="text-muted-foreground font-normal text-[10px]">({currentBatch?.producer?.reviewCount ?? 0} reviews)</span>
                             </span>
                           </div>
                         </div>
 
                         <div className="mt-4 pt-3.5 border-t border-emerald-500/20 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
                           <span>HMAC Verified</span>
-                          <span className="text-foreground font-semibold">7a3c2f8e9b4d...</span>
+                          <span className="text-foreground font-semibold">{currentBatch?.integrityHash.slice(0, 14)}...</span>
                         </div>
                       </div>
 
                       <div className="flex gap-2">
-                        <Link href="/verify/7a3c2f8e9b4d1c6e5f2a9d3b7c1e8a4f" className="flex-1">
+                        <Link href={featuredHash ? `/verify/${featuredHash}` : '/consumer/scanner'} className="flex-1">
                           <Button size="sm" className="w-full text-xs font-semibold py-2.5">
                             View Full Blockchain Audit
                           </Button>
@@ -495,24 +574,24 @@ export default function Home() {
                 <span>Try:</span>
                 <button
                   type="button"
-                  onClick={() => { setSearchInput('HT-2024-WFB-001'); setSearchError(null); }}
+                  onClick={() => { setSearchInput('HT-2024-MFA-001'); setSearchError(null); }}
                   className="font-mono text-primary underline hover:text-primary/80 transition-colors"
                 >
-                  HT-2024-WFB-001
+                  HT-2024-MFA-001
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setSearchInput('HT-2024-CLP-002'); setSearchError(null); }}
+                  onClick={() => { setSearchInput('HT-2024-VVB-002'); setSearchError(null); }}
                   className="font-mono text-primary underline hover:text-primary/80 transition-colors"
                 >
-                  HT-2024-CLP-002
+                  HT-2024-VVB-002
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setSearchInput('HT-2024-SPC-003'); setSearchError(null); }}
+                  onClick={() => { setSearchInput('HT-2024-AHH-003'); setSearchError(null); }}
                   className="font-mono text-primary underline hover:text-primary/80 transition-colors"
                 >
-                  HT-2024-SPC-003
+                  HT-2024-AHH-003
                 </button>
               </div>
             </div>
@@ -525,7 +604,12 @@ export default function Home() {
                   {searchError} The batch code entered is not registered on our cryptographically-secured honey ledger. This might indicate generic, dilution, or fraudulent honey branding.
                 </p>
                 <div className="pt-2">
-                  <Button variant="outline" size="sm" onClick={() => { setSearchInput('HT-2024-WFB-001'); setSearchError(null); setCurrentBatch(mockBatches[0]); }} className="border-destructive/20 text-destructive hover:bg-destructive/10">
+                  <Button variant="outline" size="sm" onClick={async () => {
+                    if (currentBatch?.batchCode) {
+                      setSearchInput(currentBatch.batchCode);
+                      setSearchError(null);
+                    }
+                  }} className="border-destructive/20 text-destructive hover:bg-destructive/10">
                     Restore secure batch
                   </Button>
                 </div>
@@ -586,16 +670,15 @@ export default function Home() {
                           </span>
                           <div>
                             <p className="font-semibold text-sm">Step 1: Origin & Harvest Logging</p>
-                            <p className="text-xs text-muted-foreground">{(getProducerById(currentBatch.producerId) || mockProducers[0])?.businessName}</p>
+                            <p className="text-xs text-muted-foreground">{currentProducer?.businessName ?? 'Verified Producer'}</p>
                           </div>
                         </div>
                         {timelineDetail === 1 ? <ChevronUp className="size-4 text-muted-foreground" /> : <ChevronDown className="size-4 text-muted-foreground" />}
                       </div>
                       {timelineDetail === 1 && (
                         <div className="mt-3 pt-3 border-t border-border/40 text-xs text-muted-foreground space-y-2">
-                          <p>Harvested locally at <strong>{(getProducerById(currentBatch.producerId) || mockProducers[0])?.location.address}</strong>.</p>
-                          <p>Coordinates registered: <strong>{(getProducerById(currentBatch.producerId) || mockProducers[0])?.location.lat}, {(getProducerById(currentBatch.producerId) || mockProducers[0])?.location.lng}</strong>.</p>
-                          <p>Apiary credentials status: <span className="text-emerald-500 font-semibold">100% Verified</span></p>
+                          <p>Harvested locally at <strong>{currentProducer?.location ?? 'Registered apiary'}</strong>.</p>
+                          <p>Producer credentials status: <span className="text-emerald-500 font-semibold">Verified on HiveTrace</span></p>
                         </div>
                       )}
                     </div>

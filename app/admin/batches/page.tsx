@@ -59,7 +59,7 @@ export default function AdminBatchesPage() {
       </div>
 
       <Card className="border-border rounded-[32px] overflow-hidden shadow-sm">
-        <CardHeader className="p-8 border-b border-border bg-stone-50/50">
+        <CardHeader className="p-8 border-b border-border bg-muted/30">
           <CardTitle className="text-2xl font-heading uppercase tracking-tight">All Batches</CardTitle>
           <CardDescription>
             {loading ? 'Accessing cryptographic ledger...' : `Total of ${filteredBatches.length} batches logged on platform`}
@@ -94,7 +94,7 @@ export default function AdminBatchesPage() {
                 </thead>
                 <tbody className="divide-y divide-border/40 text-stone-700">
                   {filteredBatches.map((batch) => (
-                    <tr key={batch.id} className="hover:bg-stone-50/40 transition-colors group">
+                    <tr key={batch.id} className="hover:bg-muted/30 transition-colors group">
                       <td className="py-5 px-4 font-mono text-xs font-semibold">{batch.batchCode}</td>
                       <td className="py-5 px-4 font-semibold">{batch.producer?.businessName}</td>
                       <td className="py-5 px-4">{batch.honeyType}</td>

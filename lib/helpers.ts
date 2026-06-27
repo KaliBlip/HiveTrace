@@ -87,6 +87,16 @@ export function isValidPassword(password: string): boolean {
 }
 
 /**
+ * Default landing route after sign-in based on user role.
+ */
+export function getRoleHomePath(role?: string | null): string {
+  const normalized = role?.toLowerCase();
+  if (normalized === 'admin') return '/admin';
+  if (normalized === 'producer') return '/dashboard';
+  return '/shop';
+}
+
+/**
  * Format batch ID for display
  */
 export function formatBatchId(id: string): string {

@@ -122,6 +122,17 @@ A modern Next.js application for tracking honey from hive to table with cryptogr
 6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
+## 📖 Documentation
+
+Full technical documentation for this final-year project is in the [`docs/`](./docs/) folder:
+
+- [Documentation Index](./docs/README.md) — Start here
+- [System Architecture](./docs/02-system-architecture.md)
+- [Cryptographic Verification](./docs/05-cryptographic-verification.md)
+- [Blockchain Ledger](./docs/06-blockchain-ledger.md)
+- [Fraud Detection](./docs/07-fraud-detection-system.md)
+- [Testing & Demonstration Guide](./docs/13-testing-demonstration.md)
+
 ## 📖 Usage Guide
 
 ### For Producers
@@ -263,8 +274,8 @@ created_at (timestamp)
 
 ## 🧪 Testing
 
-### Mock Data
-The application includes comprehensive mock data in `lib/store.ts` for testing without a database.
+### Database Seed Data
+Run `pnpm db:seed` to populate demo producers, batches, products, and blockchain ledger entries.
 
 ### Test Accounts
 ```

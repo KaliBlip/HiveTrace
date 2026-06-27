@@ -1,17 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ShoppingBag, Lock, CreditCard, ArrowLeft, Check } from 'lucide-react';
+import { ShoppingBag, Lock, CreditCard, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/lib/hooks/use-cart';
 import { useAuth } from '@/lib/hooks/use-auth';
-import { initializePaystackTransaction } from '@/lib/paystack';
-import { createOrderFromCart } from '@/lib/actions/order-actions';
+import {
+  initializePaystackTransaction,
+  openPaystackPopup,
+} from '@/lib/paystack';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { ConsumerHeader } from '@/components/consumer/header';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
@@ -19,73 +23,85 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({
-    fullName: user?.name || '',
-    email: user?.email || '',
+    fullName: '',
+    email: '',
     address: '',
     city: '',
     state: '',
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || user.name || '',
+        email: prev.email || user.email || '',
+      }));
+    }
+  }, [user]);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
 
+    const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
+
     try {
       const response = await initializePaystackTransaction({
         email: formData.email,
         amount: totalPrice(),
+        customerName: formData.fullName,
+        shippingAddress,
+        items: items.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          name: item.name,
+        })),
         metadata: {
-          items: items.map(i => ({ id: i.id, name: i.name, qty: i.quantity })),
-          shippingAddress: `${formData.address}, ${formData.city}, ${formData.state}`
-        }
+          shippingAddress,
+          customerName: formData.fullName,
+        },
       });
 
-      if (response.status) {
-        if (response.data.authorization_url === "#") {
-          // Mock success for development — persist order
-          const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
-          await createOrderFromCart({
-            items: items.map((item) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              priceAtPurchase: item.price,
-            })),
-            totalAmount: totalPrice(),
-            shippingAddress,
-            paymentId: response.data.reference,
-          });
-          setIsProcessing(false);
-          clearCart();
-          router.push('/checkout/success');
-          return;
-        } else {
-          // Persist order as PENDING before redirect, then update via webhook/callback
-          const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
-          await createOrderFromCart({
-            items: items.map((item) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              priceAtPurchase: item.price,
-            })),
-            totalAmount: totalPrice(),
-            shippingAddress,
-            paymentId: response.data.reference,
-          });
-          window.location.href = response.data.authorization_url;
-        }
+      const { authorization_url, reference, publicKey, amount } = response.data;
+
+      if (publicKey && amount) {
+        await openPaystackPopup({
+          publicKey,
+          email: formData.email,
+          amount,
+          reference,
+          metadata: { shippingAddress },
+          onSuccess: (paidReference) => {
+            clearCart();
+            router.push(`/checkout/success?reference=${encodeURIComponent(paidReference)}`);
+          },
+          onClose: () => {
+            setIsProcessing(false);
+            toast.message('Payment window closed', {
+              description: 'Your order is saved as pending. You can retry payment from your orders page.',
+            });
+          },
+        });
+        return;
       }
+
+      clearCart();
+      window.location.href = authorization_url;
     } catch (error) {
-      alert('Checkout failed. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Checkout failed. Please try again.');
       setIsProcessing(false);
     }
   };
 
-  if (items.length === 0 && !isSuccess) {
+  if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-20">
+      <>
+        <ConsumerHeader />
+        <div className="min-h-screen flex items-center justify-center pt-28 px-4">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">Your Cart is Empty</h1>
           <p className="text-muted-foreground">Add some honey to your cart before checking out.</p>
@@ -95,40 +111,15 @@ export default function CheckoutPage() {
             </Button>
           </Link>
         </div>
-      </div>
-    );
-  }
-
-  if (isSuccess) {
-    return (
-      <div className="min-h-screen bg-background pt-32 pb-20 px-4">
-        <div className="max-w-2xl mx-auto text-center space-y-8">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-            <Check className="w-10 h-10 text-green-600" />
-          </div>
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold">Order Placed Successfully!</h1>
-            <p className="text-xl text-muted-foreground">
-              Thank you for supporting verified producers. Your honey will be on its way soon.
-            </p>
-          </div>
-          <div className="flex gap-4 justify-center">
-            <Link href="/shop">
-              <Button variant="outline">Continue Shopping</Button>
-            </Link>
-            <Link href="/consumer/orders">
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                View Orders
-              </Button>
-            </Link>
-          </div>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background pt-32 pb-20 px-4">
+    <>
+      <ConsumerHeader />
+    <div className="min-h-screen bg-background pt-28 pb-20 px-4">
       <div className="max-w-6xl mx-auto">
         <Link href="/shop" className="flex items-center gap-2 text-primary hover:underline mb-8">
           <ArrowLeft className="w-4 h-4" />
@@ -136,7 +127,6 @@ export default function CheckoutPage() {
         </Link>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Form */}
           <div className="lg:col-span-2 space-y-6">
             <Card className="border-border">
               <CardHeader>
@@ -148,50 +138,50 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="fullName">Full Name</Label>
-                      <Input 
-                        id="fullName" 
-                        value={formData.fullName} 
-                        onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                        required 
+                      <Input
+                        id="fullName"
+                        value={formData.fullName}
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email">Email Address</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        value={formData.email} 
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        required 
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
                       />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="address">Street Address</Label>
-                    <Input 
-                      id="address" 
-                      value={formData.address} 
-                      onChange={(e) => setFormData({...formData, address: e.target.value})}
-                      required 
+                    <Input
+                      id="address"
+                      value={formData.address}
+                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                      required
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="city">City</Label>
-                      <Input 
-                        id="city" 
-                        value={formData.city} 
-                        onChange={(e) => setFormData({...formData, city: e.target.value})}
-                        required 
+                      <Input
+                        id="city"
+                        value={formData.city}
+                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                        required
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="state">State</Label>
-                      <Input 
-                        id="state" 
-                        value={formData.state} 
-                        onChange={(e) => setFormData({...formData, state: e.target.value})}
-                        required 
+                      <Label htmlFor="state">State / Region</Label>
+                      <Input
+                        id="state"
+                        value={formData.state}
+                        onChange={(e) => setFormData({ ...formData, state: e.target.value })}
+                        required
                       />
                     </div>
                   </div>
@@ -202,24 +192,28 @@ export default function CheckoutPage() {
             <Card className="border-border">
               <CardHeader>
                 <CardTitle>Payment Method</CardTitle>
-                <CardDescription>All payments are securely processed via Paystack</CardDescription>
+                <CardDescription>Secure checkout powered by Paystack (GHS)</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-4 p-4 border border-primary/20 bg-primary/5 rounded-lg">
-                  <div className="w-12 h-12 bg-white rounded-md flex items-center justify-center shadow-sm">
+                  <div className="w-12 h-12 bg-card border border-border rounded-md flex items-center justify-center shadow-sm">
                     <CreditCard className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1">
                     <p className="font-bold">Paystack Secure Payment</p>
-                    <p className="text-xs text-muted-foreground">Card, Bank Transfer, USSD, and more</p>
+                    <p className="text-xs text-muted-foreground">
+                      Card, Mobile Money, Bank Transfer, USSD
+                    </p>
                   </div>
                   <Lock className="w-4 h-4 text-muted-foreground" />
                 </div>
+                <p className="text-xs text-muted-foreground mt-3">
+                  Test mode: use Paystack test cards or mobile money simulators.
+                </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Summary */}
           <div className="space-y-6">
             <Card className="border-border sticky top-28">
               <CardHeader>
@@ -235,11 +229,13 @@ export default function CheckoutPage() {
                       <span className="text-muted-foreground">
                         {item.name} <span className="font-bold">x{item.quantity}</span>
                       </span>
-                      <span className="font-medium">GH₵{(item.price * item.quantity).toLocaleString()}</span>
+                      <span className="font-medium">
+                        GH₵{(item.price * item.quantity).toLocaleString()}
+                      </span>
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="pt-4 border-t border-border space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
@@ -251,20 +247,22 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between items-center pt-2 border-t border-border">
                     <span className="font-bold text-lg">Total</span>
-                    <span className="font-bold text-2xl text-primary">GH₵{totalPrice().toLocaleString()}</span>
+                    <span className="font-bold text-2xl text-primary">
+                      GH₵{totalPrice().toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   form="checkout-form"
                   disabled={isProcessing}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 text-lg gap-3 mt-4"
                 >
-                  {isProcessing ? 'Initializing Payment...' : 'Pay with Paystack'}
+                  {isProcessing ? 'Opening Paystack...' : 'Pay with Paystack'}
                   <CreditCard className="w-5 h-5" />
                 </Button>
-                
+
                 <div className="flex items-center justify-center gap-2 text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
                   <Lock className="w-3 h-3" />
                   Secure SSL Encryption
@@ -275,5 +273,6 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

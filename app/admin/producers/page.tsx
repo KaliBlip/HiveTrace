@@ -102,7 +102,7 @@ export default function AdminProducersPage() {
 
       {/* Main List */}
       <Card className="border-border rounded-[32px] overflow-hidden shadow-sm">
-        <CardHeader className="p-8 border-b border-border bg-stone-50/50">
+        <CardHeader className="p-8 border-b border-border bg-muted/30">
           <CardTitle className="text-2xl font-heading uppercase tracking-tight">Registered Producers</CardTitle>
           <CardDescription>
             {loading ? 'Fetching records...' : `Total of ${filteredProducers.length} producers matching filters`}
@@ -125,7 +125,7 @@ export default function AdminProducersPage() {
               {filteredProducers.map((producer) => (
                 <div
                   key={producer.id}
-                  className="border border-border/50 rounded-3xl p-6 hover:bg-stone-50/20 hover:border-primary/30 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-6"
+                  className="border border-border/50 rounded-3xl p-6 hover:bg-muted/20 hover:border-primary/30 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-6"
                 >
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-3">

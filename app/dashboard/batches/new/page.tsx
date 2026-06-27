@@ -151,7 +151,7 @@ export default function NewBatchPage() {
                   <Input 
                     id="batchCode" 
                     value={formData.batchCode} 
-                    className="h-16 font-mono bg-stone-50/50 border-border/50 rounded-2xl text-lg focus:ring-primary"
+                    className="h-16 font-mono bg-muted/30 border-border/50 rounded-2xl text-lg focus:ring-primary"
                     readOnly 
                   />
                   <p className="text-[10px] text-stone-400 font-normal italic ml-1">Auto-generated for cryptographic uniqueness</p>
@@ -231,7 +231,7 @@ export default function NewBatchPage() {
                 {/* Honey Image */}
                 <div className="space-y-4">
                   <Label className="text-sm font-bold uppercase tracking-widest text-stone-400 ml-1">Honey Product Image</Label>
-                  <div className="border border-dashed border-border/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 bg-stone-50/20 hover:bg-stone-50/40 transition-colors min-h-[220px] relative overflow-hidden group">
+                  <div className="border border-dashed border-border/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 bg-muted/20 hover:bg-muted/40 transition-colors min-h-[220px] relative overflow-hidden group">
                     {formData.honeyImage ? (
                       <>
                         <img src={formData.honeyImage} alt="Honey preview" className="absolute inset-0 w-full h-full object-cover" />
@@ -277,7 +277,7 @@ export default function NewBatchPage() {
                 {/* Packaging Image */}
                 <div className="space-y-4">
                   <Label className="text-sm font-bold uppercase tracking-widest text-stone-400 ml-1">Packaging & Label Image</Label>
-                  <div className="border border-dashed border-border/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 bg-stone-50/20 hover:bg-stone-50/40 transition-colors min-h-[220px] relative overflow-hidden group">
+                  <div className="border border-dashed border-border/80 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 bg-muted/20 hover:bg-muted/40 transition-colors min-h-[220px] relative overflow-hidden group">
                     {formData.packagingImage ? (
                       <>
                         <img src={formData.packagingImage} alt="Packaging preview" className="absolute inset-0 w-full h-full object-cover" />

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AlertCircle, ArrowRight, LockKeyhole, Mail, Sparkles } from "lucide-react";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { getRoleHomePath } from "@/lib/helpers";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldGroup, FieldLabel } from "@/components/ui/field";
@@ -27,7 +28,19 @@ export function LoginForm() {
       if (result?.error) {
         setError("The credentials provided do not match our records.");
       } else {
-        router.push("/dashboard");
+        const callbackUrl =
+          typeof window !== "undefined"
+            ? new URLSearchParams(window.location.search).get("callbackUrl")
+            : null;
+
+        if (callbackUrl && callbackUrl.startsWith("/")) {
+          router.push(callbackUrl);
+          return;
+        }
+
+        const sessionRes = await fetch("/api/auth/session");
+        const session = await sessionRes.json();
+        router.push(getRoleHomePath(session?.user?.role));
       }
     } catch {
       setError("A network synchronization error occurred. Please retry.");

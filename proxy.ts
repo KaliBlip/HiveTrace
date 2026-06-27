@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { getRoleHomePath } from "@/lib/helpers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
@@ -16,7 +17,7 @@ const proxyMiddleware = async (req: NextRequest) => {
 
   // Redirect authenticated users away from auth pages
   if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    return NextResponse.redirect(new URL(getRoleHomePath(userRole), nextUrl));
   }
 
   // If not logged in, redirect to login for protected routes

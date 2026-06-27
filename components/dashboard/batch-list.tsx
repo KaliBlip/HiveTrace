@@ -30,7 +30,7 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
       <div className="bg-card rounded-[40px] border border-border/50 p-20 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary" />
-          <p className="text-stone-500 font-normal">Loading batches...</p>
+          <p className="text-muted-foreground font-normal">Loading batches...</p>
         </div>
       </div>
     );
@@ -39,12 +39,12 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
   if (!displayBatches || displayBatches.length === 0) {
     return (
       <div className="bg-card rounded-[40px] border border-border/50 p-20 text-center space-y-8">
-        <div className="w-20 h-20 bg-stone-100 rounded-full flex items-center justify-center mx-auto text-stone-300">
+        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto text-muted-foreground/50">
           <Box className="w-10 h-10" />
         </div>
         <div className="space-y-2">
           <h3 className="text-3xl font-heading font-bold uppercase tracking-tight">No batches yet</h3>
-          <p className="text-stone-500 text-lg font-normal max-w-sm mx-auto leading-relaxed">
+          <p className="text-muted-foreground text-lg font-normal max-w-sm mx-auto leading-relaxed">
             You haven't registered any honey batches yet. Start by creating your first cryptographically signed batch.
           </p>
         </div>
@@ -59,30 +59,30 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
 
   return (
     <div className="bg-card rounded-[40px] border border-border/50 overflow-hidden shadow-sm">
-      <div className="p-10 border-b border-border/50 bg-stone-50/50">
+      <div className="p-10 border-b border-border/50 bg-muted/30">
         <h2 className="text-2xl font-heading font-bold uppercase tracking-tight">Your Honey Batches</h2>
-        <p className="text-stone-500 font-normal mt-1">Manage and track all your honey batches</p>
+        <p className="text-muted-foreground font-normal mt-1">Manage and track all your honey batches</p>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="bg-stone-50/30">
-              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+            <tr className="bg-muted/20">
+              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 Honey Type
               </th>
-              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 Harvest Date
               </th>
-              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 Quantity
               </th>
-              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 Status
               </th>
-              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <th className="text-left py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 QR Scans
               </th>
-              <th className="text-right py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-stone-400">
+              <th className="text-right py-6 px-10 font-bold text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
                 Actions
               </th>
             </tr>
@@ -91,7 +91,7 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
             {displayBatches.map((batch) => (
               <tr
                 key={batch.id}
-                className="hover:bg-stone-50/50 transition-colors group"
+                className="hover:bg-muted/30 transition-colors group"
               >
                 <td className="py-8 px-10">
                   <div className="flex items-center gap-4">
@@ -102,13 +102,13 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
                   </div>
                 </td>
                 <td className="py-8 px-10">
-                  <p className="text-stone-500 font-normal">
+                  <p className="text-muted-foreground font-normal">
                     {new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}
                   </p>
                 </td>
                 <td className="py-8 px-10">
-                  <p className="font-bold text-stone-900">
-                    {batch.quantity} <span className="text-stone-400 font-normal">{batch.unit}</span>
+                  <p className="font-bold text-foreground">
+                    {batch.quantity} <span className="text-muted-foreground font-normal">{batch.unit}</span>
                   </p>
                 </td>
                 <td className="py-8 px-10">

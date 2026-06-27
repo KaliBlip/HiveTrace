@@ -40,17 +40,46 @@ export async function getProducerAnalytics() {
     scanData.push({ name: dayName, scans, growth: Math.round(scans * 0.6) });
   }
 
-  // Batch performance (top 5 batches by scan count)
-  const batchPerformance = batches.slice(0, 5).map((batch) => ({
-    name: batch.batchCode,
-    scans: batch.scanCount,
-    revenue: Math.round(batch.scanCount * (Math.random() * 50 + 10)), // placeholder revenue proxy
-  }));
+  // Batch performance (top 5 batches by revenue from paid orders)
+  const paidOrderItems = await prisma.orderItem.findMany({
+    where: {
+      order: { status: 'PAID' },
+      product: { producerId: producer.id },
+    },
+    include: {
+      product: { include: { batch: true } },
+    },
+  });
+
+  const revenueByBatch: Record<string, { name: string; scans: number; revenue: number }> = {};
+  for (const batch of batches) {
+    revenueByBatch[batch.id] = {
+      name: batch.batchCode,
+      scans: batch.scanCount,
+      revenue: 0,
+    };
+  }
+
+  for (const item of paidOrderItems) {
+    const batchId = item.product.batchId;
+    if (revenueByBatch[batchId]) {
+      revenueByBatch[batchId].revenue += item.priceAtPurchase * item.quantity;
+    }
+  }
+
+  const batchPerformance = Object.values(revenueByBatch)
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5);
+
+  const activeProducts = await prisma.product.count({
+    where: { producerId: producer.id, isActive: true },
+  });
 
   return {
     scanData,
     batchPerformance,
     totalBatches: batches.length,
     totalScans: batches.reduce((sum, b) => sum + b.scanCount, 0),
+    activeProducts,
   };
 }

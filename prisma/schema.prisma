@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 // User model - stores all users (producers, consumers, admins)
@@ -117,10 +117,31 @@ model HoneyBatch {
   reviews           Review[]
   fraudAlerts       FraudAlert[]
   product           Product?
+  ledgerBlocks      LedgerBlock[]
 
   @@index([producerId])
   @@index([verified])
   @@index([harvestDate])
+}
+
+// Blockchain-style ledger for immutable batch verification records
+model LedgerBlock {
+  id           String      @id @default(cuid())
+  index        Int         @unique
+  blockHash    String      @unique
+  previousHash String
+  batchId      String?
+  blockType    String      // GENESIS, BATCH_VERIFY, FRAUD_RECORD
+  payload      String      // Canonical JSON data sealed in this block
+  nonce        Int         @default(0)
+  createdAt    DateTime    @default(now())
+  createdBy    String?
+
+  batch        HoneyBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+
+  @@index([batchId])
+  @@index([blockType])
+  @@index([createdAt])
 }
 
 // QR Code model - individual QR codes for each batch

@@ -35,3 +35,26 @@ export function verifyBatchHash(data: any, hash: string) {
   const generatedHash = generateBatchHash(data);
   return generatedHash === hash;
 }
+
+/**
+ * Checks if a scan location is within the allowed distance from the producer apiary.
+ */
+export function isLocationWithinThreshold(
+  scanLat: number,
+  scanLng: number,
+  producerLat: number,
+  producerLng: number,
+  thresholdKm: number
+): boolean {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+
+  const dLat = toRad(producerLat - scanLat);
+  const dLng = toRad(producerLng - scanLng);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(scanLat)) * Math.cos(toRad(producerLat)) * Math.sin(dLng / 2) ** 2;
+  const distanceKm = earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return distanceKm <= thresholdKm;
+}

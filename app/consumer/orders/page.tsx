@@ -1,13 +1,15 @@
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Footer } from '@/components/footer';
+
 import { Button } from '@/components/ui/button';
-import { 
-  ShoppingBag, 
-  Package, 
-  Truck, 
-  CheckCircle2, 
-  Clock, 
-  Lock, 
+import {
+  ShoppingBag,
+  Package,
+  Truck,
+  CheckCircle2,
+  Clock,
+  Lock,
   ArrowRight,
   ShieldCheck,
   Calendar,
@@ -17,7 +19,7 @@ import {
 import Link from 'next/link';
 import { getConsumerOrders } from '@/lib/actions/consumer-actions';
 import { ConsumerHeader } from '@/components/consumer/header';
-import { Footer } from '@/components/footer';
+import { RetryPaymentButton } from '@/components/consumer/retry-payment-button';
 
 export default async function ConsumerOrdersPage() {
   const orders = await getConsumerOrders();
@@ -37,13 +39,15 @@ export default async function ConsumerOrdersPage() {
       case 'PENDING': return 'bg-amber-500/10 text-amber-600 border-amber-500/25';
       case 'PAID': return 'bg-blue-500/10 text-blue-600 border-blue-500/25';
       case 'SHIPPED': return 'bg-purple-500/10 text-purple-600 border-purple-500/25';
-      case 'DELIVERED': return 'bg-emerald-500/10 text-emerald-600 border-emerald-500/25';
+      case 'FAILED': return 'bg-red-500/10 text-red-600 border-red-500/25';
       default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
   // Calculate sum totals for summary cards
-  const totalAmountSpent = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+  const totalAmountSpent = orders
+    .filter((order) => order.status === 'PAID')
+    .reduce((sum, order) => sum + order.totalAmount, 0);
   const totalJarsCount = orders.reduce((sum, order) => {
     return sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0);
   }, 0);
@@ -52,9 +56,9 @@ export default async function ConsumerOrdersPage() {
     <div className="min-h-screen bg-background flex flex-col justify-between">
       <div>
         <ConsumerHeader />
-        
+
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 md:py-32 space-y-12 flex-grow">
-          
+
           {/* Header Title */}
           <div className="space-y-2 md:max-w-xl">
             <Badge className="rounded-full border border-primary/25 bg-primary/12 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -119,6 +123,9 @@ export default async function ConsumerOrdersPage() {
                         {getStatusIcon(order.status)}
                         {order.status}
                       </Badge>
+                      {order.status === 'PENDING' && (
+                        <RetryPaymentButton orderId={order.id} />
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -126,12 +133,12 @@ export default async function ConsumerOrdersPage() {
                 {/* Order Details Body */}
                 <CardContent className="p-5 sm:p-6">
                   <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-start">
-                    
+
                     {/* Item Details */}
                     <div className="space-y-6 divide-y divide-border/40">
                       {order.items.map((item, idx) => (
                         <div key={item.id} className={`flex gap-4 ${idx > 0 ? 'pt-6' : ''}`}>
-                          
+
                           {/* Image */}
                           <div className="w-20 h-20 bg-muted/40 border rounded-xl overflow-hidden shrink-0">
                             {item.product?.imageUrl ? (
@@ -181,13 +188,24 @@ export default async function ConsumerOrdersPage() {
                         <ShieldCheck className="size-4 text-primary" />
                         Ledger Verification Stamp
                       </h4>
-                      
+
                       <div className="space-y-3">
                         <div className="flex justify-between items-center text-[10px] font-mono">
                           <span className="text-muted-foreground uppercase">GATEWAY STATUS</span>
-                          <span className="text-emerald-500 font-bold">SECURE & SETTLED</span>
+                          <span className={`font-bold ${order.status === 'PAID'
+                              ? 'text-emerald-500'
+                              : order.status === 'PENDING'
+                                ? 'text-amber-500'
+                                : 'text-red-500'
+                            }`}>
+                            {order.status === 'PAID'
+                              ? 'SECURE & SETTLED'
+                              : order.status === 'PENDING'
+                                ? 'AWAITING PAYMENT'
+                                : 'PAYMENT FAILED'}
+                          </span>
                         </div>
-                        
+
                         {order.paymentId && (
                           <div className="space-y-0.5">
                             <span className="text-[10px] font-mono text-muted-foreground block uppercase">TRANSACTION REF</span>

@@ -10,6 +10,8 @@
 
 import { PrismaClient } from '@prisma/client';
 import { createHmac, randomBytes } from 'crypto';
+import bcrypt from 'bcryptjs';
+import { registerBatchOnLedger, ensureGenesisBlock } from '../lib/blockchain';
 
 const prisma = new PrismaClient();
 
@@ -162,6 +164,60 @@ const SEEDS: SeedEntry[] = [
 async function main() {
   console.log('\n🐝  HiveTrace — seeding 5 honey products…\n');
 
+  const demoPassword = await bcrypt.hash('password', 10);
+
+  const demoAccounts = [
+    { email: 'admin@hivetrace.com', name: 'HiveTrace Admin', role: 'ADMIN' },
+    { email: 'john@goldenvalley.com', name: 'John Apiary', role: 'PRODUCER' },
+    { email: 'sarah@consumer.com', name: 'Sarah Consumer', role: 'CONSUMER' },
+  ];
+
+  for (const account of demoAccounts) {
+    await prisma.user.upsert({
+      where: { email: account.email },
+      update: {
+        name: account.name,
+        role: account.role,
+        password: demoPassword,
+      },
+      create: {
+        email: account.email,
+        name: account.name,
+        role: account.role,
+        password: demoPassword,
+      },
+    });
+    console.log(`  ✓ Demo account: ${account.email} (${account.role})`);
+  }
+
+  const johnUser = await prisma.user.findUnique({ where: { email: 'john@goldenvalley.com' } });
+  if (johnUser) {
+    await prisma.producer.upsert({
+      where: { userId: johnUser.id },
+      update: {
+        businessName: 'Golden Valley Apiaries',
+        location: 'Eastern Region, Ghana',
+        latitude: 6.1375,
+        longitude: -0.4502,
+        verified: true,
+        status: 'APPROVED',
+        verifiedAt: new Date(),
+      },
+      create: {
+        userId: johnUser.id,
+        businessName: 'Golden Valley Apiaries',
+        location: 'Eastern Region, Ghana',
+        latitude: 6.1375,
+        longitude: -0.4502,
+        description: 'Demo producer account for dashboard testing.',
+        verificationHash: makeHash(`producer-${johnUser.id}-golden-valley`),
+        verified: true,
+        status: 'APPROVED',
+        verifiedAt: new Date(),
+      },
+    });
+  }
+
   // 1. Upsert users & collect userId map
   const userMap: Record<string, string> = {};
   const uniqueUsers = [
@@ -204,7 +260,7 @@ async function main() {
         certifications: seed.certifications,
         verified: true,
         verifiedAt: new Date(),
-        status: 'VERIFIED',
+        status: 'APPROVED',
       },
       create: {
         userId,
@@ -217,7 +273,7 @@ async function main() {
         verificationHash: makeHash(`producer-${userId}-${seed.businessName}`),
         verified: true,
         verifiedAt: new Date(),
-        status: 'VERIFIED',
+        status: 'APPROVED',
       },
     });
     producerMap[seed.producerEmail] = producer.id;
@@ -225,6 +281,8 @@ async function main() {
   }
 
   // 3. Create batches + products
+  await ensureGenesisBlock();
+
   for (const seed of SEEDS) {
     const producerId = producerMap[seed.producerEmail];
 
@@ -249,8 +307,46 @@ async function main() {
         },
       });
       console.log(`  ✓ Batch: ${seed.batchCode} → ${batch.id}`);
+
+      const { blockHash } = await registerBatchOnLedger({
+        batchId: batch.id,
+        batchCode: batch.batchCode,
+        verificationHash: batch.verificationHash,
+        metadata: { seeded: true, honeyType: batch.honeyType },
+      });
+
+      await prisma.honeyBatch.update({
+        where: { id: batch.id },
+        data: { blockchainTx: blockHash },
+      });
     } else {
       console.log(`  ~ Batch exists: ${seed.batchCode}`);
+      if (!batch.blockchainTx) {
+        const { blockHash } = await registerBatchOnLedger({
+          batchId: batch.id,
+          batchCode: batch.batchCode,
+          verificationHash: batch.verificationHash,
+          metadata: { seeded: true, honeyType: batch.honeyType },
+        });
+        await prisma.honeyBatch.update({
+          where: { id: batch.id },
+          data: { blockchainTx: blockHash },
+        });
+      }
+    }
+
+    // QR code for verified batches
+    const existingQr = await prisma.qRCode.findFirst({ where: { batchId: batch.id } });
+    if (!existingQr) {
+      await prisma.qRCode.create({
+        data: {
+          batchId: batch.id,
+          code: JSON.stringify({
+            batchId: batch.batchCode,
+            hash: batch.verificationHash,
+          }),
+        },
+      });
     }
 
     // Product — upsert by batchId

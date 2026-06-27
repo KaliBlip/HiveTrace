@@ -1,35 +1,9 @@
-'use client';
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star } from 'lucide-react';
+import { getDashboardReviews } from '@/lib/actions/review-actions';
 
-export default function ReviewsPage() {
-  const reviews = [
-    {
-      id: 1,
-      reviewer: 'Jane Smith',
-      rating: 5,
-      text: 'Exceptional quality honey! The QR code verification gave me confidence that I&apos;m getting authentic product.',
-      batch: 'Wildflower Blend',
-      date: '2 days ago'
-    },
-    {
-      id: 2,
-      reviewer: 'John Davis',
-      rating: 5,
-      text: 'Love knowing exactly where my honey comes from. Great producer!',
-      batch: 'Clover Premium',
-      date: '1 week ago'
-    },
-    {
-      id: 3,
-      reviewer: 'Maria Garcia',
-      rating: 4,
-      text: 'Very good honey. Slightly grainy texture but tastes wonderful.',
-      batch: 'Spring Collection',
-      date: '2 weeks ago'
-    },
-  ];
+export default async function ReviewsPage() {
+  const { reviews, stats } = await getDashboardReviews();
 
   return (
     <div className="space-y-8">
@@ -45,14 +19,21 @@ export default function ReviewsPage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline gap-2">
-              <div className="text-3xl font-bold">4.8</div>
+              <div className="text-3xl font-bold">
+                {(stats?.averageRating ?? 0).toFixed(1)}
+              </div>
               <div className="flex gap-1">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                  <Star
+                    key={i}
+                    className={`w-4 h-4 ${i < Math.round(stats?.averageRating ?? 0) ? 'fill-primary text-primary' : 'text-muted'}`}
+                  />
                 ))}
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">Based on 128 reviews</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              Based on {stats?.totalReviews ?? 0} reviews
+            </p>
           </CardContent>
         </Card>
 
@@ -61,8 +42,10 @@ export default function ReviewsPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">5 Star Reviews</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">112</div>
-            <p className="text-xs text-muted-foreground mt-2">87% of all reviews</p>
+            <div className="text-3xl font-bold">{stats?.fiveStarCount ?? 0}</div>
+            <p className="text-xs text-muted-foreground mt-2">
+              {stats?.fiveStarPercent ?? 0}% of all reviews
+            </p>
           </CardContent>
         </Card>
 
@@ -71,7 +54,7 @@ export default function ReviewsPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">This Month</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold">+24</div>
+            <div className="text-3xl font-bold">+{stats?.thisMonthCount ?? 0}</div>
             <p className="text-xs text-muted-foreground mt-2">New reviews</p>
           </CardContent>
         </Card>
@@ -80,29 +63,50 @@ export default function ReviewsPage() {
       <Card className="border-border">
         <CardHeader>
           <CardTitle>Recent Reviews</CardTitle>
-          <CardDescription>Latest customer feedback</CardDescription>
+          <CardDescription>Latest customer feedback from your batches</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {reviews.map((review) => (
-            <div key={review.id} className="pb-6 border-b border-border last:border-0 last:pb-0">
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <p className="font-semibold">{review.reviewer}</p>
-                  <p className="text-sm text-muted-foreground">{review.date}</p>
+          {reviews.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">
+              No reviews yet. Reviews appear when customers rate your verified batches.
+            </p>
+          ) : (
+            reviews.map((review) => (
+              <div
+                key={review.id}
+                className="pb-6 border-b border-border last:border-0 last:pb-0"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <p className="font-semibold">{review.user.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                      {review.verified && (
+                        <span className="ml-2 text-emerald-600 text-xs font-bold">
+                          Verified Purchase
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                  <div className="flex gap-1">
+                    {[...Array(review.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                    ))}
+                    {[...Array(5 - review.rating)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 text-muted" />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex gap-1">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                  {[...Array(5 - review.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 text-muted" />
-                  ))}
-                </div>
+                <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
+                <p className="text-xs text-muted-foreground">
+                  Batch:{' '}
+                  <span className="font-medium">
+                    {review.batch.honeyType} ({review.batch.batchCode})
+                  </span>
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
-              <p className="text-xs text-muted-foreground">Batch: <span className="font-medium">{review.batch}</span></p>
-            </div>
-          ))}
+            ))
+          )}
         </CardContent>
       </Card>
     </div>

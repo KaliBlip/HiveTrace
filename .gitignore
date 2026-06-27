@@ -19,3 +19,8 @@ node_modules
 /.agent/
 .npm-cache
 /.npm-cache
+.pnpm-store
+/.pnpm-store
+.pnpm
+/.pnpm
+.pnpm-store/v10/files/
