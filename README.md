@@ -282,7 +282,7 @@ Run `pnpm db:seed` to populate demo producers, batches, products, and blockchain
 Producer: john@goldenvalley.com / password
 Consumer: sarah@consumer.com / password
 Admin: admin@hivetrace.com / password
-Producer: producer@gmail.com / producer123
+Producer: producer1@gmail.com / pro123s
 Buyer/Consumer: buyer@gmail.com / buyer123
 ```
 
