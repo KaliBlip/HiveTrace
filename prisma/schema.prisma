@@ -108,6 +108,9 @@ model HoneyBatch {
   packagingImage    String?
   honeyVideo        String?
   price             Float?
+  latitude          Float?
+  longitude         Float?
+  registrationLocation String?
   blockchainTx      String?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt

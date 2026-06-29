@@ -235,6 +235,17 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                     <p className="font-semibold">GH₵{batch.price?.toFixed(2) || 'N/A'}</p>
                   </div>
                 </div>
+                {batch.registrationLocation && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Registration Location</p>
+                      <p className="font-semibold">{batch.registrationLocation}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {batch.description && (

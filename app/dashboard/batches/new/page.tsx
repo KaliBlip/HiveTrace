@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Save, Loader2, CheckCircle2, Image as ImageIcon, Upload, DollarSign, Video } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, CheckCircle2, Image as ImageIcon, Upload, DollarSign, Video, MapPin, AlertTriangle, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { createBatch } from '@/lib/actions/batch-actions';
 import { toast } from 'sonner';
@@ -57,6 +57,12 @@ export default function NewBatchPage() {
     price: '',
   });
 
+  // Location state
+  const [locationStatus, setLocationStatus] = useState<'prompt' | 'fetching' | 'success' | 'denied' | 'error'>('prompt');
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [townName, setTownName] = useState<string>('');
+
   useEffect(() => {
     setFormData((prev) => {
       if (prev.batchCode) return prev;
@@ -68,6 +74,54 @@ export default function NewBatchPage() {
           .toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`,
       };
     });
+  }, []);
+
+  const fetchLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('error');
+      toast.error('Geolocation is not supported by your browser.');
+      return;
+    }
+    setLocationStatus('fetching');
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setLatitude(lat);
+        setLongitude(lng);
+        // Reverse geocode to get town name
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const data = await res.json();
+          const addr = data.address || {};
+          const town = addr.town || addr.city || addr.village || addr.suburb || addr.county || addr.state || 'Unknown Area';
+          setTownName(town);
+        } catch {
+          setTownName(`${lat.toFixed(4)}°, ${lng.toFixed(4)}°`);
+        }
+        setLocationStatus('success');
+        toast.success('Location verified successfully.');
+      },
+      (err) => {
+        if (err.code === err.PERMISSION_DENIED) {
+          setLocationStatus('denied');
+          toast.error('Location access denied. Please allow location to register a batch.');
+        } else {
+          setLocationStatus('error');
+          toast.error('Could not retrieve your location. Please try again.');
+        }
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
+
+  // Request location on mount
+  useEffect(() => {
+    fetchLocation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: 'honeyImage' | 'packagingImage' | 'honeyVideo') => {
@@ -92,6 +146,10 @@ export default function NewBatchPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (locationStatus !== 'success' || !latitude || !longitude) {
+      toast.error('Device location is required to register a batch.');
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -105,6 +163,9 @@ export default function NewBatchPage() {
         packagingImage: formData.packagingImage || undefined,
         honeyVideo: formData.honeyVideo || undefined,
         price: formData.price ? parseFloat(formData.price) : undefined,
+        latitude,
+        longitude,
+        registrationLocation: townName || undefined,
       });
 
       toast.success('Batch registered successfully! Awaiting admin quality verification.');
@@ -146,6 +207,50 @@ export default function NewBatchPage() {
           
           <div className="p-10">
             <form onSubmit={handleSubmit} className="space-y-10">
+              {/* Location Verification Banner */}
+              {locationStatus === 'success' && (
+                <div className="p-5 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-600 shrink-0">
+                    <MapPin className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Location Verified</p>
+                    <p className="text-xs text-emerald-600/80 dark:text-emerald-400/70">Registering from <span className="font-semibold">{townName}</span></p>
+                  </div>
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                </div>
+              )}
+              {locationStatus === 'fetching' && (
+                <div className="p-5 bg-blue-500/10 border border-blue-500/30 rounded-2xl flex items-center gap-4">
+                  <Loader2 className="w-5 h-5 text-blue-500 animate-spin shrink-0" />
+                  <p className="text-sm font-medium text-blue-700 dark:text-blue-400">Fetching device location...</p>
+                </div>
+              )}
+              {(locationStatus === 'denied' || locationStatus === 'error') && (
+                <div className="p-5 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-600 shrink-0">
+                    <AlertTriangle className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-red-700 dark:text-red-400">
+                      {locationStatus === 'denied' ? 'Location Access Denied' : 'Location Error'}
+                    </p>
+                    <p className="text-xs text-red-600/80 dark:text-red-400/70">
+                      Device location is mandatory to register a new honey batch. Please allow location access in your browser settings.
+                    </p>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" onClick={fetchLocation} className="shrink-0 gap-1.5 text-xs border-red-300 text-red-600 hover:bg-red-50">
+                    <RefreshCw className="w-3.5 h-3.5" /> Retry
+                  </Button>
+                </div>
+              )}
+              {locationStatus === 'prompt' && (
+                <div className="p-5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center gap-4">
+                  <Loader2 className="w-5 h-5 text-amber-500 animate-spin shrink-0" />
+                  <p className="text-sm font-medium text-amber-700 dark:text-amber-400">Waiting for location permission...</p>
+                </div>
+              )}
+
               {/* Media Uploads Section (At the Top) */}
               <div className="space-y-4">
                 <h3 className="text-lg font-bold uppercase tracking-wider text-stone-600">Step 1: Batch Assets (Images & Video)</h3>
@@ -379,7 +484,7 @@ export default function NewBatchPage() {
               <Button 
                 type="submit" 
                 className="w-full h-16 text-xl rounded-2xl font-bold gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]" 
-                disabled={isSubmitting}
+                disabled={isSubmitting || locationStatus !== 'success'}
               >
                 {isSubmitting ? (
                   <>

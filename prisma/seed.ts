@@ -304,6 +304,9 @@ async function main() {
           verifiedAt: new Date(),
           honeyImage: seed.imageUrl,
           price: seed.price,
+          latitude: 5.6037,
+          longitude: -0.1870,
+          registrationLocation: "Accra",
         },
       });
       console.log(`  ✓ Batch: ${seed.batchCode} → ${batch.id}`);

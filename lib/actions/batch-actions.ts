@@ -31,6 +31,9 @@ export async function createBatch(data: {
   packagingImage?: string;
   honeyVideo?: string;
   price?: number;
+  latitude?: number;
+  longitude?: number;
+  registrationLocation?: string;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');

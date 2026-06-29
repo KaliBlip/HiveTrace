@@ -195,6 +195,9 @@ export default function VerifyBatchPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
               </div>
               <p className="font-heading font-bold text-2xl">{batch.producer.location}</p>
+              {batch.registrationLocation && (
+                <p className="text-xs text-muted-foreground">Registered at: <span className="font-semibold text-foreground">{batch.registrationLocation}</span></p>
+              )}
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground mb-2">
