@@ -29,6 +29,7 @@ export async function createBatch(data: {
   description?: string;
   honeyImage?: string;
   packagingImage?: string;
+  honeyVideo?: string;
   price?: number;
 }) {
   const session = await auth();

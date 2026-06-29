@@ -52,6 +52,7 @@ export async function verifyBatchByHash(hash: string) {
     verificationHash: batch.verificationHash,
     honeyImage: batch.honeyImage,
     packagingImage: batch.packagingImage,
+    honeyVideo: batch.honeyVideo,
     price: batch.price,
     blockchainTx: batch.blockchainTx,
     producer: {

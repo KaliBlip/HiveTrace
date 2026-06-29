@@ -22,7 +22,8 @@ import {
   Loader2,
   Sparkles,
   Download,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Video
 } from 'lucide-react';
 import Link from 'next/link';
 import { getBatchById } from '@/lib/actions/batch-actions';
@@ -165,8 +166,8 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
         {/* Left Columns: Inspection and Details */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Side-by-side Images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Side-by-side Images & Video */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="border-border overflow-hidden">
               <CardHeader className="py-4 bg-muted/20">
                 <CardTitle className="text-sm font-bold flex items-center gap-2">
@@ -193,6 +194,21 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                   <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[220px] object-cover" />
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No image uploaded</p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border overflow-hidden">
+              <CardHeader className="py-4 bg-muted/20">
+                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                  <Video className="w-4 h-4 text-primary" /> Short Batch Video
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
+                {batch.honeyVideo ? (
+                  <video src={batch.honeyVideo} controls className="w-full h-[220px] object-cover" />
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">No video uploaded</p>
                 )}
               </CardContent>
             </Card>

@@ -18,7 +18,8 @@ import {
   ExternalLink,
   History,
   DollarSign,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Video
 } from 'lucide-react';
 import Link from 'next/link';
 import { getBatchById } from '@/lib/actions/batch-actions';
@@ -143,8 +144,8 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
         {/* Left Column: Details */}
         <div className="lg:col-span-2 space-y-8">
           
-          {/* Images Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Media Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="border-border overflow-hidden">
               <CardHeader className="py-4 bg-muted/20">
                 <CardTitle className="text-sm font-bold flex items-center gap-2">
@@ -171,6 +172,21 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
                   <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[220px] object-cover" />
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No image uploaded</p>
+                )}
+              </CardContent>
+            </Card>
+
+            <Card className="border-border overflow-hidden">
+              <CardHeader className="py-4 bg-muted/20">
+                <CardTitle className="text-sm font-bold flex items-center gap-2">
+                  <Video className="w-4 h-4 text-primary" /> Short Batch Video
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
+                {batch.honeyVideo ? (
+                  <video src={batch.honeyVideo} controls className="w-full h-[220px] object-cover" />
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">No video uploaded</p>
                 )}
               </CardContent>
             </Card>

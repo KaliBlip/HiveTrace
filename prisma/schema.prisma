@@ -106,6 +106,7 @@ model HoneyBatch {
   scanCount         Int        @default(0)
   honeyImage        String?
   packagingImage    String?
+  honeyVideo        String?
   price             Float?
   blockchainTx      String?
   createdAt         DateTime   @default(now())
