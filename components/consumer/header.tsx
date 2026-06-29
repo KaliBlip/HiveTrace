@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Menu, Package, ScanLine, ShieldCheck, ShoppingBag, User, X, ShoppingCart, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ const mobileMenuItems = [
 export function ConsumerHeader({ transparent = false }: { transparent?: boolean }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { isAuthenticated, role, user } = useAuth();
+  const { isAuthenticated, role, user, logout } = useAuth();
   const { toggleOpen, totalItems } = useCart();
   const currentRole = role?.toLowerCase();
   const accountHref = getRoleHomePath(currentRole);
@@ -74,18 +74,24 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
           {isAuthenticated ? (
-            <Link href={accountHref}>
-              <Button className="gap-2">
-                {user?.image ? (
-                  <img src={user.image} alt="" className="size-5 rounded-full object-cover" />
-                ) : currentRole === 'producer' || currentRole === 'admin' ? (
-                  <LayoutDashboard className="size-4" />
-                ) : (
-                  <User className="size-4" />
-                )}
-                {accountLabel}
+            <>
+              <Link href={accountHref}>
+                <Button className="gap-2">
+                  {user?.image ? (
+                    <img src={user.image} alt="" className="size-5 rounded-full object-cover" />
+                  ) : currentRole === 'producer' || currentRole === 'admin' ? (
+                    <LayoutDashboard className="size-4" />
+                  ) : (
+                    <User className="size-4" />
+                  )}
+                  {accountLabel}
+                </Button>
+              </Link>
+              <Button variant="outline" className="gap-2" onClick={() => logout()}>
+                <LogOut className="size-4" />
+                Sign out
               </Button>
-            </Link>
+            </>
           ) : (
             <Link href="/auth/login">
               <Button variant="outline">Sign in</Button>
@@ -140,9 +146,15 @@ export function ConsumerHeader({ transparent = false }: { transparent?: boolean 
               <ThemeToggle />
             </div>
             {isAuthenticated ? (
-              <Link href={accountHref} onClick={() => setMobileMenuOpen(false)}>
-                <Button className="w-full">Open account</Button>
-              </Link>
+              <>
+                <Link href={accountHref} onClick={() => setMobileMenuOpen(false)}>
+                  <Button className="w-full">Open account</Button>
+                </Link>
+                <Button variant="outline" className="w-full gap-2" onClick={() => { logout(); setMobileMenuOpen(false); }}>
+                  <LogOut className="size-4" />
+                  Sign out
+                </Button>
+              </>
             ) : (
               <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>
                 <Button variant="outline" className="w-full">Sign in</Button>
