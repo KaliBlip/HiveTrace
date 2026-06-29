@@ -48,113 +48,113 @@ interface SeedEntry {
 
 const SEEDS: SeedEntry[] = [
   {
-    producerEmail: 'kwame.mensah@hivetrace.seed',
-    producerName: 'Kwame Mensah',
-    businessName: 'Mensah Forest Apiaries',
-    location: 'Brong-Ahafo Region, Ghana',
-    latitude: 7.9465,
-    longitude: -1.0232,
-    producerDesc: 'Family-run apiary in the Brong-Ahafo forests producing premium wildflower honey since 1998.',
+    producerEmail: 'yaw.odoom@hivetrace.seed',
+    producerName: 'Yaw Odoom',
+    businessName: 'Odoom Forest Honey',
+    location: 'Central Region, Ghana',
+    latitude: 5.6037,
+    longitude: -0.1870,
+    producerDesc: 'Premium forest apiary producing rich honey in the Central Region since 2010.',
     certifications: 'Organic, Ghana Standards Authority',
-    batchCode: 'HT-2024-MFA-001',
+    batchCode: 'HT-2024-OFH-001',
     honeyType: 'Wildflower',
-    quantity: 180,
+    quantity: 150,
     harvestDate: new Date('2024-03-12'),
     processingDate: new Date('2024-03-20'),
-    productName: 'Brong-Ahafo Wildflower Honey',
+    productName: 'Odoom Forest Wildflower Honey',
     productDesc:
-      'A rich, golden wildflower honey harvested from the biodiverse forests of the Brong-Ahafo Region. Notes of tropical blossom, floral sweetness, and a smooth amber finish. Unfiltered and raw — every jar tells the story of the forest.',
-    price: 85.00,
+      'A rich, golden wildflower honey harvested from the biodiverse forests of the Central Region. Notes of tropical blossom, floral sweetness, and a smooth amber finish.',
+    price: 90.00,
     unit: '500g jar',
-    stock: 48,
+    stock: 50,
     imageUrl: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?q=80&w=1200&auto=format&fit=crop',
   },
   {
-    producerEmail: 'abena.boateng@hivetrace.seed',
-    producerName: 'Abena Boateng',
-    businessName: "Boateng's Volta Valley Bees",
+    producerEmail: 'ama.kofi@hivetrace.seed',
+    producerName: 'Ama Kofi',
+    businessName: 'Volta Honey Farms',
     location: 'Volta Region, Ghana',
     latitude: 6.877,
     longitude: 0.249,
     producerDesc: 'Artisan beekeeper in the Volta Valley producing single-origin raw honey with traceable provenance.',
     certifications: 'Fair Trade, Rainforest Alliance',
-    batchCode: 'HT-2024-VVB-002',
+    batchCode: 'HT-2024-VHF-002',
     honeyType: 'Acacia',
-    quantity: 120,
+    quantity: 110,
     harvestDate: new Date('2024-04-05'),
     processingDate: new Date('2024-04-15'),
     productName: 'Volta Valley Acacia Honey',
     productDesc:
-      'Light and crystal-clear acacia honey from the pristine Volta Valley. Mild sweetness with delicate floral notes and an exceptionally slow crystallisation rate. A favourite for tea and fine cooking.',
-    price: 110.00,
+      'Light and crystal-clear acacia honey from the pristine Volta Valley. Mild sweetness with delicate floral notes.',
+    price: 115.00,
     unit: '500g jar',
-    stock: 35,
+    stock: 40,
     imageUrl: 'https://images.unsplash.com/photo-1587049352851-8d4e89133924?q=80&w=1200&auto=format&fit=crop',
   },
   {
-    producerEmail: 'kofi.asante@hivetrace.seed',
-    producerName: 'Kofi Asante',
-    businessName: 'Asante Highland Honey Co.',
+    producerEmail: 'kweku.mensah@hivetrace.seed',
+    producerName: 'Kweku Mensah',
+    businessName: 'Mensah Sweet Honey',
     location: 'Ashanti Region, Ghana',
     latitude: 6.6886,
     longitude: -1.6244,
-    producerDesc: 'Highland apiary at 700 m elevation producing intensely flavoured raw honey from native flora.',
+    producerDesc: 'Highland apiary producing intensely flavoured raw honey from native flora.',
     certifications: 'Organic, GLOBALG.A.P.',
-    batchCode: 'HT-2024-AHH-003',
+    batchCode: 'HT-2024-MSH-003',
     honeyType: 'Raw Multifloral',
-    quantity: 200,
+    quantity: 180,
     harvestDate: new Date('2024-02-18'),
     processingDate: new Date('2024-02-28'),
     productName: 'Ashanti Highland Raw Honey',
     productDesc:
-      'Dark amber raw honey from high-altitude Ashanti flora — brimming with antioxidants and natural enzymes. Minimally processed, coarse-strained, with bold earthy undertones and a long caramel finish.',
-    price: 95.00,
+      'Dark amber raw honey from high-altitude Ashanti flora — brimming with antioxidants and natural enzymes.',
+    price: 100.00,
     unit: '500g jar',
-    stock: 62,
+    stock: 60,
     imageUrl: 'https://images.unsplash.com/photo-1600948836101-f9ffda59d250?q=80&w=1200&auto=format&fit=crop',
   },
   {
-    producerEmail: 'kwame.mensah@hivetrace.seed',
-    producerName: 'Kwame Mensah',
-    businessName: 'Mensah Forest Apiaries',
-    location: 'Brong-Ahafo Region, Ghana',
-    latitude: 7.9465,
-    longitude: -1.0232,
-    producerDesc: 'Family-run apiary in the Brong-Ahafo forests producing premium wildflower honey since 1998.',
+    producerEmail: 'yaw.odoom@hivetrace.seed',
+    producerName: 'Yaw Odoom',
+    businessName: 'Odoom Forest Honey',
+    location: 'Central Region, Ghana',
+    latitude: 5.6037,
+    longitude: -0.1870,
+    producerDesc: 'Premium forest apiary producing rich honey in the Central Region since 2010.',
     certifications: 'Organic, Ghana Standards Authority',
-    batchCode: 'HT-2024-MFA-004',
+    batchCode: 'HT-2024-OFH-004',
     honeyType: 'Clover',
-    quantity: 150,
+    quantity: 130,
     harvestDate: new Date('2024-05-10'),
     processingDate: new Date('2024-05-20'),
     productName: 'Pure Clover Blossom Honey',
     productDesc:
-      'Classic clover honey with a clean, mild sweetness perfect for everyday use. Light colour, buttery texture, and a fresh herbal aroma. Cold-extracted and never heat-treated.',
-    price: 72.00,
+      'Classic clover honey with a clean, mild sweetness perfect for everyday use. Light colour, buttery texture, and a fresh herbal aroma.',
+    price: 75.00,
     unit: '500g jar',
-    stock: 90,
+    stock: 80,
     imageUrl: 'https://images.unsplash.com/photo-1634467524884-897d0af5e104?q=80&w=1200&auto=format&fit=crop',
   },
   {
-    producerEmail: 'abena.boateng@hivetrace.seed',
-    producerName: 'Abena Boateng',
-    businessName: "Boateng's Volta Valley Bees",
+    producerEmail: 'ama.kofi@hivetrace.seed',
+    producerName: 'Ama Kofi',
+    businessName: 'Volta Honey Farms',
     location: 'Volta Region, Ghana',
     latitude: 6.877,
     longitude: 0.249,
     producerDesc: 'Artisan beekeeper in the Volta Valley producing single-origin raw honey with traceable provenance.',
     certifications: 'Fair Trade, Rainforest Alliance',
-    batchCode: 'HT-2024-VVB-005',
+    batchCode: 'HT-2024-VHF-005',
     honeyType: 'Black Seed',
-    quantity: 80,
+    quantity: 90,
     harvestDate: new Date('2024-06-01'),
     processingDate: new Date('2024-06-10'),
     productName: 'Black Seed & Thyme Infused Honey',
     productDesc:
-      'Therapeutic honey infused with cold-pressed black seed oil and wild thyme, harvested from the Volta countryside. Prized for its immune-boosting properties. Rich, dark, and deeply aromatic — a spoonful a day.',
-    price: 145.00,
+      'Therapeutic honey infused with cold-pressed black seed oil and wild thyme, harvested from the Volta countryside.',
+    price: 150.00,
     unit: '350g jar',
-    stock: 25,
+    stock: 30,
     imageUrl: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?q=80&w=1200&auto=format&fit=crop',
   },
 ];
@@ -162,14 +162,36 @@ const SEEDS: SeedEntry[] = [
 // ─── Main seeder ─────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('\n🐝  HiveTrace — seeding 5 honey products…\n');
+  console.log('\n🧹  Cleaning database tables...');
+  await prisma.payment.deleteMany({});
+  await prisma.orderItem.deleteMany({});
+  await prisma.order.deleteMany({});
+  await prisma.review.deleteMany({});
+  await prisma.qRScan.deleteMany({});
+  await prisma.qRCode.deleteMany({});
+  await prisma.fraudAlert.deleteMany({});
+  await prisma.ledgerBlock.deleteMany({});
+  await prisma.product.deleteMany({});
+  await prisma.honeyBatch.deleteMany({});
+  await prisma.producerRating.deleteMany({});
+  await prisma.producer.deleteMany({});
+  await prisma.session.deleteMany({});
+  await prisma.contactMessage.deleteMany({});
+  await prisma.user.deleteMany({
+    where: {
+      email: { not: 'admin@hivetrace.com' }
+    }
+  });
+  console.log('✓ Database tables cleaned.');
+
+  console.log('\n🐝  HiveTrace — seeding new honey products…\n');
 
   const demoPassword = await bcrypt.hash('password', 10);
 
   const demoAccounts = [
     { email: 'admin@hivetrace.com', name: 'HiveTrace Admin', role: 'ADMIN' },
-    { email: 'john@goldenvalley.com', name: 'John Apiary', role: 'PRODUCER' },
-    { email: 'sarah@consumer.com', name: 'Sarah Consumer', role: 'CONSUMER' },
+    { email: 'eric@primehoney.com', name: 'Eric Prime', role: 'PRODUCER' },
+    { email: 'linda@consumer.com', name: 'Linda Consumer', role: 'CONSUMER' },
   ];
 
   for (const account of demoAccounts) {
@@ -190,27 +212,27 @@ async function main() {
     console.log(`  ✓ Demo account: ${account.email} (${account.role})`);
   }
 
-  const johnUser = await prisma.user.findUnique({ where: { email: 'john@goldenvalley.com' } });
-  if (johnUser) {
+  const ericUser = await prisma.user.findUnique({ where: { email: 'eric@primehoney.com' } });
+  if (ericUser) {
     await prisma.producer.upsert({
-      where: { userId: johnUser.id },
+      where: { userId: ericUser.id },
       update: {
-        businessName: 'Golden Valley Apiaries',
-        location: 'Eastern Region, Ghana',
-        latitude: 6.1375,
-        longitude: -0.4502,
+        businessName: 'Prime Honey Apiaries',
+        location: 'Kumasi, Ashanti Region, Ghana',
+        latitude: 6.6886,
+        longitude: -1.6244,
         verified: true,
         status: 'APPROVED',
         verifiedAt: new Date(),
       },
       create: {
-        userId: johnUser.id,
-        businessName: 'Golden Valley Apiaries',
-        location: 'Eastern Region, Ghana',
-        latitude: 6.1375,
-        longitude: -0.4502,
-        description: 'Demo producer account for dashboard testing.',
-        verificationHash: makeHash(`producer-${johnUser.id}-golden-valley`),
+        userId: ericUser.id,
+        businessName: 'Prime Honey Apiaries',
+        location: 'Kumasi, Ashanti Region, Ghana',
+        latitude: 6.6886,
+        longitude: -1.6244,
+        description: 'New demo producer account for dashboard testing.',
+        verificationHash: makeHash(`producer-${ericUser.id}-prime-honey`),
         verified: true,
         status: 'APPROVED',
         verifiedAt: new Date(),
@@ -221,9 +243,9 @@ async function main() {
   // 1. Upsert users & collect userId map
   const userMap: Record<string, string> = {};
   const uniqueUsers = [
-    { email: 'kwame.mensah@hivetrace.seed', name: 'Kwame Mensah' },
-    { email: 'abena.boateng@hivetrace.seed', name: 'Abena Boateng' },
-    { email: 'kofi.asante@hivetrace.seed', name: 'Kofi Asante' },
+    { email: 'yaw.odoom@hivetrace.seed', name: 'Yaw Odoom' },
+    { email: 'ama.kofi@hivetrace.seed', name: 'Ama Kofi' },
+    { email: 'kweku.mensah@hivetrace.seed', name: 'Kweku Mensah' },
   ];
 
   for (const u of uniqueUsers) {
@@ -233,7 +255,6 @@ async function main() {
       create: {
         email: u.email,
         name: u.name,
-        // Placeholder bcrypt hash — seed accounts are not meant for login
         password: '$2b$10$seed.placeholder.hash.not.valid.for.auth.login.only',
         role: 'PRODUCER',
       },
