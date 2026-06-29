@@ -29,7 +29,11 @@ export async function createBatch(data: {
   description?: string;
   honeyImage?: string;
   packagingImage?: string;
+  honeyVideo?: string;
   price?: number;
+  latitude?: number;
+  longitude?: number;
+  registrationLocation?: string;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');

@@ -15,7 +15,8 @@ import {
   ExternalLink,
   ArrowRight,
   DollarSign,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Video
 } from 'lucide-react';
 import Link from 'next/link';
 import { verifyBatchByHash } from '@/lib/actions/verify-actions';
@@ -194,6 +195,9 @@ export default function VerifyBatchPage() {
                 <span className="text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
               </div>
               <p className="font-heading font-bold text-2xl">{batch.producer.location}</p>
+              {batch.registrationLocation && (
+                <p className="text-xs text-muted-foreground">Registered at: <span className="font-semibold text-foreground">{batch.registrationLocation}</span></p>
+              )}
             </div>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground mb-2">
@@ -244,8 +248,8 @@ export default function VerifyBatchPage() {
         <div className="grid lg:grid-cols-3 gap-12">
           
           <div className="lg:col-span-2 space-y-12">
-            {/* Batch Images */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Batch Images & Video */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="border-border overflow-hidden">
                 <CardHeader className="py-4 bg-muted/20">
                   <CardTitle className="text-sm font-bold flex items-center gap-2">
@@ -272,6 +276,21 @@ export default function VerifyBatchPage() {
                     <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[200px] object-cover" />
                   ) : (
                     <p className="text-xs text-muted-foreground italic">No image uploaded by producer</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="border-border overflow-hidden">
+                <CardHeader className="py-4 bg-muted/20">
+                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+                    <Video className="w-4 h-4 text-primary" /> Short Batch Video
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
+                  {batch.honeyVideo ? (
+                    <video src={batch.honeyVideo} controls className="w-full h-[200px] object-cover" />
+                  ) : (
+                    <p className="text-xs text-muted-foreground italic">No video uploaded by producer</p>
                   )}
                 </CardContent>
               </Card>

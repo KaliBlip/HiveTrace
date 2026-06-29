@@ -52,7 +52,9 @@ export async function verifyBatchByHash(hash: string) {
     verificationHash: batch.verificationHash,
     honeyImage: batch.honeyImage,
     packagingImage: batch.packagingImage,
+    honeyVideo: batch.honeyVideo,
     price: batch.price,
+    registrationLocation: batch.registrationLocation,
     blockchainTx: batch.blockchainTx,
     producer: {
       name: batch.producer.user.name || batch.producer.businessName,
@@ -65,7 +67,7 @@ export async function verifyBatchByHash(hash: string) {
       {
         event: 'Batch Registered',
         date: batch.createdAt.toISOString().split('T')[0],
-        location: batch.producer.location || 'Unknown',
+        location: batch.registrationLocation || batch.producer.location || 'Unknown',
       },
       {
         event: 'Harvested',

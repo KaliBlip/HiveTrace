@@ -282,6 +282,8 @@ Run `pnpm db:seed` to populate demo producers, batches, products, and blockchain
 Producer: eric@primehoney.com / password
 Consumer: linda@consumer.com / password
 Admin: admin@hivetrace.com / password
+Producer: producer1@gmail.com / pro123
+Buyer/Consumer: buyer@gmail.com / buyer123
 ```
 
 ### Test QR Codes
