@@ -279,8 +279,8 @@ Run `pnpm db:seed` to populate demo producers, batches, products, and blockchain
 
 ### Test Accounts
 ```
-Producer: john@goldenvalley.com / password
-Consumer: sarah@consumer.com / password
+Producer: eric@primehoney.com / password
+Consumer: linda@consumer.com / password
 Admin: admin@hivetrace.com / password
 ```
 
