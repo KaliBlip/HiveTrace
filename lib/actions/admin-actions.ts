@@ -235,9 +235,36 @@ export async function verifyAndApproveBatch(
     });
   }
 
+  // Automatically create a marketplace product listing for this approved batch
+  const existingProduct = await prisma.product.findUnique({
+    where: { batchId: id },
+  });
+
+  if (!existingProduct) {
+    const productName = batch.honeyType.toLowerCase().includes('honey')
+      ? batch.honeyType
+      : `${batch.honeyType} Honey`;
+
+    await prisma.product.create({
+      data: {
+        name: productName,
+        description: batch.description || '',
+        price: batch.price || 0,
+        unit: 'kg',
+        stock: Math.floor(batch.quantity),
+        imageUrl: batch.honeyImage || batch.packagingImage || null,
+        batchId: batch.id,
+        producerId: batch.producerId,
+        isActive: true,
+      },
+    });
+  }
+
   revalidatePath('/admin/batches');
   revalidatePath(`/admin/batches/${id}`);
   revalidatePath('/dashboard/batches');
+  revalidatePath('/dashboard/products');
+  revalidatePath('/shop');
   revalidatePath(`/verify/${batch.verificationHash}`);
 
   return updatedBatch;

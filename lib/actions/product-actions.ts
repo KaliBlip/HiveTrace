@@ -15,7 +15,10 @@ export async function getProducerProducts() {
   if (!producer) return [];
 
   return await prisma.product.findMany({
-    where: { producerId: producer.id },
+    where: {
+      producerId: producer.id,
+      isActive: true,
+    },
     include: { batch: true },
     orderBy: { createdAt: 'desc' },
   });
