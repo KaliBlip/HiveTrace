@@ -76,10 +76,34 @@ export default function NewBatchPage() {
     });
   }, []);
 
+  const fetchIPLocation = async () => {
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      if (!res.ok) throw new Error('IP geolocation failed');
+      const data = await res.json();
+      if (data.latitude && data.longitude) {
+        setLatitude(data.latitude);
+        setLongitude(data.longitude);
+        const town = data.city || data.region || 'Unknown Area';
+        setTownName(town);
+        setLocationStatus('success');
+        toast.success('Location resolved via IP address.');
+        return true;
+      }
+    } catch (err) {
+      console.error('IP Geolocation fallback failed:', err);
+    }
+    return false;
+  };
+
   const fetchLocation = () => {
     if (!navigator.geolocation) {
-      setLocationStatus('error');
-      toast.error('Geolocation is not supported by your browser.');
+      fetchIPLocation().then((success) => {
+        if (!success) {
+          setLocationStatus('error');
+          toast.error('Geolocation is not supported by your browser.');
+        }
+      });
       return;
     }
     setLocationStatus('fetching');
@@ -105,16 +129,20 @@ export default function NewBatchPage() {
         setLocationStatus('success');
         toast.success('Location verified successfully.');
       },
-      (err) => {
-        if (err.code === err.PERMISSION_DENIED) {
-          setLocationStatus('denied');
-          toast.error('Location access denied. Please allow location to register a batch.');
-        } else {
-          setLocationStatus('error');
-          toast.error('Could not retrieve your location. Please try again.');
+      async (err) => {
+        console.warn('Browser geolocation failed, attempting IP-based fallback...', err);
+        const success = await fetchIPLocation();
+        if (!success) {
+          if (err.code === err.PERMISSION_DENIED) {
+            setLocationStatus('denied');
+            toast.error('Location access denied. Please allow location to register a batch.');
+          } else {
+            setLocationStatus('error');
+            toast.error('Could not retrieve your location. Please try again.');
+          }
         }
       },
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
     );
   };
 
