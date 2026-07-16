@@ -15,6 +15,8 @@ interface Batch {
   status: "verified" | "pending" | "rejected";
   qrScans: number;
   createdAt: string;
+  hasActiveProduct?: boolean;
+  productId?: string | null;
 }
 
 interface BatchListProps {
@@ -132,11 +134,19 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
                       </Button>
                     </Link>
                     {batch.status === "verified" && (
-                      <Link href={`/dashboard/products/new?batchId=${batch.id}`}>
-                        <Button variant="outline" size="sm" className="rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white h-10 px-5 font-bold">
-                          List for Sale
-                        </Button>
-                      </Link>
+                      batch.hasActiveProduct ? (
+                        <Link href={`/dashboard/products/${batch.productId}/edit`}>
+                          <Button variant="outline" size="sm" className="rounded-full border-green-500/20 text-green-600 hover:bg-green-600 hover:text-white h-10 px-5 font-bold">
+                            Edit Listing
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href={`/dashboard/products/new?batchId=${batch.id}`}>
+                          <Button variant="outline" size="sm" className="rounded-full border-primary/20 text-primary hover:bg-primary hover:text-white h-10 px-5 font-bold">
+                            List for Sale
+                          </Button>
+                        </Link>
+                      )
                     )}
                   </div>
                 </td>

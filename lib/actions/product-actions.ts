@@ -67,6 +67,12 @@ export async function createProduct(data: {
 
   if (!producer) throw new Error('Producer profile not found');
 
+  // Fetch the associated batch to get its product image
+  const batch = await prisma.honeyBatch.findUnique({
+    where: { id: data.batchId },
+  });
+  const batchImage = batch ? (batch.honeyImage || batch.packagingImage) : null;
+
   // Check if batch already has a listing
   const existingProduct = await prisma.product.findUnique({
     where: { batchId: data.batchId },
@@ -86,7 +92,7 @@ export async function createProduct(data: {
         price: data.price,
         unit: data.unit,
         stock: data.stock,
-        imageUrl: data.imageUrl || null,
+        imageUrl: data.imageUrl || batchImage || null,
         isActive: true,
       },
     });
@@ -102,7 +108,7 @@ export async function createProduct(data: {
       price: data.price,
       unit: data.unit,
       stock: data.stock,
-      imageUrl: data.imageUrl || null,
+      imageUrl: data.imageUrl || batchImage || null,
       batchId: data.batchId,
       producerId: producer.id,
       isActive: true,

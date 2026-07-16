@@ -17,6 +17,8 @@ export default async function BatchesPage() {
     status: batch.verified ? "verified" : "pending",
     qrScans: batch.scanCount,
     createdAt: batch.createdAt.toISOString(),
+    hasActiveProduct: batch.product ? batch.product.isActive : false,
+    productId: batch.product ? batch.product.id : null,
   }));
 
   return (

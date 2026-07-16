@@ -17,6 +17,7 @@ export async function getProducerBatches() {
 
   return await prisma.honeyBatch.findMany({
     where: { producerId: producer.id },
+    include: { product: true },
     orderBy: { createdAt: 'desc' },
   });
 }
