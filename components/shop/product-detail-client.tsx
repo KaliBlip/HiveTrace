@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, BadgeCheck, Calendar, ChevronRight, Info, Lock, MapPin, Minus, Plus, ShieldCheck, ShoppingCart, Star } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, Calendar, ChevronRight, Info, Lock, MapPin, MessageSquareText, Minus, Plus, ShieldCheck, ShoppingCart, Star } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -64,6 +64,10 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
   const averageRating = reviews.length > 0
     ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
+  const ratingCounts = [5, 4, 3, 2, 1].map((rating) => ({
+    rating,
+    count: reviews.filter((review) => review.rating === rating).length,
+  }));
 
   const handleSubmitReview = async () => {
     if (!reviewText.trim()) {
@@ -313,31 +317,77 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
               ))}
             </div>
 
-            {/* Product reviews */}
-            <div className="space-y-4 rounded-xl border border-border/60 bg-card p-5">
-              <div className="flex items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-sm font-bold">Product Reviews</h2>
-                  <p className="text-xs text-muted-foreground">
-                    Buyer feedback is visible to the producer and HiveTrace admins.
-                  </p>
+          </div>
+        </div>
+
+        {/* ── Reviews: full-width product conversation ───── */}
+        <section className="mt-14 border-t border-border/60 pt-10 lg:mt-16">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-primary">
+                <MessageSquareText className="size-4" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.22em]">Buyer feedback</span>
+              </div>
+              <h2 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">Product Reviews</h2>
+              <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Multiple buyers can review this product. Reviews stay visible here and are also available to the producer and HiveTrace admins.
+              </p>
+            </div>
+            <div className="flex items-center gap-4 rounded-md border border-border/70 bg-card px-5 py-4">
+              <div className="text-center">
+                <p className="font-heading text-3xl font-bold">{averageRating > 0 ? averageRating.toFixed(1) : '0.0'}</p>
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Average</p>
+              </div>
+              <div className="h-12 w-px bg-border" />
+              <div>
+                <div className="flex gap-0.5 text-primary">
+                  {[...Array(5)].map((_, index) => (
+                    <Star
+                      key={index}
+                      className={`size-4 ${index < Math.round(averageRating) ? 'fill-current' : 'text-muted-foreground/30'}`}
+                    />
+                  ))}
                 </div>
-                <div className="flex shrink-0 items-center gap-1 text-primary">
-                  <Star className="size-4 fill-current" />
-                  <span className="text-sm font-bold">{averageRating > 0 ? averageRating.toFixed(1) : '0.0'}</span>
-                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {reviews.length} review{reviews.length === 1 ? '' : 's'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[380px_minmax(0,1fr)]">
+            <aside className="space-y-5 rounded-md border border-border/70 bg-card p-5">
+              <div className="space-y-3">
+                {ratingCounts.map(({ rating, count }) => (
+                  <div key={rating} className="grid grid-cols-[42px_1fr_24px] items-center gap-3 text-xs">
+                    <span className="flex items-center gap-1 font-semibold">
+                      {rating}
+                      <Star className="size-3 fill-primary text-primary" />
+                    </span>
+                    <div className="h-2 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary"
+                        style={{ width: reviews.length > 0 ? `${(count / reviews.length) * 100}%` : '0%' }}
+                      />
+                    </div>
+                    <span className="text-right font-semibold text-muted-foreground">{count}</span>
+                  </div>
+                ))}
               </div>
 
-              <div className="space-y-3 rounded-lg border border-border/50 bg-background/70 p-4">
+              <div className="space-y-4 border-t border-border/60 pt-5">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Leave a buyer review</p>
-                  <div className="flex gap-1">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Leave a buyer review</p>
+                    <p className="mt-1 text-xs text-muted-foreground">Anyone can add review text.</p>
+                  </div>
+                  <div className="flex gap-1 text-primary">
                     {[1, 2, 3, 4, 5].map((value) => (
                       <button
                         key={value}
                         type="button"
                         onClick={() => setReviewRating(value)}
-                        className="text-primary transition-transform hover:scale-110"
+                        className="transition-transform hover:scale-110"
                         aria-label={`Rate ${value} star${value === 1 ? '' : 's'}`}
                       >
                         <Star className={`size-4 ${value <= reviewRating ? 'fill-current' : ''}`} />
@@ -349,7 +399,7 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
                   value={reviewText}
                   onChange={(event) => setReviewText(event.target.value)}
                   placeholder="Share what stood out about this honey..."
-                  className="min-h-24 resize-none rounded-lg"
+                  className="min-h-32 resize-none rounded-md bg-background"
                 />
                 <Button
                   type="button"
@@ -360,45 +410,54 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
                   <BadgeCheck className="size-4" />
                   {submittingReview ? 'Submitting...' : 'Submit product review'}
                 </Button>
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                  Reviews are accepted from accounts with a paid order for this product.
-                </p>
               </div>
+            </aside>
 
-              <div className="space-y-3">
-                {reviews.length === 0 ? (
-                  <p className="rounded-lg border border-dashed border-border p-4 text-center text-sm text-muted-foreground">
-                    No reviews yet for this product.
-                  </p>
-                ) : (
-                  reviews.map((review) => (
-                    <article key={review.id} className="rounded-lg border border-border/50 bg-background/70 p-4">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <p className="text-sm font-semibold">{review.user.name}</p>
-                          <p className="text-[11px] text-muted-foreground">
-                            {new Date(review.createdAt).toLocaleDateString()}
-                            {review.verified && <span className="ml-2 font-bold text-emerald-600">Verified buyer</span>}
-                          </p>
+            <div className="min-h-[320px] rounded-md border border-border/70 bg-card">
+              {reviews.length === 0 ? (
+                <div className="grid min-h-[320px] place-items-center p-8 text-center">
+                  <div className="max-w-sm space-y-3">
+                    <div className="mx-auto grid size-12 place-items-center rounded-md bg-primary/10 text-primary">
+                      <MessageSquareText className="size-5" />
+                    </div>
+                    <p className="font-semibold">No reviews yet for this product</p>
+                    <p className="text-sm text-muted-foreground">Once verified buyers submit feedback, each review will appear here as part of the product record.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="divide-y divide-border/60">
+                  {reviews.map((review) => (
+                    <article key={review.id} className="p-5 sm:p-6">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                        <div className="flex items-start gap-3">
+                          <div className="grid size-10 shrink-0 place-items-center rounded-md bg-primary/10 font-heading text-sm font-bold uppercase text-primary">
+                            {review.user.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-semibold">{review.user.name}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(review.createdAt).toLocaleDateString(undefined, { dateStyle: 'medium' })}
+                              {review.verified && <span className="ml-2 font-bold text-emerald-600">Verified buyer</span>}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex gap-0.5">
+                        <div className="flex gap-0.5 text-primary">
                           {[...Array(5)].map((_, index) => (
                             <Star
                               key={index}
-                              className={`size-3.5 ${index < review.rating ? 'fill-primary text-primary' : 'text-muted-foreground/30'}`}
+                              className={`size-4 ${index < review.rating ? 'fill-current' : 'text-muted-foreground/30'}`}
                             />
                           ))}
                         </div>
                       </div>
-                      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{review.text}</p>
+                      <p className="mt-4 text-sm leading-7 text-muted-foreground">{review.text}</p>
                     </article>
-                  ))
-                )}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
-
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
