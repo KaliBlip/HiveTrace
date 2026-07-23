@@ -48,7 +48,13 @@ export async function getProducerReviews(producerId: string) {
     },
     include: {
       user: { select: { name: true } },
-      batch: { select: { batchCode: true, honeyType: true } },
+      batch: {
+        select: {
+          batchCode: true,
+          honeyType: true,
+          product: { select: { id: true, name: true } },
+        },
+      },
     },
     orderBy: { createdAt: 'desc' },
     take: 20,
@@ -176,6 +182,75 @@ export async function submitBatchReview(data: {
   revalidatePath(`/consumer/batch/${data.batchId}`);
   revalidatePath(`/consumer/producer/${batch.producerId}`);
   revalidatePath('/dashboard/reviews');
+
+  return review;
+}
+
+export async function submitProductReview(data: {
+  productId: string;
+  rating: number;
+  text: string;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('You must be logged in to leave a review');
+
+  if (data.rating < 1 || data.rating > 5) {
+    throw new Error('Rating must be between 1 and 5');
+  }
+
+  if (!data.text.trim()) {
+    throw new Error('Review text is required');
+  }
+
+  const product = await prisma.product.findUnique({
+    where: { id: data.productId },
+    include: { batch: true },
+  });
+
+  if (!product) throw new Error('Product not found');
+
+  const paidOrder = await prisma.order.findFirst({
+    where: {
+      consumerId: session.user.id,
+      status: 'PAID',
+      items: {
+        some: { productId: product.id },
+      },
+    },
+  });
+
+  if (!paidOrder) {
+    throw new Error('Only buyers with a paid order can review this product');
+  }
+
+  const existing = await prisma.review.findFirst({
+    where: { batchId: product.batchId, userId: session.user.id },
+  });
+
+  if (existing) {
+    throw new Error('You have already reviewed this product');
+  }
+
+  const review = await prisma.review.create({
+    data: {
+      batchId: product.batchId,
+      userId: session.user.id,
+      rating: data.rating,
+      text: data.text.trim(),
+      verified: true,
+    },
+    include: {
+      user: { select: { name: true } },
+    },
+  });
+
+  await updateProducerRating(product.producerId);
+
+  revalidatePath(`/shop/${product.id}`);
+  revalidatePath(`/consumer/batch/${product.batchId}`);
+  revalidatePath(`/consumer/producer/${product.producerId}`);
+  revalidatePath('/dashboard/reviews');
+  revalidatePath('/admin/products');
 
   return review;
 }

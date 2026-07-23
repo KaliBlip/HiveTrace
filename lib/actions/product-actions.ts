@@ -44,9 +44,60 @@ export async function getProductById(id: string) {
       producer: {
         include: { user: { select: { name: true, email: true } } },
       },
-      batch: true,
+      batch: {
+        include: {
+          reviews: {
+            include: { user: { select: { name: true, email: true } } },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      },
     },
   });
+}
+
+async function requireAdmin() {
+  const session = await auth();
+  if (!session?.user?.id || (session.user as { role?: string }).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+}
+
+export async function getAdminProducts() {
+  await requireAdmin();
+
+  return await prisma.product.findMany({
+    include: {
+      producer: {
+        include: { user: { select: { name: true, email: true } } },
+      },
+      batch: {
+        include: {
+          reviews: {
+            include: { user: { select: { name: true, email: true } } },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      },
+      _count: {
+        select: { orderItems: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+}
+
+export async function setAdminProductActive(productId: string, isActive: boolean) {
+  await requireAdmin();
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: { isActive },
+  });
+
+  revalidatePath('/admin/products');
+  revalidatePath('/shop');
+  revalidatePath(`/shop/${productId}`);
 }
 
 export async function createProduct(data: {

@@ -99,9 +99,14 @@ export default async function ReviewsPage() {
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">{review.text}</p>
                 <p className="text-xs text-muted-foreground">
+                  Product:{' '}
+                  <span className="font-medium">
+                    {review.batch.product?.name || review.batch.honeyType}
+                  </span>
+                  <span className="mx-2">·</span>
                   Batch:{' '}
                   <span className="font-medium">
-                    {review.batch.honeyType} ({review.batch.batchCode})
+                    {review.batch.batchCode}
                   </span>
                 </p>
               </div>

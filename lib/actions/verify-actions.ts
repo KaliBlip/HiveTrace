@@ -7,10 +7,11 @@ export async function verifyBatchByHash(hash: string) {
     return null;
   }
 
-  // Try to find a batch whose verificationHash contains or matches the provided hash
+  // Accept public verifier values and legacy product links that used the internal batch id.
   const batch = await prisma.honeyBatch.findFirst({
     where: {
       OR: [
+        { id: hash },
         { verificationHash: { equals: hash } },
         { verificationHash: { contains: hash } },
         { batchCode: { equals: hash } },

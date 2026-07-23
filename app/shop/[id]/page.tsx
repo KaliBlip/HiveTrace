@@ -38,14 +38,22 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     producerId: product.producerId,
     createdAt: product.createdAt.toISOString(),
     producerName: product.producer?.businessName || product.producer?.user?.name || 'Unknown',
-    producerLocation:
-      typeof product.producer?.location === 'object'
-        ? (product.producer.location as any)?.address || 'Unknown Location'
-        : 'Unknown Location',
+    producerLocation: product.producer?.location || 'Unknown Location',
     batchCode: product.batch?.batchCode || '',
+    verificationHash: product.batch?.verificationHash || '',
     batchHarvestDate: product.batch?.harvestDate?.toISOString() || '',
     honeyType: product.batch?.honeyType || '',
     verified: product.batch?.verified || false,
+    reviews: product.batch?.reviews.map((review) => ({
+      id: review.id,
+      rating: review.rating,
+      text: review.text,
+      verified: review.verified,
+      createdAt: review.createdAt.toISOString(),
+      user: {
+        name: review.user.name || 'HiveTrace buyer',
+      },
+    })) || [],
   };
 
   return (

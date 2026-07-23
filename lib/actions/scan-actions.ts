@@ -213,7 +213,7 @@ export async function registerScanByHash(
 ) {
   const batch = await prisma.honeyBatch.findFirst({
     where: {
-      OR: [{ verificationHash: hash }, { batchCode: hash }],
+      OR: [{ id: hash }, { verificationHash: hash }, { batchCode: hash }],
     },
     include: {
       qrCodes: true,
