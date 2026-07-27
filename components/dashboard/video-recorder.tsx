@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 interface VideoRecorderProps {
-  onVideoRecorded: (videoBase64: string) => void;
+  onVideoRecorded: (videoUrl: string) => void;
   onRecordingComplete?: () => void;
   fullScreen?: boolean;
 }
 
-const RECORDING_SECONDS = 5; // 5 seconds
+const RECORDING_SECONDS = 30; // 30 seconds
 const MAX_VIDEO_SIZE_MB = 20;
 
 export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen = false }: VideoRecorderProps) {
@@ -105,7 +105,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
           : MediaRecorder.isTypeSupported('video/webm')
           ? 'video/webm'
           : 'video/mp4',
-        videoBitsPerSecond: 500000, // 500 kbps to reduce file size
+        videoBitsPerSecond: 1000000, // 1 Mbps for better quality at 30 seconds
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -139,7 +139,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
     }
   };
 
-  const handleRecordingStop = () => {
+  const handleRecordingStop = async () => {
     const blob = new Blob(chunksRef.current, { 
       type: mediaRecorderRef.current?.mimeType || 'video/webm' 
     });
@@ -161,22 +161,34 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       return;
     }
 
-    // Convert blob to base64
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64 = reader.result as string;
-      setRecordedVideo(base64);
+    // Upload video to API route
+    const formData = new FormData();
+    formData.append('video', blob, 'video.webm');
+
+    try {
+      const response = await fetch('/api/upload/video', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const { url } = await response.json();
+      
+      setRecordedVideo(url);
       setIsPreviewing(true);
       setIsProcessing(false);
-      onVideoRecorded(base64);
+      onVideoRecorded(url);
       toast.success(`Recording completed (${RECORDING_SECONDS}s, ${sizeMB.toFixed(2)}MB)`);
       // Don't auto-advance - let user review and manually submit
-    };
-    reader.onerror = () => {
-      toast.error('Failed to process video recording.');
+    } catch (error) {
+      console.error('Video upload error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to upload video');
       setIsProcessing(false);
-    };
-    reader.readAsDataURL(blob);
+    }
   };
 
   const stopStream = () => {
@@ -347,13 +359,13 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
             className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 rounded-xl"
           >
             <Camera className="w-4 h-4" />
-            Start Recording (5 seconds)
+            Start Recording (30 seconds)
           </Button>
         ) : (
           <div className="flex items-center justify-center gap-3">
             <div className="text-white text-xs text-center space-y-0.5">
               <p className="font-bold">Recording in progress</p>
-              <p className="opacity-80">Auto-ends at 5 seconds</p>
+              <p className="opacity-80">Auto-ends at 30 seconds</p>
             </div>
           </div>
         )}

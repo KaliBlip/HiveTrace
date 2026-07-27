@@ -105,7 +105,7 @@ export function BatchList({ batches, isLoading }: BatchListProps) {
                 </td>
                 <td className="py-8 px-10">
                   <p className="text-muted-foreground font-normal">
-                    {new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}
+                    {new Date(batch.harvestDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
                 </td>
                 <td className="py-8 px-10">

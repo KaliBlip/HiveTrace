@@ -56,7 +56,18 @@ export async function createBatch(data: {
 
   const batch = await prisma.honeyBatch.create({
     data: {
-      ...data,
+      batchCode: data.batchCode,
+      honeyType: data.honeyType,
+      quantity: data.quantity,
+      price: data.price,
+      description: data.description,
+      harvestDate: data.harvestDate,
+      honeyImage: data.honeyImage,
+      packagingImage: data.packagingImage,
+      honeyVideo: data.honeyVideo, // Now stores URL instead of base64
+      latitude: data.latitude,
+      longitude: data.longitude,
+      registrationLocation: data.registrationLocation,
       producerId: producer.id,
       verificationHash,
       verified: false, // Set to false so it requires Admin quality approval

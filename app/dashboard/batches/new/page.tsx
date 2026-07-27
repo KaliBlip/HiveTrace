@@ -62,7 +62,7 @@ export default function NewBatchPage() {
   const formSteps = [
     { id: 1, title: 'Location', description: 'Verify your apiary location' },
     { id: 2, title: 'Images', description: 'Upload product and packaging images' },
-    { id: 3, title: 'Record Video', description: 'Record 1-minute verification video' },
+    { id: 3, title: 'Record Video', description: 'Record 30-second verification video' },
     { id: 4, title: 'Details', description: 'Enter basic batch information' },
     { id: 5, title: 'Review', description: 'Review and submit your batch' },
   ];
@@ -228,10 +228,9 @@ export default function NewBatchPage() {
       return;
     }
     if (!formData.honeyVideo) {
-      // Make video optional temporarily to isolate the issue
-      toast.warning('Video recording is recommended but optional for testing.');
+      toast.error('Video recording is required to register a batch. Please record a 30-second video of your batch.');
       console.error('Video validation failed');
-      // return; // Temporarily skip video validation
+      return;
     }
     if (!formData.honeyType || !formData.quantity || !formData.price || !formData.description) {
       toast.error('Please fill in all required batch details (Honey Type, Quantity, Price, Description).');
@@ -511,13 +510,13 @@ export default function NewBatchPage() {
                       <span className="text-sm font-semibold">Back</span>
                     </button>
                     <h3 className="text-white text-xl font-bold text-center">Record Verification Video</h3>
-                    <p className="text-white/70 text-sm text-center mt-1">Auto-ends at 5 seconds</p>
+                    <p className="text-white/70 text-sm text-center mt-1">Auto-ends at 30 seconds</p>
                   </div>
                   
                   {/* Video Recorder */}
                   <div className="absolute inset-0">
                     <VideoRecorder 
-                      onVideoRecorded={(videoBase64) => setFormData(prev => ({ ...prev, honeyVideo: videoBase64 }))}
+                      onVideoRecorded={(videoUrl) => setFormData(prev => ({ ...prev, honeyVideo: videoUrl }))}
                       onRecordingComplete={handleRecordingComplete}
                       fullScreen={true}
                     />
@@ -646,7 +645,7 @@ export default function NewBatchPage() {
                       </div>
                       <div className="flex items-center gap-4 text-sm mt-2">
                         <div className={`w-3 h-3 rounded-full ${formData.honeyVideo ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                        <span>Verification Video: {formData.honeyVideo ? 'Recorded (5 seconds)' : 'Missing'}</span>
+                        <span>Verification Video: {formData.honeyVideo ? 'Recorded (30 seconds)' : 'Missing'}</span>
                       </div>
                       <div className="flex items-center gap-4 text-sm mt-2">
                         <div className={`w-3 h-3 rounded-full ${formData.price ? 'bg-emerald-500' : 'bg-red-500'}`} />
