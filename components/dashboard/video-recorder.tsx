@@ -11,7 +11,7 @@ interface VideoRecorderProps {
   fullScreen?: boolean;
 }
 
-const RECORDING_SECONDS = 10; // 10 seconds
+const RECORDING_SECONDS = 5; // 5 seconds
 const MAX_VIDEO_SIZE_MB = 20;
 
 export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen = false }: VideoRecorderProps) {
@@ -105,7 +105,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
           : MediaRecorder.isTypeSupported('video/webm')
           ? 'video/webm'
           : 'video/mp4',
-        videoBitsPerSecond: 1500000, // 1.5 Mbps to reduce file size
+        videoBitsPerSecond: 500000, // 500 kbps to reduce file size
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -347,13 +347,13 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
             className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 rounded-xl"
           >
             <Camera className="w-4 h-4" />
-            Start Recording (15 seconds)
+            Start Recording (5 seconds)
           </Button>
         ) : (
           <div className="flex items-center justify-center gap-3">
             <div className="text-white text-xs text-center space-y-0.5">
               <p className="font-bold">Recording in progress</p>
-              <p className="opacity-80">Auto-ends at 15 seconds</p>
+              <p className="opacity-80">Auto-ends at 5 seconds</p>
             </div>
           </div>
         )}
