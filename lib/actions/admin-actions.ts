@@ -3,6 +3,7 @@ import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { registerBatchOnLedger } from '@/lib/blockchain';
+import { analyzeHoneyImage, generateFallbackAnalysis, type HoneyAnalysisResult } from '@/lib/honey-analysis';
 
 const ACTIVE_FRAUD_STATUSES = ['FLAGGED', 'PENDING', 'INVESTIGATING'] as const;
 
@@ -345,5 +346,97 @@ export async function getLedgerBlocks(limit = 50) {
   ]);
 
   return { blocks, stats, integrity };
+}
+
+export async function analyzeBatchWithAI(batchId: string): Promise<HoneyAnalysisResult> {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const batch = await prisma.honeyBatch.findUnique({
+    where: { id: batchId },
+    include: { producer: true }
+  });
+
+  if (!batch) {
+    throw new Error('Batch not found');
+  }
+
+  // Use honey image or packaging image for analysis
+  const imageToAnalyze = batch.honeyImage || batch.packagingImage;
+  
+  if (!imageToAnalyze) {
+    // Return fallback analysis if no images available
+    return generateFallbackAnalysis();
+  }
+
+  try {
+    const analysisResult = await analyzeHoneyImage(imageToAnalyze);
+    
+    // If authenticity score is low, create a fraud alert
+    if (analysisResult.authenticityScore < 50) {
+      await prisma.fraudAlert.create({
+        data: {
+          batchId: batch.id,
+          producerId: batch.producerId,
+          type: 'AI_SUSPICIOUS_IMAGE',
+          severity: analysisResult.authenticityScore < 30 ? 'HIGH' : 'MEDIUM',
+          description: `AI analysis detected potential issues: ${analysisResult.detectedIssues.join(', ')}. Authenticity score: ${analysisResult.authenticityScore}%`,
+          status: 'FLAGGED',
+          evidence: JSON.stringify(analysisResult),
+        }
+      });
+      
+      revalidatePath('/admin/fraud');
+    }
+    
+    return analysisResult;
+  } catch (error) {
+    console.error('AI analysis failed, returning fallback:', error);
+    return generateFallbackAnalysis();
+  }
+}
+
+export async function approveBatchWithAIAnalysis(
+  batchId: string,
+  aiAnalysis: HoneyAnalysisResult,
+  qualityMetrics?: {
+    purity?: number;
+    moisture?: number;
+    color?: string;
+    score?: number;
+  }
+) {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const batch = await prisma.honeyBatch.findUnique({
+    where: { id: batchId },
+    include: { producer: true },
+  });
+
+  if (!batch) {
+    throw new Error('Batch not found');
+  }
+
+  // Check if AI analysis indicates potential fraud
+  if (aiAnalysis.authenticityScore < 50) {
+    throw new Error(`Cannot approve batch: AI analysis indicates potential issues (Authenticity: ${aiAnalysis.authenticityScore}%)`);
+  }
+
+  // Combine AI analysis with quality metrics
+  const combinedQualityMetrics = {
+    ...qualityMetrics,
+    aiAuthenticityScore: aiAnalysis.authenticityScore,
+    aiQualityScore: aiAnalysis.qualityScore,
+    aiClassification: aiAnalysis.classification,
+    aiDetectedIssues: aiAnalysis.detectedIssues,
+  };
+
+  // Proceed with normal approval process
+  return await verifyAndApproveBatch(batchId, combinedQualityMetrics);
 }
 
