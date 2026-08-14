@@ -24,7 +24,6 @@ import {
   Star,
   ShieldAlert,
   HelpCircle,
-  DollarSign,
   Briefcase,
   Users,
   Building,
@@ -846,9 +845,7 @@ export default function Home() {
                   </div>
                   <div className="glass-panel border rounded-xl p-6 space-y-4 hover:translate-y-[-2px] transition-transform">
                     <div className="flex items-center gap-3">
-                      <span className="flex size-10 items-center justify-center rounded-md bg-primary/12 text-primary">
-                        <DollarSign className="size-5" />
-                      </span>
+                      <span className="flex size-10 items-center justify-center rounded-md bg-primary/12 text-primary font-bold text-sm">GH₵</span>
                       <h3 className="font-heading text-xl font-semibold">Direct Honey Marketplace</h3>
                     </div>
                     <p className="text-muted-foreground text-sm leading-relaxed">

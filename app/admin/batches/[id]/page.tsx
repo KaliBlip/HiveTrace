@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   Cpu,
   Database,
-  DollarSign,
   Hash,
   Image as ImageIcon,
   Loader2,
@@ -265,7 +264,7 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-                    <DollarSign className="w-5 h-5 text-muted-foreground" />
+                    <span className="text-muted-foreground font-bold text-sm">GH₵</span>
                   </div>
                   <div>
                     <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Price Listed</p>
