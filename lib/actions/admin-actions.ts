@@ -440,3 +440,50 @@ export async function approveBatchWithAIAnalysis(
   return await verifyAndApproveBatch(batchId, combinedQualityMetrics);
 }
 
+export async function rejectBatch(batchId: string, reason?: string) {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const batch = await prisma.honeyBatch.findUnique({
+    where: { id: batchId },
+    include: { producer: true },
+  });
+
+  if (!batch) {
+    throw new Error('Batch not found');
+  }
+
+  // Update batch status to rejected
+  await prisma.honeyBatch.update({
+    where: { id: batchId },
+    data: {
+      verified: false,
+      status: 'REJECTED',
+    },
+  });
+
+  // Create fraud alert if reason provided
+  if (reason) {
+    await prisma.fraudAlert.create({
+      data: {
+        batchId: batch.id,
+        producerId: batch.producerId,
+        type: 'MANUAL_REJECTION',
+        severity: 'HIGH',
+        description: `Batch manually rejected by admin: ${reason}`,
+        status: 'FLAGGED',
+        evidence: JSON.stringify({ reason, rejectedBy: session.user.email }),
+      },
+    });
+
+    revalidatePath('/admin/fraud');
+  }
+
+  revalidatePath('/admin/batches');
+  revalidatePath('/dashboard/batches');
+
+  return { success: true, message: 'Batch rejected successfully' };
+}
+

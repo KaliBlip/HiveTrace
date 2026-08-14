@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { analyzeBatchWithAI, approveBatchWithAIAnalysis, verifyAndApproveBatch } from '@/lib/actions/admin-actions';
+import { analyzeBatchWithAI, approveBatchWithAIAnalysis, rejectBatch, verifyAndApproveBatch } from '@/lib/actions/admin-actions';
 import { getBatchById } from '@/lib/actions/batch-actions';
 import {
   AlertTriangle,
@@ -39,6 +39,7 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
   const [scanStep, setScanStep] = useState(0);
   const [scanMetrics, setScanMetrics] = useState<any>(null);
   const [approving, setApproving] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
 
   const fetchBatch = async () => {
     try {
@@ -116,6 +117,25 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
       toast.error(err.message || 'Failed to approve batch');
     } finally {
       setApproving(false);
+    }
+  };
+
+  const handleReject = async () => {
+    const reason = prompt('Please provide a reason for rejection:');
+    if (!reason) {
+      toast.error('Rejection reason is required');
+      return;
+    }
+    
+    setRejecting(true);
+    try {
+      await rejectBatch(id, reason);
+      toast.success('Batch rejected successfully');
+      await fetchBatch();
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to reject batch');
+    } finally {
+      setRejecting(false);
     }
   };
 
@@ -490,24 +510,43 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                     </div>
                   )}
 
-                  {/* Approval Button */}
+                  {/* Approval/Reject Buttons */}
                   <div className="space-y-3 pt-2">
-                    <Button 
-                      className="w-full bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 text-white h-14 rounded-2xl font-bold gap-2 shadow-xl shadow-primary/30 transition-all"
-                      onClick={handleApprove}
-                      disabled={approving || scanMetrics.authenticityScore < 50}
-                    >
-                      {approving ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          Signing blockchain ledger...
-                        </>
-                      ) : (
-                        <>
-                          <Database className="w-5 h-5" /> Approve & Sign Ledger
-                        </>
-                      )}
-                    </Button>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Button 
+                        className="bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 text-white h-14 rounded-2xl font-bold gap-2 shadow-xl shadow-primary/30 transition-all"
+                        onClick={handleApprove}
+                        disabled={approving || rejecting || scanMetrics.authenticityScore < 50}
+                      >
+                        {approving ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Signing...
+                          </>
+                        ) : (
+                          <>
+                            <Database className="w-5 h-5" /> Approve
+                          </>
+                        )}
+                      </Button>
+                      <Button 
+                        variant="outline"
+                        className="border-red-500/30 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 h-14 rounded-2xl font-bold gap-2 transition-all"
+                        onClick={handleReject}
+                        disabled={approving || rejecting}
+                      >
+                        {rejecting ? (
+                          <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Rejecting...
+                          </>
+                        ) : (
+                          <>
+                            <ShieldAlert className="w-5 h-5" /> Reject
+                          </>
+                        )}
+                      </Button>
+                    </div>
                     {scanMetrics.authenticityScore < 50 && (
                       <div className="flex items-center justify-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-xl border border-amber-200 dark:border-amber-900/30">
                         <AlertTriangle className="w-4 h-4" />
