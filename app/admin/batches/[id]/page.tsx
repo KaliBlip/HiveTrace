@@ -1,33 +1,31 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState, useEffect, use } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { QRCodeSVG } from 'qrcode.react';
-import { 
-  ArrowLeft, 
-  ShieldCheck, 
-  ShieldAlert, 
-  Calendar, 
-  Weight, 
-  Hash, 
-  MapPin, 
-  DollarSign, 
-  Camera, 
-  Cpu, 
-  Database,
-  CheckCircle2, 
-  Loader2,
-  Sparkles,
-  Download,
-  Image as ImageIcon,
-  Video
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { analyzeBatchWithAI, approveBatchWithAIAnalysis, verifyAndApproveBatch } from '@/lib/actions/admin-actions';
+import { getBatchById } from '@/lib/actions/batch-actions';
+import {
+    AlertTriangle,
+    ArrowLeft,
+    Calendar,
+    Camera,
+    CheckCircle2,
+    Cpu,
+    Database,
+    DollarSign,
+    Image as ImageIcon,
+    Loader2,
+    MapPin,
+    ShieldAlert,
+    ShieldCheck,
+    Video,
+    Weight
 } from 'lucide-react';
 import Link from 'next/link';
-import { getBatchById } from '@/lib/actions/batch-actions';
-import { verifyAndApproveBatch } from '@/lib/actions/admin-actions';
+import { useRouter } from 'next/navigation';
+import { QRCodeSVG } from 'qrcode.react';
+import { use, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function AdminBatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -60,32 +58,40 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
     fetchBatch();
   }, [id]);
 
-  const startQualityScan = () => {
+  const startQualityScan = async () => {
     setScanning(true);
     setScanStep(1);
     
-    // Simulate step-by-step scanner checks
-    setTimeout(() => {
-      setScanStep(2); // Scanning label
-      setTimeout(() => {
-        setScanStep(3); // Analyzing fluid density
-        setTimeout(() => {
-          setScanStep(4); // Comparing pricing metadata
-          setTimeout(() => {
-            setScanning(false);
-            setScanStep(5); // Complete
-            setScanMetrics({
-              purity: 99.3,
-              moisture: 17.2,
-              color: 'Extra Light Amber',
-              labelMatch: true,
-              score: 98,
-            });
-            toast.success('Quality inspection scan completed successfully!');
-          }, 1500);
-        }, 1500);
-      }, 1500);
-    }, 1500);
+    try {
+      // Step 1: Initializing optics
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setScanStep(2);
+      
+      // Step 2: Inspecting packaging labels
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setScanStep(3);
+      
+      // Step 3: Analyzing fluid density
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setScanStep(4);
+      
+      // Step 4: Running AI analysis
+      const aiResult = await analyzeBatchWithAI(id);
+      
+      setScanning(false);
+      setScanStep(5);
+      setScanMetrics(aiResult);
+      
+      if (aiResult.authenticityScore < 50) {
+        toast.warning(`AI analysis detected potential issues (Authenticity: ${aiResult.authenticityScore}%)`);
+      } else {
+        toast.success('Quality inspection scan completed successfully!');
+      }
+    } catch (error) {
+      console.error('AI scan failed:', error);
+      setScanning(false);
+      toast.error(error instanceof Error ? error.message : 'AI analysis failed');
+    }
   };
 
   const handleApprove = async () => {
@@ -96,7 +102,13 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
     setApproving(true);
 
     try {
-      await verifyAndApproveBatch(id, scanMetrics ?? undefined);
+      if (scanMetrics) {
+        // Use AI analysis for approval
+        await approveBatchWithAIAnalysis(id, scanMetrics);
+      } else {
+        // Use regular approval (already verified)
+        await verifyAndApproveBatch(id);
+      }
       toast.success('Batch cryptographically signed and registered on blockchain!');
       await fetchBatch();
     } catch (err: any) {
@@ -335,7 +347,7 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                         {scanStep === 1 && 'Initializing optics...'}
                         {scanStep === 2 && 'Inspecting packaging labels...'}
                         {scanStep === 3 && 'Analyzing fluid density...'}
-                        {scanStep === 4 && 'Matching pricing metadata...'}
+                        {scanStep === 4 && 'Running AI analysis...'}
                       </p>
                       <div className="w-48 h-1 bg-white/10 rounded-full mx-auto overflow-hidden">
                         <div 
@@ -347,42 +359,86 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                   </div>
                 </div>
               ) : scanMetrics ? (
-                // Scan Complete Metrics
+                // Scan Complete Metrics - Display AI Analysis Results
                 <div className="space-y-6">
                   <div className="border border-emerald-500/20 rounded-2xl p-4 bg-emerald-950/20 space-y-3">
                     <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-1.5 uppercase">
-                      <CheckCircle2 className="w-4 h-4" /> Lab Analysis Passed
+                      <CheckCircle2 className="w-4 h-4" /> AI Analysis Complete
                     </h4>
                     <div className="grid grid-cols-2 gap-4 text-xs pt-1">
                       <div>
-                        <span className="text-stone-400 block">Purity Index</span>
-                        <span className="font-bold text-sm text-stone-100">{scanMetrics.purity}% Pure</span>
+                        <span className="text-stone-400 block">Quality Score</span>
+                        <span className="font-bold text-sm text-stone-100">{scanMetrics.qualityScore}/100</span>
                       </div>
                       <div>
-                        <span className="text-stone-400 block">Moisture Ratio</span>
-                        <span className="font-bold text-sm text-stone-100">{scanMetrics.moisture}% (Optimal)</span>
+                        <span className="text-stone-400 block">Authenticity</span>
+                        <span className="font-bold text-sm text-stone-100">{scanMetrics.authenticityScore}%</span>
                       </div>
                       <div>
-                        <span className="text-stone-400 block">Color Grade</span>
-                        <span className="font-bold text-sm text-stone-100">{scanMetrics.color}</span>
+                        <span className="text-stone-400 block">Classification</span>
+                        <span className="font-bold text-sm text-stone-100">{scanMetrics.classification}</span>
                       </div>
                       <div>
-                        <span className="text-stone-400 block">Label Match</span>
-                        <span className="font-bold text-sm text-stone-100">100% Match</span>
+                        <span className="text-stone-400 block">Confidence</span>
+                        <span className="font-bold text-sm text-stone-100">{(scanMetrics.confidence * 100).toFixed(0)}%</span>
                       </div>
                     </div>
                   </div>
 
+                  <div className="border border-white/10 rounded-2xl p-4 bg-white/5 space-y-3">
+                    <h4 className="text-xs font-bold text-stone-400 uppercase tracking-wider">Detailed Analysis</h4>
+                    <div className="grid grid-cols-2 gap-4 text-xs">
+                      <div>
+                        <span className="text-stone-500 block">Food Classification</span>
+                        <span className="font-bold text-sm text-stone-200">{scanMetrics.detailedAnalysis.foodClassification}</span>
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">Spoilage Score</span>
+                        <span className="font-bold text-sm text-stone-200">{scanMetrics.detailedAnalysis.spoilageScore}%</span>
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">Visual Quality</span>
+                        <span className="font-bold text-sm text-stone-200">{scanMetrics.detailedAnalysis.visualQuality}%</span>
+                      </div>
+                      <div>
+                        <span className="text-stone-500 block">Texture</span>
+                        <span className="font-bold text-sm text-stone-200">{scanMetrics.detailedAnalysis.textureAnalysis}</span>
+                      </div>
+                    </div>
+                    <div className="pt-2 border-t border-white/10">
+                      <span className="text-stone-500 block text-xs">Color Analysis</span>
+                      <span className="font-bold text-sm text-stone-200">{scanMetrics.detailedAnalysis.colorAnalysis}</span>
+                    </div>
+                  </div>
+
+                  {scanMetrics.detectedIssues.length > 0 && (
+                    <div className="border border-amber-500/20 rounded-2xl p-4 bg-amber-950/20 space-y-3">
+                      <h4 className="text-xs font-bold text-amber-400 flex items-center gap-1.5 uppercase">
+                        <AlertTriangle className="w-4 h-4" /> Detected Issues
+                      </h4>
+                      <ul className="space-y-1 text-xs text-amber-200">
+                        {scanMetrics.detectedIssues.map((issue: string, idx: number) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <span className="text-amber-400">•</span>
+                            <span>{issue}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   <div className="space-y-2 text-center bg-white/5 border border-white/10 p-4 rounded-2xl">
-                    <span className="text-[10px] text-stone-400 uppercase font-bold tracking-widest">Quality score</span>
-                    <p className="text-5xl font-black text-primary tracking-tighter">{scanMetrics.score}<span className="text-lg font-normal text-stone-400">/100</span></p>
-                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">Premium Grade Approved</p>
+                    <span className="text-[10px] text-stone-400 uppercase font-bold tracking-widest">Overall Score</span>
+                    <p className="text-5xl font-black text-primary tracking-tighter">{scanMetrics.qualityScore}<span className="text-lg font-normal text-stone-400">/100</span></p>
+                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+                      {scanMetrics.authenticityScore >= 70 ? 'Premium Grade Approved' : 'Requires Manual Review'}
+                    </p>
                   </div>
 
                   <Button 
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-14 rounded-xl font-bold gap-2 shadow-lg shadow-primary/20"
                     onClick={handleApprove}
-                    disabled={approving}
+                    disabled={approving || scanMetrics.authenticityScore < 50}
                   >
                     {approving ? (
                       <>
@@ -395,6 +451,11 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                       </>
                     )}
                   </Button>
+                  {scanMetrics.authenticityScore < 50 && (
+                    <p className="text-xs text-amber-400 text-center">
+                      Low authenticity score - manual review required before approval
+                    </p>
+                  )}
                 </div>
               ) : (
                 // Scanner Idle / Start
