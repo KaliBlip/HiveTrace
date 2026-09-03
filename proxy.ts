@@ -15,26 +15,29 @@ const proxyMiddleware = async (req: NextRequest) => {
   const isConsumerOrders = nextUrl.pathname.startsWith("/consumer/orders");
   const isCheckout = nextUrl.pathname.startsWith("/checkout");
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages (preserving the request origin)
   if (isAuthRoute && isLoggedIn) {
-    return NextResponse.redirect(new URL(getRoleHomePath(userRole), nextUrl));
+    const url = new URL(getRoleHomePath(userRole), req.url);
+    return NextResponse.redirect(url);
   }
 
-  // If not logged in, redirect to login for protected routes
+  // If not logged in, redirect to login for protected routes (preserving the request origin)
   if ((isDashboard || isAdmin || isConsumerOrders || isCheckout) && !isLoggedIn) {
-    const loginUrl = new URL("/auth/login", nextUrl);
-    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
+    const loginUrl = new URL("/auth/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", nextUrl.pathname + nextUrl.search);
     return NextResponse.redirect(loginUrl);
   }
 
   // Admin routes: admin only
   if (isAdmin && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+    const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
   }
 
   // Dashboard routes: producer or admin only
   if (isDashboard && userRole !== "producer" && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/shop", nextUrl));
+    const url = new URL("/shop", req.url);
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();

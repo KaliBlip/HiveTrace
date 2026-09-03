@@ -6,6 +6,17 @@ export const authConfig = {
     signIn: "/auth/login",
   },
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return url;
+      // Allows callback URLs on the same origin / host
+      try {
+        const urlObj = new URL(url);
+        const baseUrlObj = new URL(baseUrl);
+        if (urlObj.host === baseUrlObj.host) return url;
+      } catch {}
+      return url.startsWith("http") ? url : baseUrl;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
