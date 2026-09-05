@@ -313,7 +313,7 @@ export default function NewBatchPage() {
   };
 
   return (
-    <div className="max-w-[1440px] mx-auto p-12">
+    <div className="max-w-[1440px] mx-auto px-3 py-5 sm:p-6 lg:p-12">
       <div className="max-w-4xl mx-auto space-y-12">
         <Link href="/dashboard/batches" className="inline-flex items-center gap-3 text-stone-500 hover:text-primary font-bold group transition-colors">
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -321,26 +321,26 @@ export default function NewBatchPage() {
         </Link>
 
         <div className="space-y-4">
-          <h1 className="text-5xl font-heading font-bold tracking-tighter uppercase italic">
+          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-bold tracking-tighter uppercase italic">
             New Honey <span className="text-primary not-italic tracking-tight">Batch</span>
           </h1>
-          <p className="text-stone-500 font-normal text-xl leading-relaxed">
+          <p className="text-stone-500 font-normal text-sm sm:text-base lg:text-xl leading-relaxed">
             Register a new batch of honey, upload images and video verification. It will go to the Admin queue for quality verification.
           </p>
         </div>
 
-        <div className="bg-card rounded-[40px] border border-border/50 overflow-hidden shadow-2xl">
-          <div className="p-10 bg-primary/5 border-b border-border/50 flex items-center gap-6">
-            <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Save className="w-7 h-7 text-white" />
+        <div className="bg-card rounded-2xl sm:rounded-3xl lg:rounded-[40px] border border-border/50 overflow-hidden shadow-2xl">
+          <div className="p-4 sm:p-6 lg:p-10 bg-primary/5 border-b border-border/50 flex items-center gap-4 sm:gap-6">
+            <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 shrink-0">
+              <Save className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-heading font-bold uppercase tracking-tight">Create New Batch</h2>
-              <p className="text-stone-500 font-normal">Follow the steps to register your honey batch</p>
+              <h2 className="text-lg sm:text-2xl font-heading font-bold uppercase tracking-tight">Create New Batch</h2>
+              <p className="text-stone-500 font-normal text-xs sm:text-sm">Follow the steps to register your honey batch</p>
             </div>
           </div>
           
-          <div className="p-10">
+          <div className="p-4 sm:p-6 lg:p-10">
             <FormSteps 
               currentStep={currentStep} 
               steps={formSteps} 
@@ -351,7 +351,7 @@ export default function NewBatchPage() {
               {/* Step 1: Location Verification */}
               {currentStep === 0 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="p-8 bg-muted/20 border border-border/30 rounded-3xl">
+                  <div className="p-4 sm:p-6 lg:p-8 bg-muted/20 border border-border/30 rounded-2xl sm:rounded-3xl">
                     <h3 className="text-xl font-bold mb-4">Location Verification</h3>
                     <p className="text-muted-foreground mb-6">We need to verify your apiary location to ensure batch authenticity.</p>
                     
@@ -404,7 +404,7 @@ export default function NewBatchPage() {
               {/* Step 2: Image Uploads */}
               {currentStep === 1 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-muted/20 border border-border/30 rounded-3xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8 p-4 sm:p-6 bg-muted/20 border border-border/30 rounded-2xl sm:rounded-3xl">
                     {/* Honey Image */}
                     <div className="space-y-4">
                       <Label className="text-xs font-bold uppercase tracking-widest text-stone-400 ml-1">Honey Product Image</Label>
@@ -528,9 +528,9 @@ export default function NewBatchPage() {
               {/* Step 4: Batch Details */}
               {currentStep === 3 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="p-8 bg-muted/20 border border-border/30 rounded-3xl space-y-8">
+                  <div className="p-4 sm:p-6 lg:p-8 bg-muted/20 border border-border/30 rounded-2xl sm:rounded-3xl space-y-6 sm:space-y-8">
                     {/* Core Info */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-10">
                       <div className="space-y-3">
                         <Label htmlFor="batchCode" className="text-sm font-bold uppercase tracking-widest text-stone-400 ml-1">Batch Code</Label>
                         <Input 
@@ -603,7 +603,7 @@ export default function NewBatchPage() {
               {/* Step 5: Review */}
               {currentStep === 4 && (
                 <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  <div className="p-8 bg-muted/20 border border-border/30 rounded-3xl space-y-6">
+                  <div className="p-4 sm:p-6 lg:p-8 bg-muted/20 border border-border/30 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
                     <h3 className="text-xl font-bold mb-4">Review Your Batch</h3>
                     
                     {/* Location Summary */}
