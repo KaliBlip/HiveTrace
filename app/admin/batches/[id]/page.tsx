@@ -323,45 +323,45 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Right Column: Simulated Camera Scanner & Ledger Sign */}
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           
           {/* Quality Scanner Viewport */}
-          <Card className="border-border overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 from-slate-100 via-slate-50 to-slate-100 text-slate-900 dark:text-white shadow-2xl relative">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl"></div>
+          <Card className="border-border overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 text-foreground shadow-xl relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
             
-            <CardHeader className="border-b border-slate-200 dark:border-white/5 py-5 bg-slate-50/50 dark:bg-white/5 backdrop-blur-sm">
-              <CardTitle className="text-base font-bold flex items-center gap-2.5 text-primary">
-                <div className="p-2 bg-primary/10 rounded-lg">
+            <CardHeader className="border-b border-border py-4 sm:py-5 px-4 sm:px-6 bg-muted/20 backdrop-blur-sm">
+              <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-2.5 text-primary">
+                <div className="p-2 bg-primary/10 rounded-lg shrink-0">
                   <Camera className="w-4 h-4" />
                 </div>
                 Lab Quality Scanner
               </CardTitle>
-              <CardDescription className="text-slate-500 dark:text-stone-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 AI-powered honey authenticity and quality verification
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="p-6 space-y-6 relative z-10">
+            <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6 relative z-10">
               {batch.verified ? (
                 // Already Verified display
-                <div className="text-center py-8 space-y-5">
+                <div className="text-center py-6 sm:py-8 space-y-4 sm:space-y-5">
                   <div className="relative inline-block">
                     <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse"></div>
-                    <div className="relative w-20 h-20 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto border-2 border-emerald-500/30 shadow-lg shadow-emerald-500/20">
-                      <ShieldCheck className="w-10 h-10" />
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto border-2 border-emerald-500/30 shadow-lg shadow-emerald-500/20">
+                      <ShieldCheck className="w-8 h-8 sm:w-10 sm:h-10" />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <p className="font-bold text-xl text-emerald-600 dark:text-emerald-400">Ledger Verification Passed</p>
-                    <p className="text-xs text-slate-500 dark:text-stone-400">Quality checked & blockchain registered</p>
+                  <div className="space-y-1 sm:space-y-2">
+                    <p className="font-bold text-lg sm:text-xl text-emerald-600 dark:text-emerald-400">Ledger Verification Passed</p>
+                    <p className="text-xs text-muted-foreground">Quality checked & blockchain registered</p>
                   </div>
-                  <div className="bg-gradient-to-br from-white/50 to-white/0 dark:from-white/5 dark:to-white/0 border border-slate-200 dark:border-white/10 p-6 rounded-3xl flex items-center justify-center shadow-xl">
-                    <QRCodeSVG value={qrUrl} size={160} level="H" includeMargin={false} />
+                  <div className="bg-muted/30 border border-border p-4 sm:p-6 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-md">
+                    <QRCodeSVG value={qrUrl} size={140} level="H" includeMargin={false} />
                   </div>
-                  <div className="space-y-3 pt-2">
-                    <span className="text-[10px] text-slate-400 dark:text-stone-500 uppercase tracking-widest block font-bold">Ledger Address</span>
-                    <code className="block text-[11px] font-mono text-emerald-700 dark:text-emerald-300 break-all bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-inner">
+                  <div className="space-y-2 pt-2">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest block font-bold">Ledger Address</span>
+                    <code className="block text-[10px] sm:text-[11px] font-mono text-emerald-700 dark:text-emerald-300 break-all bg-emerald-50 dark:bg-emerald-950/40 p-2.5 sm:p-3 rounded-xl border border-emerald-200 dark:border-emerald-900/50 shadow-inner">
                       {batch.blockchainTx}
                     </code>
                   </div>
@@ -513,44 +513,44 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
 
                   {/* Approval/Reject Buttons */}
                   <div className="space-y-3 pt-2">
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
                       <Button 
-                        className="bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 text-white h-14 rounded-2xl font-bold gap-2 shadow-xl shadow-primary/30 transition-all"
+                        className="bg-gradient-to-r from-primary to-amber-500 hover:from-primary/90 hover:to-amber-500/90 text-white h-12 sm:h-14 rounded-xl sm:rounded-2xl font-bold gap-2 shadow-xl shadow-primary/30 transition-all text-sm sm:text-base"
                         onClick={handleApprove}
                         disabled={approving || rejecting || scanMetrics.authenticityScore < 50}
                       >
                         {approving ? (
                           <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                             Signing...
                           </>
                         ) : (
                           <>
-                            <Database className="w-5 h-5" /> Approve
+                            <Database className="w-4 h-4 sm:w-5 sm:h-5" /> Approve
                           </>
                         )}
                       </Button>
                       <Button 
                         variant="outline"
-                        className="border-red-500/30 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 h-14 rounded-2xl font-bold gap-2 transition-all"
+                        className="border-red-500/30 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30 h-12 sm:h-14 rounded-xl sm:rounded-2xl font-bold gap-2 transition-all text-sm sm:text-base"
                         onClick={handleReject}
                         disabled={approving || rejecting}
                       >
                         {rejecting ? (
                           <>
-                            <Loader2 className="w-5 h-5 animate-spin" />
+                            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                             Rejecting...
                           </>
                         ) : (
                           <>
-                            <ShieldAlert className="w-5 h-5" /> Reject
+                            <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5" /> Reject
                           </>
                         )}
                       </Button>
                     </div>
                     {scanMetrics.authenticityScore < 50 && (
                       <div className="flex items-center justify-center gap-2 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-3 rounded-xl border border-amber-200 dark:border-amber-900/30">
-                        <AlertTriangle className="w-4 h-4" />
+                        <AlertTriangle className="w-4 h-4 shrink-0" />
                         <span>Low authenticity score - manual review required before approval</span>
                       </div>
                     )}
@@ -558,24 +558,24 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
                 </div>
               ) : (
                 // Scanner Idle / Start
-                <div className="text-center py-10 space-y-6">
+                <div className="text-center py-6 sm:py-10 space-y-4 sm:space-y-6">
                   <div className="relative inline-block">
                     <div className="absolute inset-0 bg-primary/10 rounded-full blur-2xl"></div>
-                    <div className="relative w-20 h-20 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-white/10 dark:to-white/5 border border-slate-200 dark:border-white/10 text-slate-400 dark:text-stone-400 rounded-full flex items-center justify-center mx-auto shadow-xl">
-                      <Camera className="w-10 h-10" />
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-muted/40 border border-border text-muted-foreground rounded-full flex items-center justify-center mx-auto shadow-md">
+                      <Camera className="w-8 h-8 sm:w-10 sm:h-10" />
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <h4 className="font-bold text-xl text-slate-900 dark:text-white">Quality Verification Required</h4>
-                    <p className="text-xs text-slate-500 dark:text-stone-400 max-w-xs mx-auto leading-relaxed">
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-lg sm:text-xl text-foreground">Quality Verification Required</h4>
+                    <p className="text-xs text-muted-foreground max-w-xs mx-auto leading-relaxed">
                       Run the AI-powered lab scanner to analyze packaging labels and product image parameters before certifying this honey batch.
                     </p>
                   </div>
                   <Button 
-                    className="w-full bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 text-primary border border-primary/20 h-14 rounded-2xl font-bold gap-2 transition-all shadow-lg shadow-primary/10"
+                    className="w-full bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/20 hover:to-primary/10 text-primary border border-primary/20 h-12 sm:h-14 rounded-xl sm:rounded-2xl font-bold gap-2 transition-all shadow-lg shadow-primary/10 text-xs sm:text-sm"
                     onClick={startQualityScan}
                   >
-                    <Cpu className="w-5 h-5" /> Start Quality Inspection Scan
+                    <Cpu className="w-4 h-4 sm:w-5 sm:h-5" /> Start Quality Inspection Scan
                   </Button>
                 </div>
               )}
