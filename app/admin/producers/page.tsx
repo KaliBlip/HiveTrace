@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, Star, ShieldAlert, Loader2, Sparkles, Check, X } from 'lucide-react';
+import { Search, MapPin, Star, ShieldAlert, Loader2, Sparkles, Check, X, Phone } from 'lucide-react';
 import { getAllProducers, approveProducer, rejectProducer } from '@/lib/actions/admin-actions';
 import { toast } from 'sonner';
 
@@ -60,8 +60,9 @@ export default function AdminProducersPage() {
     const term = searchQuery.toLowerCase();
     const name = p.businessName?.toLowerCase() || '';
     const email = p.user?.email?.toLowerCase() || '';
+    const phone = (p.phoneNumber || p.user?.phoneNumber || '').toLowerCase();
     const loc = p.location?.toLowerCase() || '';
-    return name.includes(term) || email.includes(term) || loc.includes(term);
+    return name.includes(term) || email.includes(term) || phone.includes(term) || loc.includes(term);
   });
 
   const getStatusBadgeColor = (status: string) => {
@@ -92,7 +93,7 @@ export default function AdminProducersPage() {
         <div className="relative max-w-md">
           <Search className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
           <Input
-            placeholder="Search by name, email, or location..."
+            placeholder="Search by name, email, phone, or location..."
             className="pl-10 sm:pl-12 h-12 sm:h-14 rounded-xl sm:rounded-2xl bg-card border-border/50 text-sm sm:text-base"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -138,10 +139,19 @@ export default function AdminProducersPage() {
                     <div className="flex flex-wrap items-center gap-y-1.5 gap-x-3 sm:gap-x-6 text-xs sm:text-sm text-muted-foreground">
                       <span className="flex items-center gap-1.5">
                         <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground/60 shrink-0" />
-                        <span className="truncate">{producer.location}</span>
+                        <span className="truncate">{producer.location || 'Location not specified'}</span>
                       </span>
                       <span className="hidden sm:inline">•</span>
                       <span className="font-mono text-[11px] sm:text-xs truncate max-w-[180px]">{producer.user?.email}</span>
+                      {(producer.phoneNumber || producer.user?.phoneNumber) && (
+                        <>
+                          <span className="hidden sm:inline">•</span>
+                          <span className="flex items-center gap-1 font-mono text-[11px] sm:text-xs text-foreground font-semibold">
+                            <Phone className="w-3 h-3 text-primary shrink-0" />
+                            {producer.phoneNumber || producer.user?.phoneNumber}
+                          </span>
+                        </>
+                      )}
                       <span className="hidden sm:inline">•</span>
                       <span className="text-[11px] sm:text-sm">Joined {new Date(producer.createdAt).toLocaleDateString()}</span>
                     </div>

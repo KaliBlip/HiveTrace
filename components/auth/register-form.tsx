@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowRight, LockKeyhole, Mail, ShieldCheck, User, Users } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertCircle, ArrowRight, LockKeyhole, Mail, Phone, ShieldCheck, User, Users } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,16 +11,27 @@ import { FieldGroup, FieldLabel } from "@/components/ui/field";
 type Role = "consumer" | "producer";
 
 export function RegisterForm() {
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get("role")?.toLowerCase() === "producer" ? "producer" : "consumer";
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phoneNumber: "",
     password: "",
     confirmPassword: "",
-    role: "consumer" as Role,
+    role: initialRole as Role,
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const roleParam = searchParams.get("role")?.toLowerCase();
+    if (roleParam === "producer" || roleParam === "consumer") {
+      setFormData((prev) => ({ ...prev, role: roleParam as Role }));
+    }
+  }, [searchParams]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -52,6 +63,7 @@ export function RegisterForm() {
           email: formData.email,
           password: formData.password,
           name: formData.name,
+          phoneNumber: formData.phoneNumber,
           role: formData.role.toUpperCase(),
         }),
       });
@@ -70,17 +82,17 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full space-y-6">
+    <form onSubmit={handleSubmit} className="w-full space-y-5">
       <FieldGroup>
         <FieldLabel htmlFor="name" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-          Name
+          Full Name / Business Name
         </FieldLabel>
         <div className="relative">
           <User className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
           <Input
             id="name"
             type="text"
-            placeholder="Jane Apiary"
+            placeholder={formData.role === "producer" ? "e.g. Kwame Apiaries" : "e.g. Jane Doe"}
             name="name"
             value={formData.name}
             onChange={handleChange}
@@ -105,6 +117,26 @@ export function RegisterForm() {
             value={formData.email}
             onChange={handleChange}
             required
+            disabled={isLoading}
+            className="h-[52px] rounded-lg border-border/70 bg-background/70 pl-12 text-base"
+          />
+        </div>
+      </FieldGroup>
+
+      <FieldGroup>
+        <FieldLabel htmlFor="phoneNumber" className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+          Phone Number {formData.role === "producer" ? "(Required for SMS alerts & audits)" : "(Optional)"}
+        </FieldLabel>
+        <div className="relative">
+          <Phone className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            id="phoneNumber"
+            type="tel"
+            placeholder="+233 24 123 4567"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required={formData.role === "producer"}
             disabled={isLoading}
             className="h-[52px] rounded-lg border-border/70 bg-background/70 pl-12 text-base"
           />

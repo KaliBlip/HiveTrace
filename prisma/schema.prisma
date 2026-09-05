@@ -12,14 +12,15 @@ datasource db {
 
 // User model - stores all users (producers, consumers, admins)
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  password  String
-  name      String
-  role      String     @default("CONSUMER")
-  image     String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(cuid())
+  email       String     @unique
+  password    String
+  name        String
+  phoneNumber String?
+  role        String     @default("CONSUMER")
+  image       String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   // Relations
   producer  Producer?
@@ -51,6 +52,7 @@ model Producer {
   userId            String     @unique
   businessName      String
   location          String
+  phoneNumber       String?
   latitude          Float?
   longitude         Float?
   description       String?

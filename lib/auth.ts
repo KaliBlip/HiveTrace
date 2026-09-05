@@ -42,6 +42,7 @@ export const {
           name: user.name,
           role: user.role,
           image: user.image,
+          phoneNumber: user.phoneNumber,
         };
       },
     }),

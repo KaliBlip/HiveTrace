@@ -89,6 +89,7 @@ export async function getAllProducers() {
         select: {
           name: true,
           email: true,
+          phoneNumber: true,
         }
       },
       ratings: true,

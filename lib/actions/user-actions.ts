@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 
-export async function updateProfile(data: { name?: string; image?: string }) {
+export async function updateProfile(data: { name?: string; image?: string; phoneNumber?: string }) {
   const session = await auth();
   if (!session?.user?.id) {
     throw new Error('Unauthorized');
@@ -16,6 +16,7 @@ export async function updateProfile(data: { name?: string; image?: string }) {
     data: {
       name: data.name,
       image: data.image,
+      phoneNumber: data.phoneNumber ? data.phoneNumber.trim() : null,
     },
   });
 

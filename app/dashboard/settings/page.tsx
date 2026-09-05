@@ -22,6 +22,7 @@ export default function SettingsPage() {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     image: user?.image || '',
+    phoneNumber: (user as any)?.phoneNumber || '',
     businessName: '',
     location: '',
     description: '',
@@ -52,6 +53,7 @@ export default function SettingsPage() {
         if (producer) {
           setFormData((prev) => ({
             ...prev,
+            phoneNumber: producer.phoneNumber || producer.user?.phoneNumber || prev.phoneNumber || '',
             businessName: producer.businessName,
             location: producer.location,
             description: producer.description || '',
@@ -78,10 +80,12 @@ export default function SettingsPage() {
       await updateProfile({
         name: formData.name,
         image: formData.image,
+        phoneNumber: formData.phoneNumber,
       });
       await updateProducerProfile({
         businessName: formData.businessName,
         location: formData.location,
+        phoneNumber: formData.phoneNumber,
         description: formData.description,
         certifications: formData.certifications,
         apiarySize: formData.apiarySize ? parseInt(formData.apiarySize, 10) : undefined,
@@ -159,6 +163,18 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label htmlFor="email">Email Address</Label>
                 <Input id="email" type="email" value={user?.email || ''} disabled className="bg-muted" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input
+                  id="phoneNumber"
+                  type="tel"
+                  placeholder="+233 24 123 4567"
+                  value={formData.phoneNumber}
+                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                />
+                <p className="text-[11px] text-muted-foreground">Used for SMS verification, batch notifications, and producer vetting.</p>
               </div>
 
               <div className="space-y-2">

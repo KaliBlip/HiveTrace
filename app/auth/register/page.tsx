@@ -1,7 +1,6 @@
-'use client';
-
+import { Suspense } from 'react';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Loader2 } from 'lucide-react';
 import { RegisterForm } from '@/components/auth/register-form';
 
 export default function RegisterPage() {
@@ -14,7 +13,14 @@ export default function RegisterPage() {
 
       <div className="motion-rise rounded-xl border border-border/60 bg-card/76 shadow-[var(--shadow-lift)] backdrop-blur-2xl overflow-hidden">
         <div className="p-6 sm:p-8">
-          <RegisterForm />
+          <Suspense fallback={
+            <div className="py-12 flex flex-col items-center justify-center gap-3">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">Loading registration...</p>
+            </div>
+          }>
+            <RegisterForm />
+          </Suspense>
         </div>
       </div>
 

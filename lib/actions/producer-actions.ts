@@ -104,6 +104,7 @@ export async function getProducerProfileForSettings() {
   return prisma.producer.findUnique({
     where: { userId: session.user.id },
     include: {
+      user: { select: { name: true, email: true, phoneNumber: true } },
       ratings: true,
       _count: { select: { batches: true } },
     },
@@ -113,6 +114,7 @@ export async function getProducerProfileForSettings() {
 export async function updateProducerProfile(data: {
   businessName?: string;
   location?: string;
+  phoneNumber?: string;
   description?: string;
   latitude?: number;
   longitude?: number;
@@ -128,11 +130,12 @@ export async function updateProducerProfile(data: {
 
   if (!producer) throw new Error('Producer profile not found');
 
-  return prisma.producer.update({
+  const updatedProducer = await prisma.producer.update({
     where: { id: producer.id },
     data: {
       businessName: data.businessName,
       location: data.location,
+      phoneNumber: data.phoneNumber ? data.phoneNumber.trim() : null,
       description: data.description,
       latitude: data.latitude,
       longitude: data.longitude,
@@ -140,4 +143,13 @@ export async function updateProducerProfile(data: {
       certifications: data.certifications,
     },
   });
+
+  if (data.phoneNumber !== undefined) {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { phoneNumber: data.phoneNumber ? data.phoneNumber.trim() : null },
+    });
+  }
+
+  return updatedProducer;
 }

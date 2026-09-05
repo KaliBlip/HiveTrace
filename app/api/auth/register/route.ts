@@ -4,7 +4,7 @@ import prisma from '@/lib/prisma';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name, role } = await req.json();
+    const { email, password, name, role, phoneNumber } = await req.json();
 
     if (!email || !password || !name) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         name,
+        phoneNumber: phoneNumber ? phoneNumber.trim() : null,
         role: role || 'CONSUMER',
       },
     });
@@ -39,6 +40,7 @@ export async function POST(req: Request) {
           userId: user.id,
           businessName: name,
           location: '',
+          phoneNumber: phoneNumber ? phoneNumber.trim() : null,
           verificationHash,
         },
       });
@@ -46,7 +48,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ 
       message: 'User created successfully',
-      user: { id: user.id, email: user.email, name: user.name, role: user.role }
+      user: { id: user.id, email: user.email, name: user.name, phoneNumber: user.phoneNumber, role: user.role }
     }, { status: 201 });
 
   } catch (error) {
