@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Video, Camera, CameraOff, RotateCcw, Check, AlertTriangle, Loader2 } from 'lucide-react';
+import { Camera, CameraOff, RotateCcw, Check, AlertTriangle, Loader2, Upload, Video as VideoIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -9,36 +9,45 @@ interface VideoRecorderProps {
   onVideoRecorded: (videoUrl: string) => void;
   onRecordingComplete?: () => void;
   fullScreen?: boolean;
+  initialVideo?: string | null;
 }
 
 const RECORDING_SECONDS = 30; // 30 seconds
 const MAX_VIDEO_SIZE_MB = 20;
 
-export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen = false }: VideoRecorderProps) {
+export function VideoRecorder({ 
+  onVideoRecorded, 
+  onRecordingComplete, 
+  fullScreen = false,
+  initialVideo = null 
+}: VideoRecorderProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
 
-  const [permissionStatus, setPermissionStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied' | 'error'>('idle');
+  const [permissionStatus, setPermissionStatus] = useState<'idle' | 'requesting' | 'granted' | 'denied' | 'error' | 'unsupported'>('idle');
   const [isRecording, setIsRecording] = useState(false);
   const isRecordingRef = useRef(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const recordingTimeRef = useRef(0);
-  const [recordedVideo, setRecordedVideo] = useState<string | null>(null);
-  const [isPreviewing, setIsPreviewing] = useState(false);
+  const [recordedVideo, setRecordedVideo] = useState<string | null>(initialVideo || null);
+  const [isPreviewing, setIsPreviewing] = useState(!!initialVideo);
   const [videoSize, setVideoSize] = useState(0);
 
-  // Request camera permission on mount
+  // Request camera permission on mount if no initial video
   useEffect(() => {
-    requestCameraPermission();
+    if (!initialVideo) {
+      requestCameraPermission();
+    }
     return () => {
       stopStream();
     };
-  }, []);
+  }, [initialVideo]);
 
-  // Recording timer — auto-stops at exactly 1 minute
+  // Recording timer — auto-stops at exactly 30 seconds
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isRecording) {
@@ -57,6 +66,14 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
   }, [isRecording]);
 
   const requestCameraPermission = async () => {
+    if (typeof window === 'undefined') return;
+
+    // Check if mediaDevices and getUserMedia are supported in the current context
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices || typeof navigator.mediaDevices.getUserMedia !== 'function') {
+      setPermissionStatus('unsupported');
+      return;
+    }
+
     setPermissionStatus('requesting');
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ 
@@ -67,6 +84,11 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch {
+          // Autoplay might be restricted until user interaction
+        }
       }
       
       setPermissionStatus('granted');
@@ -76,24 +98,28 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       if (error instanceof Error) {
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
           setPermissionStatus('denied');
-          toast.error('Camera access denied. Please allow camera access to create a batch.');
+          toast.error('Camera access denied. You can record or upload a video file instead.');
         } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
           setPermissionStatus('error');
-          toast.error('No camera found on this device.');
+          toast.error('No camera detected. You can upload a video file instead.');
         } else {
           setPermissionStatus('error');
-          toast.error('Failed to access camera. Please try again.');
+          toast.error('Could not start live camera. You can upload a video file instead.');
         }
       } else {
         setPermissionStatus('error');
-        toast.error('Failed to access camera. Please try again.');
       }
     }
   };
 
   const startRecording = () => {
     if (!streamRef.current) {
-      toast.error('Camera not available');
+      toast.error('Camera stream is not available');
+      return;
+    }
+
+    if (typeof MediaRecorder === 'undefined') {
+      toast.error('MediaRecorder is not supported in this browser. Please use file upload.');
       return;
     }
 
@@ -105,7 +131,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
           : MediaRecorder.isTypeSupported('video/webm')
           ? 'video/webm'
           : 'video/mp4',
-        videoBitsPerSecond: 1000000, // 1 Mbps for better quality at 30 seconds
+        videoBitsPerSecond: 1000000,
       });
 
       mediaRecorderRef.current = mediaRecorder;
@@ -118,7 +144,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
 
       mediaRecorder.onstop = handleRecordingStop;
 
-      mediaRecorder.start(1000); // Collect data every second
+      mediaRecorder.start(1000);
       setIsRecording(true);
       isRecordingRef.current = true;
       setRecordingTime(0);
@@ -153,7 +179,6 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       return;
     }
 
-    // Use ref for accurate time since onstop fires asynchronously
     const actualTime = recordingTimeRef.current;
     if (actualTime < RECORDING_SECONDS) {
       toast.error(`Recording too short (${actualTime}s). The full ${RECORDING_SECONDS}s is required.`);
@@ -183,11 +208,52 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       setIsProcessing(false);
       onVideoRecorded(url);
       toast.success(`Recording completed (${RECORDING_SECONDS}s, ${sizeMB.toFixed(2)}MB)`);
-      // Don't auto-advance - let user review and manually submit
     } catch (error) {
       console.error('Video upload error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to upload video');
       setIsProcessing(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const sizeMB = file.size / (1024 * 1024);
+    if (sizeMB > MAX_VIDEO_SIZE_MB) {
+      toast.error(`Video too large (${sizeMB.toFixed(2)}MB). Maximum allowed is ${MAX_VIDEO_SIZE_MB}MB.`);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
+    setIsProcessing(true);
+    const formData = new FormData();
+    formData.append('video', file);
+
+    try {
+      const response = await fetch('/api/upload/video', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+
+      const { url } = await response.json();
+      setRecordedVideo(url);
+      setVideoSize(sizeMB);
+      setIsPreviewing(true);
+      setIsProcessing(false);
+      onVideoRecorded(url);
+      toast.success(`Video attached successfully (${sizeMB.toFixed(2)}MB)`);
+    } catch (error) {
+      console.error('Video upload error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to upload video file');
+      setIsProcessing(false);
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -206,6 +272,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
     recordingTimeRef.current = 0;
     setVideoSize(0);
     onVideoRecorded('');
+    requestCameraPermission();
     toast.info('Ready to record again');
   };
 
@@ -213,7 +280,6 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
     if (recordedVideo) {
       setIsPreviewing(false);
       toast.success('Video confirmed for batch submission');
-      // Trigger advance to next step
       if (onRecordingComplete) {
         onRecordingComplete();
       }
@@ -228,16 +294,133 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
 
   const progressPercentage = (recordingTime / RECORDING_SECONDS) * 100;
 
+  // Hidden file input for native camera or file upload fallback
+  const renderFileInput = () => (
+    <input 
+      ref={fileInputRef}
+      type="file"
+      accept="video/*"
+      capture="environment"
+      className="hidden"
+      onChange={handleFileUpload}
+    />
+  );
+
+  // Processing / Uploading state
+  if (isProcessing) {
+    return (
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[220px]'} border border-dashed border-amber-500/40 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 bg-amber-500/5 text-center`}>
+        <Loader2 className="w-10 h-10 text-amber-500 animate-spin" />
+        <div className="space-y-1">
+          <p className="text-base font-bold text-foreground">Processing & Uploading Video...</p>
+          <p className="text-xs text-muted-foreground">Please wait while the verification video is secured on the server.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Preview mode
+  if (isPreviewing && recordedVideo) {
+    return (
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none p-0' : 'min-h-[280px]'} border border-primary/50 rounded-2xl p-4 bg-primary/5 relative overflow-hidden flex flex-col justify-between`}>
+        {renderFileInput()}
+        <video 
+          src={recordedVideo} 
+          controls 
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute top-4 left-4 z-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/90 text-white backdrop-blur-md shadow-md">
+            <Check className="w-3.5 h-3.5" /> Video Ready
+          </span>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/60 to-transparent flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 z-10">
+          <div className="text-white text-xs space-y-0.5">
+            <p className="font-bold">Verification Video Recorded</p>
+            {videoSize > 0 && <p className="opacity-80">Size: {videoSize.toFixed(2)} MB</p>}
+          </div>
+          <div className="flex items-center gap-2">
+            <Button 
+              type="button"
+              variant="outline" 
+              size="sm" 
+              onClick={retakeRecording}
+              className="flex-1 sm:flex-initial gap-1.5 text-xs bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm"
+            >
+              <RotateCcw className="w-3.5 h-3.5" /> Retake
+            </Button>
+            <Button 
+              type="button"
+              size="sm" 
+              onClick={confirmRecording}
+              className="flex-1 sm:flex-initial gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold shadow-lg"
+            >
+              <Check className="w-3.5 h-3.5" /> Confirm & Continue
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Unsupported context (e.g. HTTP over LAN IP without HTTPS)
+  if (permissionStatus === 'unsupported') {
+    return (
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[220px]'} border border-dashed border-primary/40 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 bg-card/60 text-center`}>
+        {renderFileInput()}
+        <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+          <VideoIcon className="w-6 h-6" />
+        </div>
+        <div className="space-y-1 max-w-md">
+          <p className="text-base font-bold text-foreground">Record Verification Video</p>
+          <p className="text-xs text-muted-foreground">
+            Live browser streaming requires HTTPS or localhost. You can record or upload a video directly using your mobile or device camera.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+          <Button 
+            type="button" 
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full gap-2 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Camera className="w-4 h-4" /> Open Camera / Upload Video
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   // Camera access denied state
   if (permissionStatus === 'denied') {
     return (
-      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[180px]'} border border-dashed border-red-500/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-red-500/5`}>
-        <div className="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center text-red-500">
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[220px]'} border border-dashed border-red-500/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 bg-red-500/5 text-center`}>
+        {renderFileInput()}
+        <div className="w-12 h-12 bg-red-500/20 rounded-2xl flex items-center justify-center text-red-500">
           <CameraOff className="w-6 h-6" />
         </div>
-        <div className="text-center space-y-1">
-          <p className="text-sm font-bold text-red-600 dark:text-red-400">Camera Access Required</p>
-          <p className="text-[10px] text-red-500/70">Camera access is mandatory to create a batch. Please allow camera access in your browser settings and refresh the page.</p>
+        <div className="space-y-1 max-w-md">
+          <p className="text-base font-bold text-red-600 dark:text-red-400">Camera Permission Denied</p>
+          <p className="text-xs text-muted-foreground">
+            Please allow camera access in browser settings, or record/upload a video directly from your device.
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+          <Button 
+            type="button" 
+            variant="outline"
+            onClick={requestCameraPermission}
+            className="flex-1 gap-1.5 text-xs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Try Live Camera
+          </Button>
+          <Button 
+            type="button" 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 gap-1.5 text-xs bg-primary text-primary-foreground"
+          >
+            <Upload className="w-3.5 h-3.5" /> Upload / Record
+          </Button>
         </div>
       </div>
     );
@@ -246,23 +429,34 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
   // Camera error state
   if (permissionStatus === 'error') {
     return (
-      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[180px]'} border border-dashed border-amber-500/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-amber-500/5`}>
-        <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center text-amber-500">
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[220px]'} border border-dashed border-amber-500/50 rounded-2xl p-6 flex flex-col items-center justify-center gap-4 bg-amber-500/5 text-center`}>
+        {renderFileInput()}
+        <div className="w-12 h-12 bg-amber-500/20 rounded-2xl flex items-center justify-center text-amber-500">
           <AlertTriangle className="w-6 h-6" />
         </div>
-        <div className="text-center space-y-1">
-          <p className="text-sm font-bold text-amber-600 dark:text-amber-400">Camera Error</p>
-          <p className="text-[10px] text-amber-500/70">Failed to access camera. Please check your device and try again.</p>
+        <div className="space-y-1 max-w-md">
+          <p className="text-base font-bold text-amber-600 dark:text-amber-400">Camera Unavailable</p>
+          <p className="text-xs text-muted-foreground">
+            Failed to connect to live camera stream. You can retry or record/upload using your native device camera.
+          </p>
         </div>
-        <Button 
-          type="button" 
-          variant="outline" 
-          size="sm" 
-          onClick={requestCameraPermission}
-          className="gap-2 text-xs"
-        >
-          <RotateCcw className="w-3.5 h-3.5" /> Retry
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-2 w-full max-w-xs">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={requestCameraPermission}
+            className="flex-1 gap-1.5 text-xs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" /> Retry
+          </Button>
+          <Button 
+            type="button" 
+            onClick={() => fileInputRef.current?.click()}
+            className="flex-1 gap-1.5 text-xs bg-primary text-primary-foreground"
+          >
+            <Upload className="w-3.5 h-3.5" /> Upload / Record
+          </Button>
+        </div>
       </div>
     );
   }
@@ -270,61 +464,26 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
   // Requesting permission state
   if (permissionStatus === 'requesting') {
     return (
-      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[180px]'} border border-dashed border-border/80 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-muted/10`}>
+      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[220px]'} border border-dashed border-border/80 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-muted/10 text-center`}>
+        {renderFileInput()}
         <Loader2 className="w-8 h-8 text-primary animate-spin" />
-        <p className="text-sm font-medium text-muted-foreground">Requesting camera access...</p>
+        <p className="text-sm font-medium text-muted-foreground">Connecting to camera...</p>
       </div>
     );
   }
 
-  // Preview mode
-  if (isPreviewing && recordedVideo) {
-    return (
-      <div className={`${fullScreen ? 'h-full w-full rounded-none border-none p-0' : 'min-h-[180px]'} border border-dashed border-primary/50 rounded-2xl p-4 bg-primary/5 relative overflow-hidden`}>
-        <video 
-          src={recordedVideo} 
-          controls 
-          className="absolute inset-0 w-full h-full object-cover rounded-xl"
-        />
-        <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center justify-between gap-2">
-          <div className="text-white text-[10px] space-y-0.5">
-            <p className="font-bold">Duration: {formatTime(recordingTime)}</p>
-            <p className="opacity-80">Size: {videoSize.toFixed(2)}MB</p>
-          </div>
-          <div className="flex gap-2">
-            <Button 
-              type="button"
-              variant="outline" 
-              size="sm" 
-              onClick={retakeRecording}
-              className="gap-1.5 text-xs bg-white/20 text-white border-white/30 hover:bg-white/30"
-            >
-              <RotateCcw className="w-3.5 h-3.5" /> Retake
-            </Button>
-            <Button 
-              type="button"
-              size="sm" 
-              onClick={confirmRecording}
-              className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-            >
-              <Check className="w-3.5 h-3.5" /> Submit & Continue
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Recording mode with live camera
+  // Live recording mode
   return (
-    <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[180px]'} border border-dashed border-border/80 rounded-2xl overflow-hidden bg-muted/10 relative`}>
+    <div className={`${fullScreen ? 'h-full w-full rounded-none border-none' : 'min-h-[280px]'} border border-dashed border-border/80 rounded-2xl overflow-hidden bg-muted/10 relative`}>
+      {renderFileInput()}
+
       {/* Live camera preview */}
       <video 
         ref={videoRef}
         autoPlay 
         muted 
         playsInline
-        className={`absolute inset-0 w-full h-full object-cover ${isRecording ? '' : 'opacity-60'}`}
+        className={`absolute inset-0 w-full h-full object-cover ${isRecording ? '' : 'opacity-80'}`}
       />
       
       {/* Recording overlay */}
@@ -334,7 +493,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
 
       {/* Recording indicator */}
       {isRecording && (
-        <div className="absolute top-3 left-3 flex items-center gap-2 bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold">
+        <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
           <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
           REC {formatTime(recordingTime)}
         </div>
@@ -351,18 +510,27 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
       )}
 
       {/* Controls */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+      <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col items-center gap-3">
         {!isRecording ? (
-          <Button 
-            type="button"
-            onClick={startRecording}
-            className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 rounded-xl"
-          >
-            <Camera className="w-4 h-4" />
-            Start Recording (30 seconds)
-          </Button>
+          <div className="w-full max-w-sm space-y-2">
+            <Button 
+              type="button"
+              onClick={startRecording}
+              className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-bold gap-2 rounded-xl shadow-lg"
+            >
+              <Camera className="w-4 h-4" />
+              Start Recording (30 seconds)
+            </Button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full text-center text-xs text-white/80 hover:text-white underline underline-offset-2 py-1 transition-colors"
+            >
+              Or choose / record video with device camera
+            </button>
+          </div>
         ) : (
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex items-center justify-center gap-3 py-2">
             <div className="text-white text-xs text-center space-y-0.5">
               <p className="font-bold">Recording in progress</p>
               <p className="opacity-80">Auto-ends at 30 seconds</p>
@@ -373,7 +541,7 @@ export function VideoRecorder({ onVideoRecorded, onRecordingComplete, fullScreen
 
       {/* Time remaining indicator */}
       {isRecording && (
-        <div className="absolute top-3 right-3 bg-black/60 text-white px-3 py-1.5 rounded-full text-xs font-mono">
+        <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs font-mono backdrop-blur-sm">
           {formatTime(RECORDING_SECONDS - recordingTime)} remaining
         </div>
       )}
