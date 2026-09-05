@@ -32,7 +32,9 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 9);
-    const filename = `video-${timestamp}-${random}.webm`;
+    const originalExt = file.name?.includes('.') ? file.name.split('.').pop()?.toLowerCase() : null;
+    const ext = originalExt || (file.type.includes('mp4') ? 'mp4' : file.type.includes('quicktime') ? 'mov' : 'webm');
+    const filename = `video-${timestamp}-${random}.${ext}`;
     const filepath = path.join(uploadsDir, filename);
 
     // Convert file to buffer and write to disk

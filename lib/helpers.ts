@@ -166,6 +166,9 @@ export function getFraudAlertColor(
  */
 export async function hasCameraAccess(): Promise<boolean> {
   try {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.enumerateDevices) {
+      return false;
+    }
     const devices = await navigator.mediaDevices.enumerateDevices();
     return devices.some((device) => device.kind === 'videoinput');
   } catch {
@@ -178,6 +181,9 @@ export async function hasCameraAccess(): Promise<boolean> {
  */
 export async function requestCameraPermission(): Promise<boolean> {
   try {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
+      return false;
+    }
     const stream = await navigator.mediaDevices.getUserMedia({ video: true });
     // Stop all tracks immediately
     stream.getTracks().forEach((track) => track.stop());
