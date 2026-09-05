@@ -168,9 +168,9 @@
   body {
     @apply bg-background text-foreground antialiased;
     min-height: 100vh;
+    min-height: 100dvh;
     background: var(--surface-wash);
     letter-spacing: 0;
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   ::selection {

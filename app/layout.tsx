@@ -1,10 +1,21 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/providers/auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CartOverlay } from '@/components/shop/cart-overlay'
 import { MobileTabBar } from '@/components/mobile-tab-bar'
 import './globals.css'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#131313' },
+  ],
+}
 
 export const metadata: Metadata = {
   title: 'HiveTrace - Cryptographically Verified Honey Traceability',
