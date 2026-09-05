@@ -41,50 +41,50 @@ export default function AdminLedgerPage() {
   const { blocks = [], stats, integrity } = data ?? {};
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-bold">Blockchain Ledger</h1>
-          <p className="text-muted-foreground">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 sm:gap-4">
+        <div className="space-y-1.5 sm:space-y-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Blockchain Ledger</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Immutable hash-chained record of all verified honey batches
           </p>
         </div>
-        <Button variant="outline" onClick={loadLedger} disabled={loading} className="gap-2">
+        <Button variant="outline" onClick={loadLedger} disabled={loading} className="gap-2 w-fit">
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Refresh Chain
         </Button>
       </div>
 
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-3xl font-black">{stats?.blockCount ?? 0}</p>
-            <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Total Blocks</p>
+          <CardContent className="p-4 sm:pt-6 text-center">
+            <p className="text-2xl sm:text-3xl font-black">{stats?.blockCount ?? 0}</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Total Blocks</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-3xl font-black">{stats?.batchBlocks ?? 0}</p>
-            <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Batch Records</p>
+          <CardContent className="p-4 sm:pt-6 text-center">
+            <p className="text-2xl sm:text-3xl font-black">{stats?.batchBlocks ?? 0}</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Batch Records</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="pt-6 text-center">
-            <p className="text-3xl font-black">{stats?.fraudBlocks ?? 0}</p>
-            <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Fraud Records</p>
+          <CardContent className="p-4 sm:pt-6 text-center">
+            <p className="text-2xl sm:text-3xl font-black">{stats?.fraudBlocks ?? 0}</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Fraud Records</p>
           </CardContent>
         </Card>
-        <Card className={integrity?.valid ? 'border-emerald-200 bg-emerald-50/50' : 'border-red-200 bg-red-50/50'}>
-          <CardContent className="pt-6 text-center">
+        <Card className={integrity?.valid ? 'border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/40 dark:bg-emerald-900/10' : 'border-red-200 bg-red-50/50 dark:border-red-800/40 dark:bg-red-900/10'}>
+          <CardContent className="p-4 sm:pt-6 text-center">
             <div className="flex items-center justify-center gap-2">
               {integrity?.valid ? (
-                <ShieldCheck className="w-6 h-6 text-emerald-600" />
+                <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600 dark:text-emerald-400" />
               ) : (
-                <ShieldAlert className="w-6 h-6 text-red-600" />
+                <ShieldAlert className="w-5 h-5 sm:w-6 sm:h-6 text-red-600 dark:text-red-400" />
               )}
-              <p className="text-lg font-black">{integrity?.valid ? 'Valid' : 'Invalid'}</p>
+              <p className="text-base sm:text-lg font-black">{integrity?.valid ? 'Valid' : 'Invalid'}</p>
             </div>
-            <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Chain Integrity</p>
+            <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Chain Integrity</p>
           </CardContent>
         </Card>
       </div>
@@ -105,46 +105,45 @@ export default function AdminLedgerPage() {
               No blocks registered yet. Approve a batch to create the first verification record.
             </p>
           ) : (
-            blocks.map((block: any) => (
-              <div
+            blocks.map((block: any) =>                <div
                 key={block.id}
-                className="border border-border/60 rounded-2xl p-5 hover:border-primary/30 transition-colors"
+                className="border border-border/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:border-primary/30 transition-colors"
               >
-                <div className="flex flex-wrap items-start justify-between gap-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 sm:gap-4">
+                  <div className="space-y-2 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <Badge variant="outline" className="font-mono text-[10px]">
                         #{block.index}
                       </Badge>
                       <Badge
                         className={
                           block.blockType === 'BATCH_VERIFY'
-                            ? 'bg-emerald-100 text-emerald-800'
+                            ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400'
                             : block.blockType === 'GENESIS'
                               ? 'bg-primary/10 text-primary'
-                              : 'bg-amber-100 text-amber-800'
+                              : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
                         }
                       >
                         {block.blockType.replace('_', ' ')}
                       </Badge>
                     </div>
                     {block.batch && (
-                      <p className="font-semibold">
-                        Batch: <span className="font-mono text-sm">{block.batch.batchCode}</span>
+                      <p className="font-semibold text-sm sm:text-base">
+                        Batch: <span className="font-mono text-xs sm:text-sm">{block.batch.batchCode}</span>
                         {block.batch.honeyType && (
                           <span className="text-muted-foreground"> — {block.batch.honeyType}</span>
                         )}
                       </p>
                     )}
-                    <code className="block text-[10px] font-mono text-muted-foreground break-all bg-muted/50 p-2 rounded-lg max-w-2xl">
+                    <code className="block text-[9px] sm:text-[10px] font-mono text-muted-foreground break-all bg-muted/50 p-1.5 sm:p-2 rounded-lg max-w-full sm:max-w-2xl">
                       {block.blockHash}
                     </code>
                   </div>
-                  <div className="text-right text-xs text-muted-foreground space-y-1">
-                    <p>{new Date(block.createdAt).toLocaleString()}</p>
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-1 text-xs text-muted-foreground shrink-0">
+                    <p className="text-[11px] sm:text-xs">{new Date(block.createdAt).toLocaleString()}</p>
                     {block.batch?.batchCode && (
                       <Link href={`/verify/${block.batch.batchCode}`}>
-                        <Button variant="ghost" size="sm" className="text-primary">
+                        <Button variant="ghost" size="sm" className="text-primary h-auto py-1">
                           Verify
                         </Button>
                       </Link>
