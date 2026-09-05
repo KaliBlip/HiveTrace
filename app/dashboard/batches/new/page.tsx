@@ -314,7 +314,7 @@ export default function NewBatchPage() {
 
   return (
     <div className="max-w-[1440px] mx-auto px-3 py-5 sm:p-6 lg:p-12">
-      <div className="max-w-4xl mx-auto space-y-12">
+      <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 lg:space-y-12">
         <Link href="/dashboard/batches" className="inline-flex items-center gap-3 text-stone-500 hover:text-primary font-bold group transition-colors">
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
           Back to Batches
