@@ -39,27 +39,27 @@ export default async function AdminReportsPage() {
   ];
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-2">
-        <h1 className="text-4xl font-bold">Reports</h1>
-        <p className="text-muted-foreground">Generate and download platform reports</p>
+    <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-1.5 sm:space-y-2">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Reports</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Generate and download platform reports</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {reports.map((report, index) => (
-          <Card key={index} className="border-border">
-            <CardHeader>
-              <CardTitle className="text-lg">{report.title}</CardTitle>
-              <CardDescription>{report.description}</CardDescription>
+          <Card key={index} className="border-border rounded-2xl sm:rounded-3xl">
+            <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+              <CardTitle className="text-base sm:text-lg">{report.title}</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">{report.description}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
+            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-4">
+              <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   <span>Period: {report.period}</span>
                 </div>
-                <p className="text-sm text-muted-foreground">Generated: {report.generated}</p>
-                <p className="text-sm font-medium">{report.records}</p>
+                <p className="text-muted-foreground">Generated: {report.generated}</p>
+                <p className="font-medium text-foreground">{report.records}</p>
               </div>
               <ReportDownloadButton title={report.title} stats={stats} />
             </CardContent>
@@ -67,42 +67,42 @@ export default async function AdminReportsPage() {
         ))}
       </div>
 
-      <Card className="border-border">
-        <CardHeader>
-          <CardTitle>Platform Snapshot</CardTitle>
-          <CardDescription>Live metrics from the HiveTrace database</CardDescription>
+      <Card className="border-border rounded-2xl sm:rounded-3xl">
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-base sm:text-lg">Platform Snapshot</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Live metrics from the HiveTrace database</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.batchCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Batches</p>
+        <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.batchCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Batches</p>
             </div>
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.producerCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Producers</p>
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.producerCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Producers</p>
             </div>
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.scanCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Scans</p>
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.scanCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Scans</p>
             </div>
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.orderCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Orders</p>
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.orderCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Orders</p>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.consumerCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Consumers</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-4">
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.consumerCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Consumers</p>
             </div>
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.reviewCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Reviews</p>
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center">
+              <p className="text-xl sm:text-2xl font-black">{stats.reviewCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Reviews</p>
             </div>
-            <div className="bg-muted/50 p-4 rounded-xl text-center">
-              <p className="text-2xl font-black">{stats.fraudAlertCount}</p>
-              <p className="text-xs font-bold uppercase text-muted-foreground tracking-widest mt-1">Fraud Alerts</p>
+            <div className="bg-muted/50 p-3 sm:p-4 rounded-xl text-center col-span-2 sm:col-span-1">
+              <p className="text-xl sm:text-2xl font-black">{stats.fraudAlertCount}</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-muted-foreground tracking-wider mt-1">Fraud Alerts</p>
             </div>
           </div>
         </CardContent>
