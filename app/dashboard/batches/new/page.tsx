@@ -521,6 +521,7 @@ export default function NewBatchPage() {
                       onVideoRecorded={(videoUrl) => setFormData(prev => ({ ...prev, honeyVideo: videoUrl }))}
                       onRecordingComplete={handleRecordingComplete}
                       fullScreen={true}
+                      initialVideo={formData.honeyVideo}
                     />
                   </div>
                 </div>,
