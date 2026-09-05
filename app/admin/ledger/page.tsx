@@ -105,7 +105,8 @@ export default function AdminLedgerPage() {
               No blocks registered yet. Approve a batch to create the first verification record.
             </p>
           ) : (
-            blocks.map((block: any) =>                <div
+            blocks.map((block: any) => (
+              <div
                 key={block.id}
                 className="border border-border/60 rounded-xl sm:rounded-2xl p-3 sm:p-5 hover:border-primary/30 transition-colors"
               >

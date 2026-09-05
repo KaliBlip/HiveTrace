@@ -170,7 +170,6 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
     : `https://hivetrace.com/verify/${batch.verificationHash}`;
 
   return (
-  return (
     <div className="space-y-6 sm:space-y-8">
       <Link href="/admin/batches" className="inline-flex items-center gap-2 text-primary hover:underline font-bold text-sm">
         <ArrowLeft className="w-4 h-4" />
