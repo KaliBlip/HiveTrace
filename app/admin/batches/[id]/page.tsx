@@ -170,46 +170,47 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
     : `https://hivetrace.com/verify/${batch.verificationHash}`;
 
   return (
-    <div className="space-y-8">
-      <Link href="/admin/batches" className="flex items-center gap-2 text-primary hover:underline font-bold">
+  return (
+    <div className="space-y-6 sm:space-y-8">
+      <Link href="/admin/batches" className="inline-flex items-center gap-2 text-primary hover:underline font-bold text-sm">
         <ArrowLeft className="w-4 h-4" />
         Back to Batches
       </Link>
 
-      <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-4xl font-bold">{batch.honeyType}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{batch.honeyType}</h1>
             {batch.verified ? (
-              <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
-                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Quality Verified
+              <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800 text-xs">
+                <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600 dark:text-emerald-400" /> Quality Verified
               </Badge>
             ) : (
-              <Badge className="bg-amber-100 text-amber-800 border-amber-200 animate-pulse">
-                <ShieldAlert className="w-3.5 h-3.5 mr-1 text-amber-600" /> Pending Quality Check
+              <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800 animate-pulse text-xs">
+                <ShieldAlert className="w-3.5 h-3.5 mr-1 text-amber-600 dark:text-amber-400" /> Pending Quality Check
               </Badge>
             )}
           </div>
-          <p className="text-muted-foreground font-mono text-sm">Batch Code: {batch.batchCode}</p>
+          <p className="text-muted-foreground font-mono text-xs sm:text-sm">Batch Code: {batch.batchCode}</p>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
         
         {/* Left Columns: Inspection and Details */}
-        <div className="lg:col-span-2 space-y-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
           
           {/* Side-by-side Images & Video */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             <Card className="border-border overflow-hidden">
-              <CardHeader className="py-4 bg-muted/20">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-primary" /> Honey Image Upload
+              <CardHeader className="py-3 sm:py-4 px-4 bg-muted/20">
+                <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-primary shrink-0" /> Honey Image Upload
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[220px] relative">
                 {batch.honeyImage ? (
-                  <img src={batch.honeyImage} alt="Honey product" className="w-full h-[220px] object-cover" />
+                  <img src={batch.honeyImage} alt="Honey product" className="w-full h-[180px] sm:h-[220px] object-cover" />
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No image uploaded</p>
                 )}
@@ -217,29 +218,29 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
             </Card>
 
             <Card className="border-border overflow-hidden">
-              <CardHeader className="py-4 bg-muted/20">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="w-4 h-4 text-primary" /> Packaging & Label Image
+              <CardHeader className="py-3 sm:py-4 px-4 bg-muted/20">
+                <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-primary shrink-0" /> Packaging & Label
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[220px] relative">
                 {batch.packagingImage ? (
-                  <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[220px] object-cover" />
+                  <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[180px] sm:h-[220px] object-cover" />
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No image uploaded</p>
                 )}
               </CardContent>
             </Card>
 
-            <Card className="border-border overflow-hidden">
-              <CardHeader className="py-4 bg-muted/20">
-                <CardTitle className="text-sm font-bold flex items-center gap-2">
-                  <Video className="w-4 h-4 text-primary" /> Short Batch Video
+            <Card className="border-border overflow-hidden sm:col-span-2 md:col-span-1">
+              <CardHeader className="py-3 sm:py-4 px-4 bg-muted/20">
+                <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
+                  <Video className="w-4 h-4 text-primary shrink-0" /> Short Batch Video
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[220px] relative">
+              <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[220px] relative">
                 {batch.honeyVideo ? (
-                  <video src={batch.honeyVideo} controls className="w-full h-[220px] object-cover" />
+                  <video src={batch.honeyVideo} controls className="w-full h-[180px] sm:h-[220px] object-cover" />
                 ) : (
                   <p className="text-xs text-muted-foreground italic">No video uploaded</p>
                 )}
@@ -249,11 +250,11 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
 
           {/* Verification Details */}
           <Card className="border-border">
-            <CardHeader>
-              <CardTitle>Batch Parameters & Origin</CardTitle>
-              <CardDescription>Submitted by {batch.producer?.businessName}</CardDescription>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg">Batch Parameters & Origin</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Submitted by {batch.producer?.businessName}</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0 space-y-4 sm:space-y-6">
               <div className="grid sm:grid-cols-2 gap-6">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
