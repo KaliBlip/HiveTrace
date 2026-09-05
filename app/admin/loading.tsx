@@ -2,11 +2,11 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 export default function AdminLoading() {
   return (
-    <div className="space-y-8 animate-pulse">
+    <div className="space-y-6 sm:space-y-8 animate-pulse">
       {/* Header */}
       <div className="space-y-2">
-        <div className="h-10 w-64 bg-muted rounded-md"></div>
-        <div className="h-4 w-96 bg-muted rounded-md"></div>
+        <div className="h-8 sm:h-10 w-48 sm:w-64 bg-muted rounded-md"></div>
+        <div className="h-4 max-w-sm w-full bg-muted rounded-md"></div>
       </div>
 
       {/* Stats Grid */}
