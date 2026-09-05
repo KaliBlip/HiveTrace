@@ -4,6 +4,11 @@ import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { authConfig } from "@/auth.config";
 
+const isHttps =
+  process.env.AUTH_URL?.startsWith("https://") ||
+  process.env.NEXTAUTH_URL?.startsWith("https://") ||
+  process.env.VERCEL === "1";
+
 export const { 
   handlers, 
   auth, 
@@ -12,6 +17,7 @@ export const {
 } = NextAuth({
   ...authConfig,
   trustHost: true,
+  useSecureCookies: isHttps,
   providers: [
     Credentials({
       async authorize(credentials) {

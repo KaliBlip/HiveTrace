@@ -8,9 +8,15 @@ export function useAuth() {
 
   const login = useCallback(
     async (email: string, password: string) => {
+      const callbackUrl =
+        typeof window !== "undefined"
+          ? new URLSearchParams(window.location.search).get("callbackUrl") || window.location.origin
+          : undefined;
+
       const result = await signIn("credentials", {
         email,
         password,
+        callbackUrl,
         redirect: false,
       });
       return result;

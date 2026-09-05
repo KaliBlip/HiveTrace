@@ -7,6 +7,8 @@ const nextConfig = {
     unoptimized: true,
   },
   allowedDevOrigins: [
+    '192.168.1.173',
+    '192.168.1.173:3000',
     '172.20.10.7',
     '172.20.10.7:3000',
     'localhost',
@@ -24,6 +26,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '200mb',
       allowedOrigins: [
+        '192.168.1.173',
+        '192.168.1.173:3000',
         '172.20.10.7',
         '172.20.10.7:3000',
         'localhost',

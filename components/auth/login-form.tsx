@@ -34,13 +34,18 @@ export function LoginForm() {
             : null;
 
         if (callbackUrl && callbackUrl.startsWith("/")) {
-          router.push(callbackUrl);
+          window.location.href = callbackUrl;
           return;
         }
 
-        const sessionRes = await fetch("/api/auth/session");
-        const session = await sessionRes.json();
-        router.push(getRoleHomePath(session?.user?.role));
+        try {
+          const sessionRes = await fetch("/api/auth/session");
+          const session = await sessionRes.json();
+          const target = getRoleHomePath(session?.user?.role);
+          window.location.href = target;
+        } catch {
+          window.location.href = "/dashboard";
+        }
       }
     } catch {
       setError("A network synchronization error occurred. Please retry.");
