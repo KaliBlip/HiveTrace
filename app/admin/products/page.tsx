@@ -12,22 +12,22 @@ export default async function AdminProductsPage() {
   const totalStock = products.reduce((sum, product) => sum + product.stock, 0);
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div className="space-y-3">
-          <Badge className="w-fit rounded-full bg-primary/10 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
+    <div className="space-y-6 sm:space-y-8">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-2 sm:space-y-3">
+          <Badge className="w-fit rounded-full bg-primary/10 px-3 sm:px-4 py-1 sm:py-1.5 text-[10px] font-bold uppercase tracking-[0.24em] text-primary">
             Marketplace Control
           </Badge>
           <div>
-            <h1 className="font-heading text-4xl font-bold uppercase italic tracking-tight sm:text-5xl">
+            <h1 className="font-heading text-3xl font-bold uppercase italic tracking-tight sm:text-4xl lg:text-5xl">
               PRODUCT <span className="text-primary not-italic">LISTINGS</span>
             </h1>
-            <p className="mt-2 max-w-3xl text-muted-foreground">
+            <p className="mt-1.5 max-w-3xl text-sm sm:text-base text-muted-foreground">
               Review every producer listing, moderate marketplace visibility, and inspect buyer feedback tied to each product.
             </p>
           </div>
         </div>
-        <Link href="/shop">
+        <Link href="/shop" className="w-fit">
           <Button variant="outline" className="gap-2">
             <ExternalLink className="size-4" />
             View marketplace
@@ -35,53 +35,53 @@ export default async function AdminProductsPage() {
         </Link>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <Card className="border-border">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <PackageCheck className="size-4 text-primary" />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+            <CardTitle className="flex items-center gap-2 text-xs sm:text-sm font-medium text-muted-foreground">
+              <PackageCheck className="size-4 text-primary shrink-0" />
               Active Listings
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="font-heading text-3xl font-bold">{activeCount}</p>
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <p className="font-heading text-2xl sm:text-3xl font-bold">{activeCount}</p>
             <p className="mt-1 text-xs text-muted-foreground">of {products.length} total products</p>
           </CardContent>
         </Card>
         <Card className="border-border">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <Boxes className="size-4 text-primary" />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+            <CardTitle className="flex items-center gap-2 text-xs sm:text-sm font-medium text-muted-foreground">
+              <Boxes className="size-4 text-primary shrink-0" />
               Stock Under Watch
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="font-heading text-3xl font-bold">{totalStock.toLocaleString()}</p>
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <p className="font-heading text-2xl sm:text-3xl font-bold">{totalStock.toLocaleString()}</p>
             <p className="mt-1 text-xs text-muted-foreground">units listed by producers</p>
           </CardContent>
         </Card>
         <Card className="border-border">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-              <MessageSquareText className="size-4 text-primary" />
+          <CardHeader className="p-4 sm:p-6 pb-2 sm:pb-3">
+            <CardTitle className="flex items-center gap-2 text-xs sm:text-sm font-medium text-muted-foreground">
+              <MessageSquareText className="size-4 text-primary shrink-0" />
               Buyer Reviews
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="font-heading text-3xl font-bold">{reviewCount}</p>
+          <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+            <p className="font-heading text-2xl sm:text-3xl font-bold">{reviewCount}</p>
             <p className="mt-1 text-xs text-muted-foreground">text reviews awaiting routine audit</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="overflow-hidden border-border">
-        <CardHeader className="border-b border-border bg-muted/30">
-          <CardTitle>All Producer Products</CardTitle>
-          <CardDescription>Visibility controls and review context for every marketplace product.</CardDescription>
+      <Card className="overflow-hidden border-border rounded-2xl sm:rounded-[32px]">
+        <CardHeader className="p-4 sm:p-6 border-b border-border bg-muted/30">
+          <CardTitle className="text-lg sm:text-xl font-heading uppercase tracking-tight">All Producer Products</CardTitle>
+          <CardDescription className="text-xs sm:text-sm">Visibility controls and review context for every marketplace product.</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           {products.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground">
+            <div className="p-8 sm:p-12 text-center text-sm text-muted-foreground">
               No product listings have been created yet.
             </div>
           ) : (
@@ -94,26 +94,26 @@ export default async function AdminProductsPage() {
                     : 0;
 
                 return (
-                  <section key={product.id} className="grid gap-6 p-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-                    <div className="flex gap-5">
-                      <div className="hidden size-24 shrink-0 overflow-hidden rounded-md border border-border bg-muted sm:block">
+                  <section key={product.id} className="grid gap-4 sm:gap-6 p-4 sm:p-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 min-w-0">
+                      <div className="size-20 sm:size-24 shrink-0 overflow-hidden rounded-xl border border-border bg-muted">
                         {product.imageUrl ? (
                           <img src={product.imageUrl} alt={product.name} className="size-full object-cover" />
                         ) : (
                           <div className="grid size-full place-items-center text-xs font-semibold text-muted-foreground">No image</div>
                         )}
                       </div>
-                      <div className="min-w-0 flex-1 space-y-4">
-                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                      <div className="min-w-0 flex-1 space-y-3 sm:space-y-4">
+                        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-start sm:justify-between">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
-                              <h2 className="truncate text-xl font-bold">{product.name}</h2>
-                              <Badge className={product.isActive ? 'bg-emerald-100 text-emerald-800' : 'bg-stone-100 text-stone-700'}>
+                              <h2 className="truncate text-base sm:text-xl font-bold">{product.name}</h2>
+                              <Badge className={product.isActive ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-muted text-muted-foreground'}>
                                 {product.isActive ? 'Active' : 'Hidden'}
                               </Badge>
                             </div>
-                            <p className="mt-1 text-sm text-muted-foreground">
-                              {product.producer.businessName} · {product.batch.honeyType} · {product.batch.batchCode}
+                            <p className="mt-1 text-xs sm:text-sm text-muted-foreground truncate">
+                              {product.producer.businessName} · {product.batch.honeyType} · <span className="font-mono">{product.batch.batchCode}</span>
                             </p>
                           </div>
                           <form
@@ -122,42 +122,42 @@ export default async function AdminProductsPage() {
                               await setAdminProductActive(product.id, !product.isActive);
                             }}
                           >
-                            <Button variant="outline" size="sm" className="gap-2">
+                            <Button variant="outline" size="sm" className="gap-2 w-fit text-xs">
                               {product.isActive ? <ToggleLeft className="size-4" /> : <ToggleRight className="size-4" />}
                               {product.isActive ? 'Hide listing' : 'Activate'}
                             </Button>
                           </form>
                         </div>
 
-                        <div className="grid gap-3 text-sm sm:grid-cols-4">
-                          <div className="rounded-md border border-border bg-background p-3">
-                            <p className="text-xs text-muted-foreground">Price</p>
-                            <p className="font-bold">GH₵{product.price.toFixed(2)}</p>
+                        <div className="grid grid-cols-2 gap-2 sm:gap-3 text-sm sm:grid-cols-4">
+                          <div className="rounded-xl border border-border bg-background p-2.5 sm:p-3">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">Price</p>
+                            <p className="font-bold text-sm sm:text-base">GH₵{product.price.toFixed(2)}</p>
                           </div>
-                          <div className="rounded-md border border-border bg-background p-3">
-                            <p className="text-xs text-muted-foreground">Stock</p>
-                            <p className="font-bold">{product.stock} {product.unit}</p>
+                          <div className="rounded-xl border border-border bg-background p-2.5 sm:p-3">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">Stock</p>
+                            <p className="font-bold text-sm sm:text-base truncate">{product.stock} {product.unit}</p>
                           </div>
-                          <div className="rounded-md border border-border bg-background p-3">
-                            <p className="text-xs text-muted-foreground">Orders</p>
-                            <p className="font-bold">{product._count.orderItems}</p>
+                          <div className="rounded-xl border border-border bg-background p-2.5 sm:p-3">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">Orders</p>
+                            <p className="font-bold text-sm sm:text-base">{product._count.orderItems}</p>
                           </div>
-                          <div className="rounded-md border border-border bg-background p-3">
-                            <p className="text-xs text-muted-foreground">Rating</p>
-                            <p className="font-bold">{averageRating.toFixed(1)} / 5</p>
+                          <div className="rounded-xl border border-border bg-background p-2.5 sm:p-3">
+                            <p className="text-[10px] sm:text-xs text-muted-foreground">Rating</p>
+                            <p className="font-bold text-sm sm:text-base">{averageRating.toFixed(1)} / 5</p>
                           </div>
                         </div>
 
                         <div className="flex flex-wrap gap-2">
                           <Link href={`/shop/${product.id}`}>
-                            <Button variant="ghost" size="sm" className="gap-2">
-                              <ExternalLink className="size-4" />
+                            <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 text-xs">
+                              <ExternalLink className="size-3.5 sm:size-4" />
                               Product page
                             </Button>
                           </Link>
                           <Link href={`/admin/batches/${product.batchId}`}>
-                            <Button variant="ghost" size="sm" className="gap-2">
-                              <ShieldCheck className="size-4" />
+                            <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 text-xs">
+                              <ShieldCheck className="size-3.5 sm:size-4" />
                               Batch audit
                             </Button>
                           </Link>
