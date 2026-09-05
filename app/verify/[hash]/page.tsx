@@ -120,24 +120,24 @@ export default function VerifyBatchPage() {
       {/* Verification Banner */}
       {batch.verified ? (
         // VERIFIED STATE BANNER
-        <div className="bg-[#1c1917] relative overflow-hidden py-32 text-center px-4">
+        <div className="bg-[#1c1917] relative overflow-hidden py-16 sm:py-24 lg:py-32 text-center px-4">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=2000')] bg-cover bg-center opacity-10 grayscale mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#1c1917]"></div>
           
-          <div className="relative z-10 space-y-8">
+          <div className="relative z-10 space-y-6 sm:space-y-8">
             <div className="flex justify-center">
-              <div className="w-24 h-24 bg-primary rounded-[32px] flex items-center justify-center shadow-2xl shadow-primary/40 group">
-                <ShieldCheck className="w-12 h-12 text-white transition-transform duration-500 group-hover:scale-110" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary rounded-2xl sm:rounded-[32px] flex items-center justify-center shadow-2xl shadow-primary/40 group">
+                <ShieldCheck className="w-10 h-10 sm:w-12 sm:h-12 text-white transition-transform duration-500 group-hover:scale-110" />
               </div>
             </div>
-            <div className="space-y-4">
-              <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-6 rounded-full text-xs font-bold uppercase tracking-[0.3em]">
+            <div className="space-y-3 sm:space-y-4">
+              <Badge className="bg-primary/20 text-primary border-primary/30 py-1.5 px-6 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em]">
                 Origin Verified
               </Badge>
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
+              <h1 className="text-3xl sm:text-6xl md:text-8xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
                 AUTHENTICITY <span className="text-primary not-italic">CONFIRMED.</span>
               </h1>
-              <p className="text-stone-400 font-normal text-xl max-w-2xl mx-auto leading-relaxed">
+              <p className="text-stone-400 font-normal text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2">
                 This batch has been cryptographically signed and verified on the HiveTrace ledger. 100% genuine artisan honey.
               </p>
             </div>
@@ -145,24 +145,24 @@ export default function VerifyBatchPage() {
         </div>
       ) : (
         // PENDING STATE BANNER
-        <div className="bg-[#291e13] relative overflow-hidden py-32 text-center px-4">
+        <div className="bg-[#291e13] relative overflow-hidden py-16 sm:py-24 lg:py-32 text-center px-4">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=2000')] bg-cover bg-center opacity-10 grayscale mix-blend-overlay"></div>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#291e13]"></div>
           
-          <div className="relative z-10 space-y-8">
+          <div className="relative z-10 space-y-6 sm:space-y-8">
             <div className="flex justify-center">
-              <div className="w-24 h-24 bg-amber-500 rounded-[32px] flex items-center justify-center shadow-2xl shadow-amber-500/40 group animate-pulse">
-                <ShieldAlert className="w-12 h-12 text-white" />
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-amber-500 rounded-2xl sm:rounded-[32px] flex items-center justify-center shadow-2xl shadow-amber-500/40 group animate-pulse">
+                <ShieldAlert className="w-10 h-10 sm:w-12 sm:h-12 text-white" />
               </div>
             </div>
-            <div className="space-y-4">
-              <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 py-1.5 px-6 rounded-full text-xs font-bold uppercase tracking-[0.3em]">
+            <div className="space-y-3 sm:space-y-4">
+              <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30 py-1.5 px-6 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-[0.3em]">
                 Review Pending
               </Badge>
-              <h1 className="text-4xl sm:text-6xl md:text-7xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
+              <h1 className="text-3xl sm:text-6xl md:text-7xl font-heading font-bold tracking-tighter uppercase italic text-white leading-none text-balance">
                 QUALITY <span className="text-amber-500 not-italic">UNVERIFIED.</span>
               </h1>
-              <p className="text-amber-200/70 font-normal text-xl max-w-2xl mx-auto leading-relaxed">
+              <p className="text-amber-200/70 font-normal text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2">
                 This batch has been logged by the producer but is awaiting formal camera & quality certification by HiveTrace administrators. Proceed with caution.
               </p>
             </div>
@@ -170,56 +170,56 @@ export default function VerifyBatchPage() {
         </div>
       )}
 
-      <div className="max-w-[1440px] mx-auto px-4 lg:px-[128px] -mt-16 relative z-20 space-y-12">
+      <div className="max-w-[1440px] mx-auto px-4 lg:px-[128px] -mt-10 sm:-mt-16 relative z-20 space-y-8 sm:space-y-12">
         {/* Main Info Card */}
-        <div className="bg-card rounded-[48px] border border-border/50 shadow-2xl overflow-hidden">
-          <div className="p-10 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-8 bg-muted/30">
-            <div className="space-y-4 text-center md:text-left">
-              <h2 className="text-3xl sm:text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-                <Badge className="bg-foreground text-background px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
-                <span className="text-xs text-muted-foreground font-mono bg-card px-3 py-1.5 rounded-lg border border-border/50">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
+        <div className="bg-card rounded-2xl sm:rounded-3xl lg:rounded-[48px] border border-border/50 shadow-2xl overflow-hidden">
+          <div className="p-5 sm:p-8 lg:p-16 border-b border-border/50 flex flex-col md:flex-row justify-between items-center gap-6 sm:gap-8 bg-muted/30">
+            <div className="space-y-2 sm:space-y-4 text-center md:text-left">
+              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase tracking-tight">{batch.honeyType}</h2>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 sm:gap-3">
+                <Badge className="bg-foreground text-background px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest">{batch.batchCode}</Badge>
+                <span className="text-[10px] sm:text-xs text-muted-foreground font-mono bg-card px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-border/50 truncate max-w-[260px] sm:max-w-none">HMAC-SHA256: {batch.verificationHash.slice(0, 16)}...</span>
               </div>
             </div>
-            <div className="text-center md:text-right space-y-2">
+            <div className="text-center md:text-right space-y-1 sm:space-y-2">
               <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-[0.2em]">Harvested On</p>
-              <p className="font-heading font-bold text-3xl">{new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+              <p className="font-heading font-bold text-xl sm:text-2xl lg:text-3xl">{new Date(batch.harvestDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
             </div>
           </div>
           
-          <div className="p-10 lg:p-16 grid grid-cols-1 sm:grid-cols-4 gap-12">
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-muted-foreground mb-2">
-                <MapPin className="w-5 h-5" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
+          <div className="p-5 sm:p-8 lg:p-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground mb-1 sm:mb-2">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Origin Location</span>
               </div>
-              <p className="font-heading font-bold text-2xl">{batch.producer.location}</p>
+              <p className="font-heading font-bold text-lg sm:text-2xl">{batch.producer.location}</p>
               {batch.registrationLocation && (
                 <p className="text-xs text-muted-foreground">Registered at: <span className="font-semibold text-foreground">{batch.registrationLocation}</span></p>
               )}
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-muted-foreground mb-2">
-                <Weight className="w-5 h-5" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Batch Quantity</span>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground mb-1 sm:mb-2">
+                <Weight className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Batch Quantity</span>
               </div>
-              <p className="font-heading font-bold text-2xl">{batch.quantity} <span className="text-muted-foreground font-normal">{batch.unit}</span></p>
+              <p className="font-heading font-bold text-lg sm:text-2xl">{batch.quantity} <span className="text-muted-foreground font-normal">{batch.unit}</span></p>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-muted-foreground mb-2">
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground mb-1 sm:mb-2">
                 <span className="font-bold text-sm">GH₵</span>
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Retail Price</span>
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Retail Price</span>
               </div>
-              <p className="font-heading font-bold text-2xl">GH₵{batch.price?.toFixed(2) || 'N/A'}</p>
+              <p className="font-heading font-bold text-lg sm:text-2xl">GH₵{batch.price?.toFixed(2) || 'N/A'}</p>
             </div>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 text-muted-foreground mb-2">
-                <ShieldCheck className="w-5 h-5" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Transparency Status</span>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3 text-muted-foreground mb-1 sm:mb-2">
+                <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">Transparency Status</span>
               </div>
               {batch.verified ? (
                 <div className="space-y-1">
-                  <p className="font-heading font-bold text-2xl text-emerald-600 dark:text-emerald-400 flex items-center gap-2 italic uppercase">
+                  <p className="font-heading font-bold text-lg sm:text-2xl text-emerald-600 dark:text-emerald-400 flex items-center gap-2 italic uppercase">
                     Fully Verified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
@@ -231,7 +231,7 @@ export default function VerifyBatchPage() {
                 </div>
               ) : (
                 <div className="space-y-1">
-                  <p className="font-heading font-bold text-2xl text-amber-600 dark:text-amber-400 flex items-center gap-2 italic uppercase">
+                  <p className="font-heading font-bold text-lg sm:text-2xl text-amber-600 dark:text-amber-400 flex items-center gap-2 italic uppercase">
                     Unverified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
@@ -244,50 +244,50 @@ export default function VerifyBatchPage() {
         </div>
 
         {/* Assets & Verification details */}
-        <div className="grid lg:grid-cols-3 gap-12">
+        <div className="grid lg:grid-cols-3 gap-8 sm:gap-12">
           
-          <div className="lg:col-span-2 space-y-12">
+          <div className="lg:col-span-2 space-y-8 sm:space-y-12">
             {/* Batch Images & Video */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="border-border overflow-hidden">
-                <CardHeader className="py-4 bg-muted/20">
-                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+              <Card className="border-border overflow-hidden rounded-2xl">
+                <CardHeader className="py-3 sm:py-4 bg-muted/20">
+                  <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-primary" /> Honey Product Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[200px]">
                   {batch.honeyImage ? (
-                    <img src={batch.honeyImage} alt="Honey product" className="w-full h-[200px] object-cover" />
+                    <img src={batch.honeyImage} alt="Honey product" className="w-full h-[180px] sm:h-[200px] object-cover" />
                   ) : (
                     <p className="text-xs text-muted-foreground italic">No image uploaded by producer</p>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="border-border overflow-hidden">
-                <CardHeader className="py-4 bg-muted/20">
-                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+              <Card className="border-border overflow-hidden rounded-2xl">
+                <CardHeader className="py-3 sm:py-4 bg-muted/20">
+                  <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
                     <ImageIcon className="w-4 h-4 text-primary" /> Packaging & Label Image
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[200px]">
                   {batch.packagingImage ? (
-                    <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[200px] object-cover" />
+                    <img src={batch.packagingImage} alt="Packaging label" className="w-full h-[180px] sm:h-[200px] object-cover" />
                   ) : (
                     <p className="text-xs text-muted-foreground italic">No image uploaded by producer</p>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="border-border overflow-hidden">
-                <CardHeader className="py-4 bg-muted/20">
-                  <CardTitle className="text-sm font-bold flex items-center gap-2">
+              <Card className="border-border overflow-hidden rounded-2xl">
+                <CardHeader className="py-3 sm:py-4 bg-muted/20">
+                  <CardTitle className="text-xs sm:text-sm font-bold flex items-center gap-2">
                     <Video className="w-4 h-4 text-primary" /> Short Batch Video
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[200px]">
+                <CardContent className="p-0 flex items-center justify-center bg-muted/40 min-h-[180px] sm:min-h-[200px]">
                   {batch.honeyVideo ? (
-                    <video src={batch.honeyVideo} controls className="w-full h-[200px] object-cover" />
+                    <video src={batch.honeyVideo} controls playsInline className="w-full h-[180px] sm:h-[200px] object-cover" />
                   ) : (
                     <p className="text-xs text-muted-foreground italic">No video uploaded by producer</p>
                   )}
@@ -296,26 +296,26 @@ export default function VerifyBatchPage() {
             </div>
 
             {/* History / Chain of Custody */}
-            <Card className="rounded-[48px] border border-border/50 shadow-xl overflow-hidden flex flex-col">
-              <div className="p-10 border-b border-border/50 bg-muted/30 flex items-center gap-4">
-                <History className="w-8 h-8 text-primary" />
-                <h3 className="text-2xl font-heading font-bold uppercase tracking-tight">Chain of Custody</h3>
+            <Card className="rounded-2xl sm:rounded-3xl lg:rounded-[48px] border border-border/50 shadow-xl overflow-hidden flex flex-col">
+              <div className="p-5 sm:p-8 lg:p-10 border-b border-border/50 bg-muted/30 flex items-center gap-3 sm:gap-4">
+                <History className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
+                <h3 className="text-xl sm:text-2xl font-heading font-bold uppercase tracking-tight">Chain of Custody</h3>
               </div>
-              <div className="p-10 lg:p-16 flex-1">
-                <div className="space-y-12">
+              <div className="p-5 sm:p-8 lg:p-16 flex-1">
+                <div className="space-y-8 sm:space-y-12">
                   {batch.history.map((item: any, i: number) => (
-                    <div key={i} className="flex gap-8 group">
-                      <div className="w-10 flex flex-col items-center">
-                        <div className="w-6 h-6 rounded-full bg-card border-4 border-primary ring-8 ring-primary/5 mt-1 group-hover:scale-125 transition-transform duration-300"></div>
-                        {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-border mt-4 group-hover:bg-primary/20 transition-colors"></div>}
+                    <div key={i} className="flex gap-4 sm:gap-8 group">
+                      <div className="w-8 sm:w-10 flex flex-col items-center">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-card border-4 border-primary ring-4 sm:ring-8 ring-primary/5 mt-1 group-hover:scale-125 transition-transform duration-300"></div>
+                        {i < batch.history.length - 1 && <div className="w-0.5 h-full bg-border mt-3 sm:mt-4 group-hover:bg-primary/20 transition-colors"></div>}
                       </div>
                       <div className="flex-1 pb-4">
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-                          <p className="font-heading font-bold text-xl uppercase italic group-hover:text-primary transition-colors">{item.event}</p>
-                          <span className="text-xs text-muted-foreground font-bold uppercase tracking-widest bg-muted px-3 py-1 rounded-full border border-border/50 shrink-0">{item.date}</span>
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-2">
+                          <p className="font-heading font-bold text-base sm:text-xl uppercase italic group-hover:text-primary transition-colors">{item.event}</p>
+                          <span className="text-[10px] sm:text-xs text-muted-foreground font-bold uppercase tracking-widest bg-muted px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full border border-border/50 shrink-0">{item.date}</span>
                         </div>
-                        <p className="text-muted-foreground font-normal mt-3 flex items-center gap-2 text-lg">
-                          <MapPin className="w-4 h-4 text-muted-foreground/60" /> {item.location}
+                        <p className="text-muted-foreground font-normal mt-2 sm:mt-3 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-lg">
+                          <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground/60" /> {item.location}
                         </p>
                       </div>
                     </div>
@@ -326,26 +326,26 @@ export default function VerifyBatchPage() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             {/* Producer Profile */}
-            <div className="bg-card rounded-[40px] border border-border/50 shadow-xl overflow-hidden group">
-              <div className="h-3 bg-primary w-full transition-all group-hover:h-4"></div>
-              <div className="p-10 space-y-8">
+            <div className="bg-card rounded-2xl sm:rounded-3xl lg:rounded-[40px] border border-border/50 shadow-xl overflow-hidden group">
+              <div className="h-2.5 sm:h-3 bg-primary w-full transition-all group-hover:h-3.5 sm:group-hover:h-4"></div>
+              <div className="p-5 sm:p-8 lg:p-10 space-y-6 sm:space-y-8">
                 <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-[0.2em]">Verified Producer</p>
-                <div className="space-y-4">
-                  <h4 className="text-3xl font-heading font-bold uppercase italic group-hover:text-primary transition-colors">{batch.producer.name}</h4>
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-1">
+                <div className="space-y-3 sm:space-y-4">
+                  <h4 className="text-2xl sm:text-3xl font-heading font-bold uppercase italic group-hover:text-primary transition-colors">{batch.producer.name}</h4>
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex gap-0.5 sm:gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-primary text-xl">★</span>
+                        <span key={i} className="text-primary text-base sm:text-xl">★</span>
                       ))}
                     </div>
-                    <span className="text-sm text-muted-foreground font-bold">({batch.producer.reviewCount} Reviews)</span>
+                    <span className="text-xs sm:text-sm text-muted-foreground font-bold">({batch.producer.reviewCount} Reviews)</span>
                   </div>
                 </div>
                 {batch.verified && (
                   <Link href="/shop" className="block">
-                    <Button variant="outline" className="w-full h-14 rounded-2xl border-border hover:border-primary hover:text-primary text-sm font-bold uppercase tracking-widest gap-3 group/btn">
+                    <Button variant="outline" className="w-full h-12 sm:h-14 rounded-xl sm:rounded-2xl border-border hover:border-primary hover:text-primary text-xs sm:text-sm font-bold uppercase tracking-widest gap-2 sm:gap-3 group/btn">
                       View Producer Shop 
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                     </Button>
@@ -356,21 +356,21 @@ export default function VerifyBatchPage() {
 
             {/* Blockchain Details */}
             {batch.verified && batch.blockchainTx && (
-              <div className="bg-[#1c1917] rounded-[40px] border border-white/5 p-10 space-y-8 shadow-2xl relative overflow-hidden">
+              <div className="bg-[#1c1917] rounded-2xl sm:rounded-3xl lg:rounded-[40px] border border-white/5 p-5 sm:p-8 lg:p-10 space-y-6 sm:space-y-8 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl"></div>
-                <div className="relative z-10 space-y-6">
-                  <div className="flex items-center gap-3 text-emerald-400">
-                    <ShieldCheck className="w-7 h-7" />
-                    <h4 className="text-xl font-heading font-bold uppercase tracking-tight text-white">Blockchain Record</h4>
+                <div className="relative z-10 space-y-4 sm:space-y-6">
+                  <div className="flex items-center gap-2.5 sm:gap-3 text-emerald-400">
+                    <ShieldCheck className="w-6 h-6 sm:w-7 sm:h-7" />
+                    <h4 className="text-lg sm:text-xl font-heading font-bold uppercase tracking-tight text-white">Blockchain Record</h4>
                   </div>
-                  <p className="text-stone-400 font-normal text-sm leading-relaxed">
+                  <p className="text-stone-400 font-normal text-xs sm:text-sm leading-relaxed">
                     This product's batch parameters are cryptographically sealed on the blockchain. The transaction ledger hash is recorded below:
                   </p>
                   <code className="block text-[10px] font-mono text-emerald-300 break-all bg-black/40 p-3 rounded-lg border border-white/10 select-all">
                     {batch.blockchainTx}
                   </code>
                   <Link href={`/api/blockchain/verify?hash=${encodeURIComponent(batch.blockchainTx)}`} target="_blank">
-                    <Button variant="outline" size="sm" className="w-full mt-3 border-emerald-500/30 text-emerald-300 hover:bg-emerald-950/30">
+                    <Button variant="outline" size="sm" className="w-full mt-2 sm:mt-3 border-emerald-500/30 text-emerald-300 hover:bg-emerald-950/30 text-xs">
                       Verify on Ledger API
                     </Button>
                   </Link>

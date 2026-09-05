@@ -573,7 +573,7 @@ export default function NewBatchPage() {
                         />
                       </div>
                       <div className="space-y-3">
-                        <Label htmlFor="price" className="text-sm font-bold uppercase tracking-widest text-stone-400 ml-1">Price (₦)</Label>
+                        <Label htmlFor="price" className="text-sm font-bold uppercase tracking-widest text-stone-400 ml-1">Price (GH₵)</Label>
                         <Input 
                           id="price" 
                           type="number" 
@@ -652,7 +652,7 @@ export default function NewBatchPage() {
                       </div>
                       <div className="flex items-center gap-4 text-sm mt-2">
                         <div className={`w-3 h-3 rounded-full ${formData.price ? 'bg-emerald-500' : 'bg-red-500'}`} />
-                        <span>Price: {formData.price ? `₦${formData.price}` : 'Missing'}</span>
+                        <span>Price: {formData.price ? `GH₵${formData.price}` : 'Missing'}</span>
                       </div>
                       <div className="flex items-center gap-4 text-sm mt-2">
                         <div className={`w-3 h-3 rounded-full ${formData.description ? 'bg-emerald-500' : 'bg-red-500'}`} />
