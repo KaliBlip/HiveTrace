@@ -374,19 +374,21 @@ export default function NewBatchPage() {
                       </div>
                     )}
                     {(locationStatus === 'denied' || locationStatus === 'error') && (
-                      <div className="p-5 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-600 shrink-0">
-                          <AlertTriangle className="w-5 h-5" />
+                      <div className="p-4 sm:p-5 bg-red-500/10 border border-red-500/30 rounded-2xl space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center text-red-600 shrink-0">
+                            <AlertTriangle className="w-5 h-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-red-700 dark:text-red-400">
+                              {locationStatus === 'denied' ? 'Location Access Denied' : 'Location Error'}
+                            </p>
+                            <p className="text-xs text-red-600/80 dark:text-red-400/70">
+                              Device location is mandatory to register a new honey batch. Please allow location access in your browser settings.
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-bold text-red-700 dark:text-red-400">
-                            {locationStatus === 'denied' ? 'Location Access Denied' : 'Location Error'}
-                          </p>
-                          <p className="text-xs text-red-600/80 dark:text-red-400/70">
-                            Device location is mandatory to register a new honey batch. Please allow location access in your browser settings.
-                          </p>
-                        </div>
-                        <Button type="button" variant="outline" size="sm" onClick={fetchLocation} className="shrink-0 gap-1.5 text-xs border-red-300 text-red-600 hover:bg-red-50">
+                        <Button type="button" variant="outline" size="sm" onClick={fetchLocation} className="shrink-0 gap-1.5 text-xs border-red-300 text-red-600 hover:bg-red-50 w-full sm:w-auto">
                           <RefreshCw className="w-3.5 h-3.5" /> Retry
                         </Button>
                       </div>
