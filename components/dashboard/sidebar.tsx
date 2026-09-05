@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -23,6 +23,7 @@ import {
   Star,
   Users,
   ClipboardList,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -67,6 +68,11 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname();
   const { user, role, logout } = useAuth();
 
+  // Automatically close mobile sidebar on navigation
+  useEffect(() => {
+    onMobileClose?.();
+  }, [pathname]);
+
   const currentRole = role?.toLowerCase();
   const menuItems =
     currentRole === "producer"
@@ -87,10 +93,10 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex h-screen flex-col border-r border-sidebar-border/70 bg-sidebar/82 text-sidebar-foreground shadow-[var(--shadow-soft)] backdrop-blur-2xl transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:translate-x-0",
+          "fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col border-r border-sidebar-border/70 bg-sidebar/95 text-sidebar-foreground shadow-[var(--shadow-soft)] backdrop-blur-2xl transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:translate-x-0",
           mobileOpen ? "translate-x-0" : "-translate-x-full",
           isCollapsed ? "lg:w-[5.5rem]" : "lg:w-72",
-          "w-72"
+          "w-72 max-w-[85vw]"
         )}
       >
         <button
@@ -101,8 +107,12 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
 
-        <div className={cn("p-5", isCollapsed && "px-4")}>
-          <Link href="/" className={cn("flex items-center gap-3", isCollapsed && "justify-center")}>
+        <div className={cn("p-5 flex items-center justify-between", isCollapsed && "px-4")}>
+          <Link
+            href="/"
+            onClick={onMobileClose}
+            className={cn("flex items-center gap-3", isCollapsed && "justify-center")}
+          >
             <span className="scan-line grid size-11 shrink-0 place-items-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
               <ShieldCheck className="size-5" />
             </span>
@@ -112,6 +122,15 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               </span>
             )}
           </Link>
+
+          {/* Close button on mobile screens */}
+          <button
+            onClick={onMobileClose}
+            className="grid size-9 place-items-center rounded-lg border border-border/60 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground lg:hidden"
+            aria-label="Close navigation"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {user && (
@@ -147,6 +166,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={onMobileClose}
                 title={isCollapsed ? item.label : undefined}
                 className={cn(
                   "motion-rise flex items-center gap-3 rounded-md px-3 py-3 text-sm font-semibold transition-all",
