@@ -137,41 +137,41 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="space-y-4">
         <div>
-          <h1 className="text-4xl font-bold">Fraud Detection</h1>
-          <p className="text-muted-foreground">Monitor and investigate suspicious activities</p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">Fraud Detection</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Monitor and investigate suspicious activities</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="border-red-200 bg-red-50/50 dark:bg-red-900/10">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-black text-red-600">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <Card className="border-red-200 bg-red-50/50 dark:bg-red-900/10 dark:border-red-800/40">
+            <CardContent className="p-4 sm:pt-6 text-center">
+              <p className="text-2xl sm:text-3xl font-black text-red-600 dark:text-red-400">
                 {alerts.filter((a) => a.severity === 'HIGH').length}
               </p>
-              <p className="text-xs font-bold uppercase text-red-600/70 tracking-wider">High Severity</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-red-600/70 dark:text-red-400/70 tracking-wider mt-1">High Severity</p>
             </CardContent>
           </Card>
-          <Card className="border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-black text-yellow-600">
+          <Card className="border-yellow-200 bg-yellow-50/50 dark:bg-yellow-900/10 dark:border-yellow-800/40">
+            <CardContent className="p-4 sm:pt-6 text-center">
+              <p className="text-2xl sm:text-3xl font-black text-yellow-600 dark:text-yellow-400">
                 {alerts.filter((a) => ['FLAGGED', 'PENDING'].includes(a.status)).length}
               </p>
-              <p className="text-xs font-bold uppercase text-yellow-600/70 tracking-wider">Pending Review</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-yellow-600/70 dark:text-yellow-400/70 tracking-wider mt-1">Pending Review</p>
             </CardContent>
           </Card>
-          <Card className="border-green-200 bg-green-50/50 dark:bg-green-900/10">
-            <CardContent className="pt-6 text-center">
-              <p className="text-3xl font-black text-green-600">
+          <Card className="border-green-200 bg-green-50/50 dark:bg-green-900/10 dark:border-green-800/40">
+            <CardContent className="p-4 sm:pt-6 text-center">
+              <p className="text-2xl sm:text-3xl font-black text-green-600 dark:text-green-400">
                 {alerts.filter((a) => a.status === 'RESOLVED').length}
               </p>
-              <p className="text-xs font-bold uppercase text-green-600/70 tracking-wider">Resolved</p>
+              <p className="text-[10px] sm:text-xs font-bold uppercase text-green-600/70 dark:text-green-400/70 tracking-wider mt-1">Resolved</p>
             </CardContent>
           </Card>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
@@ -181,9 +181,9 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-2">
             <Select value={severityFilter} onValueChange={setSeverityFilter}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -194,7 +194,7 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -211,17 +211,17 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
       <div className="space-y-3">
         {filteredAlerts.map((alert) => (
           <Card key={alert.id} className="border-border hover:shadow-md transition">
-            <CardContent className="pt-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    {getTypeIcon(alert.type)}
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-lg">{getTypeLabel(alert.type)}</h3>
-                      <p className="text-sm text-muted-foreground">{alert.description}</p>
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
+                  <div className="flex items-start gap-2.5 sm:gap-3 min-w-0">
+                    <div className="shrink-0 mt-0.5">{getTypeIcon(alert.type)}</div>
+                    <div className="space-y-1 min-w-0">
+                      <h3 className="font-bold text-base sm:text-lg">{getTypeLabel(alert.type)}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{alert.description}</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 sm:gap-2 shrink-0 ml-7 sm:ml-0">
                     <Badge className={getSeverityColor(alert.severity)}>
                       {alert.severity?.toLowerCase()}
                     </Badge>
@@ -231,22 +231,22 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-3 sm:pt-4 border-t border-border">
                   <div>
-                    <p className="text-xs text-muted-foreground">Batch</p>
-                    <p className="font-mono text-sm">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Batch</p>
+                    <p className="font-mono text-xs sm:text-sm truncate">
                       {alert.batch?.batchCode || (alert.batchId ?? 'N/A').slice(-8)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Detected</p>
-                    <p className="font-semibold text-sm">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Detected</p>
+                    <p className="font-semibold text-xs sm:text-sm">
                       {new Date(alert.createdAt).toLocaleString()}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex gap-2 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2">
                   {alert.status !== 'INVESTIGATING' && alert.status !== 'RESOLVED' && (
                     <Button
                       variant="outline"
@@ -272,7 +272,7 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-green-600 hover:bg-green-50"
+                      className="text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/30"
                       disabled={pendingId === alert.id}
                       onClick={() => handleStatusUpdate(alert.id, 'RESOLVED')}
                     >
@@ -286,10 +286,10 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
         ))}
 
         {filteredAlerts.length === 0 && (
-          <Card className="border-border p-12 text-center space-y-3">
-            <ShieldAlert className="w-12 h-12 mx-auto text-green-500" />
-            <h3 className="text-xl font-bold">All Clear</h3>
-            <p className="text-muted-foreground">
+          <Card className="border-border p-8 sm:p-12 text-center space-y-3">
+            <ShieldAlert className="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-green-500" />
+            <h3 className="text-lg sm:text-xl font-bold">All Clear</h3>
+            <p className="text-sm sm:text-base text-muted-foreground">
               No fraud alerts match your filters. The system is actively monitoring all scans.
             </p>
           </Card>
