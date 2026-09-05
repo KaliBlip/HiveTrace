@@ -100,16 +100,16 @@ export default function BatchDetailPage({ params }: { params: Promise<{ id: stri
   };
 
   return (
-    <div className="space-y-8">
-      <Link href="/dashboard/batches" className="flex items-center gap-2 text-primary hover:underline font-bold">
+    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 px-1 sm:px-4">
+      <Link href="/dashboard/batches" className="inline-flex items-center gap-2 text-primary hover:underline font-bold text-sm">
         <ArrowLeft className="w-4 h-4" />
         Back to Batches
       </Link>
 
-      <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-        <div className="space-y-2">
-          <div className="flex items-center gap-3">
-            <h1 className="text-4xl font-bold">{batch.honeyType}</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-6">
+        <div className="space-y-1.5 sm:space-y-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{batch.honeyType}</h1>
             {batch.verified ? (
               <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200">
                 <ShieldCheck className="w-3.5 h-3.5 mr-1 text-emerald-600" /> Verified
