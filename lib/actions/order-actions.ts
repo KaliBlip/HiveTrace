@@ -274,9 +274,25 @@ export async function retryOrderPayment(orderId: string) {
     '@/lib/paystack-server'
   );
 
-  const reference = order.payment?.reference ?? order.paymentId ?? generatePaymentReference();
+  // Paystack references are unique; retries must never reuse a previous attempt.
+  const reference = generatePaymentReference();
 
-  if (!order.payment) {
+  if (order.payment) {
+    await prisma.payment.update({
+      where: { id: order.payment.id },
+      data: {
+        reference,
+        amount: order.totalAmount,
+        status: 'PENDING',
+        paidAt: null,
+        channel: null,
+      },
+    });
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { paymentId: reference, status: 'PENDING' },
+    });
+  } else {
     await prisma.payment.create({
       data: {
         orderId: order.id,
