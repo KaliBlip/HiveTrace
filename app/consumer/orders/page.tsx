@@ -124,7 +124,7 @@ export default async function ConsumerOrdersPage() {
                         {getStatusIcon(order.status)}
                         {order.status}
                       </Badge>
-                      {order.status === 'PENDING' && (
+                      {(order.status === 'PENDING' || order.status === 'FAILED' || order.payment?.status === 'PENDING' || order.payment?.status === 'FAILED') && (
                         <RetryPaymentButton orderId={order.id} />
                       )}
                       {order.status === 'DELIVERED' && !order.deliveryConfirmedAt && (

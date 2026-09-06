@@ -259,7 +259,11 @@ export async function retryOrderPayment(orderId: string) {
     throw new Error('Order not found');
   }
 
-  if (order.status === 'PAID') {
+  if (order.status !== 'PENDING' && order.status !== 'FAILED') {
+    throw new Error('Only pending or failed orders can be paid again');
+  }
+
+  if (order.payment?.status === 'PAID') {
     throw new Error('Order is already paid');
   }
 
