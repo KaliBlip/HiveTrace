@@ -22,6 +22,8 @@ export async function createPendingOrderFromCart(data: {
     throw new Error('Cart is empty');
   }
 
+  const producerIds = new Set<string>();
+
   for (const item of data.items) {
     const product = await prisma.product.findUnique({
       where: { id: item.productId },
@@ -34,6 +36,12 @@ export async function createPendingOrderFromCart(data: {
     if (product.stock < item.quantity) {
       throw new Error(`Insufficient stock for "${product.name}"`);
     }
+
+    producerIds.add(product.producerId);
+  }
+
+  if (producerIds.size > 1) {
+    throw new Error('Please place separate orders for products from different beekeepers.');
   }
 
   const reference = generatePaymentReference();
