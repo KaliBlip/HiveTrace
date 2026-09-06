@@ -84,7 +84,9 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
       setScanStep(5);
       setScanMetrics(aiResult);
       
-      if (aiResult.authenticityScore < 50) {
+      if (aiResult.status === 'disabled') {
+        toast.warning('AI is disabled in this environment. Manual review is required before approval.');
+      } else if (aiResult.authenticityScore < 50) {
         toast.warning(`AI analysis detected potential issues (Authenticity: ${aiResult.authenticityScore}%)`);
       } else {
         toast.success('Quality inspection scan completed successfully!');
@@ -397,15 +399,32 @@ export default function AdminBatchDetailPage({ params }: { params: Promise<{ id:
               ) : scanMetrics ? (
                 // Scan Complete Metrics - Display AI Analysis Results
                 <div className="space-y-5">
+                  {scanMetrics.status === 'disabled' && (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-200">
+                      <div className="flex items-start gap-3">
+                        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                        <div>
+                          <p className="font-bold">AI inspection is disabled</p>
+                          <p className="mt-1 text-xs leading-relaxed text-amber-700 dark:text-amber-300">
+                            {scanMetrics.manualReviewReason || 'This environment is missing a valid Hugging Face token or the AI flag is off. Manual review is required before approval.'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Main Score Card */}
                   <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/40 dark:to-emerald-900/20 border border-emerald-200 dark:border-emerald-500/30 p-6 shadow-xl dark:shadow-emerald-500/10">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
                     <div className="relative z-10 flex items-center justify-between">
                       <div className="space-y-1">
                         <h4 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2 uppercase tracking-wider">
-                          <CheckCircle2 className="w-4 h-4" /> AI Analysis Complete
+                          <CheckCircle2 className="w-4 h-4" />
+                          {scanMetrics.status === 'disabled' ? 'Manual Review Mode' : 'AI Analysis Complete'}
                         </h4>
-                        <p className="text-[10px] text-slate-500 dark:text-stone-400">Powered by Hugging Face AI</p>
+                        <p className="text-[10px] text-slate-500 dark:text-stone-400">
+                          {scanMetrics.status === 'disabled' ? 'No live AI model configured' : 'Powered by Hugging Face AI'}
+                        </p>
                       </div>
                       <div className="text-right">
                         <p className="text-4xl font-black text-emerald-600 dark:text-emerald-400 tracking-tighter">{scanMetrics.qualityScore}</p>

@@ -369,7 +369,7 @@ export async function analyzeBatchWithAI(batchId: string): Promise<HoneyAnalysis
   
   if (!imageToAnalyze) {
     // Return fallback analysis if no images available
-    return generateFallbackAnalysis();
+    return generateFallbackAnalysis('No image available for AI analysis');
   }
 
   try {
@@ -395,7 +395,7 @@ export async function analyzeBatchWithAI(batchId: string): Promise<HoneyAnalysis
     return analysisResult;
   } catch (error) {
     console.error('AI analysis failed, returning fallback:', error);
-    return generateFallbackAnalysis();
+    return generateFallbackAnalysis('AI analysis request failed');
   }
 }
 

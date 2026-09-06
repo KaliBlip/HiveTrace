@@ -1,7 +1,10 @@
 import { InferenceClient } from '@huggingface/inference';
 
-const hf = process.env.HUGGINGFACE_API_TOKEN 
-  ? new InferenceClient(process.env.HUGGINGFACE_API_TOKEN)
+const aiEnabled = process.env.NEXT_PUBLIC_ENABLE_AI_ANALYSIS === 'true';
+const hfToken = process.env.HUGGINGFACE_API_TOKEN?.trim();
+
+const hf = aiEnabled && hfToken
+  ? new InferenceClient(hfToken)
   : null;
 
 export interface HoneyAnalysisResult {
@@ -10,6 +13,9 @@ export interface HoneyAnalysisResult {
   detectedIssues: string[];
   classification: string;
   confidence: number;
+  status: 'ok' | 'manual_review' | 'disabled';
+  isAiEnabled: boolean;
+  manualReviewReason?: string;
   detailedAnalysis: {
     foodClassification: string;
     spoilageScore: number;
@@ -17,14 +23,20 @@ export interface HoneyAnalysisResult {
     textureAnalysis: string;
     colorAnalysis: string;
   };
-  rawResults: any[];
+  rawResults: any;
 }
 
 export async function analyzeHoneyImage(imageUrl: string): Promise<HoneyAnalysisResult> {
-  // If Hugging Face API token is not configured, use fallback
+  // If AI is disabled or the token is not configured, use fallback
   if (!hf) {
-    console.warn('HUGGINGFACE_API_TOKEN not configured, using fallback analysis');
-    return generateFallbackAnalysis();
+    const reason = !aiEnabled
+      ? 'NEXT_PUBLIC_ENABLE_AI_ANALYSIS is not true'
+      : !hfToken
+        ? 'HUGGINGFACE_API_TOKEN is not configured'
+        : 'AI analysis is unavailable';
+
+    console.warn(`${reason}, using fallback analysis`);
+    return generateFallbackAnalysis(reason);
   }
 
   try {
@@ -55,12 +67,14 @@ export async function analyzeHoneyImage(imageUrl: string): Promise<HoneyAnalysis
     
     return {
       ...analysis,
+      status: 'ok',
+      isAiEnabled: true,
       rawResults: { food: foodData, spoilage: spoilageData }
     };
   } catch (error) {
     console.error('Honey analysis failed:', error);
     // Return fallback on error instead of throwing
-    return generateFallbackAnalysis();
+    return generateFallbackAnalysis('AI model request failed');
   }
 }
 
@@ -123,6 +137,8 @@ function interpretClassificationResults(foodResults: any[], spoilageResults: any
     detectedIssues,
     classification: topFoodResult.label || 'unknown',
     confidence: foodConfidence,
+    status: 'ok',
+    isAiEnabled: true,
     detailedAnalysis,
     rawResults: []
   };
@@ -147,13 +163,22 @@ function generateColorAnalysis(isFoodRelated: boolean): string {
 }
 
 // Fallback analysis when API is unavailable
-export function generateFallbackAnalysis(): HoneyAnalysisResult {
+export function generateFallbackAnalysis(reason?: string): HoneyAnalysisResult {
+  const disabled = !aiEnabled || !hfToken;
+
   return {
     qualityScore: 85,
     authenticityScore: 80,
-    detectedIssues: ['AI analysis unavailable - using manual review mode'],
+    detectedIssues: [
+      disabled
+        ? 'AI is disabled in this environment. Manual review is required.'
+        : 'AI analysis unavailable - using manual review mode'
+    ],
     classification: 'manual_review',
     confidence: 0.5,
+    status: disabled ? 'disabled' : 'manual_review',
+    isAiEnabled: !disabled,
+    manualReviewReason: reason ?? (disabled ? 'AI disabled: missing or invalid Hugging Face configuration' : 'Model unavailable; manual review in effect'),
     detailedAnalysis: {
       foodClassification: 'manual_review',
       spoilageScore: 15,
