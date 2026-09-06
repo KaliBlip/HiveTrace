@@ -214,6 +214,7 @@ model FraudAlert {
   severity          String
   producerId        String?
   batchId           String?
+  orderId           String?
   description       String
   evidence          String?    // JSON data supporting the alert
   status            String     @default("FLAGGED")
@@ -225,12 +226,14 @@ model FraudAlert {
   // Relations
   producer          Producer?  @relation(fields: [producerId], references: [id], onDelete: SetNull)
   batch             HoneyBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  order             Order?     @relation(fields: [orderId], references: [id], onDelete: SetNull)
 
   @@index([producerId])
   @@index([batchId])
   @@index([status])
   @@index([type])
   @@index([severity])
+  @@index([orderId])
 }
 
 
@@ -294,6 +297,7 @@ model Order {
   consumer        User        @relation(fields: [consumerId], references: [id])
   items           OrderItem[]
   payment         Payment?
+  fraudAlerts     FraudAlert[]
 
   @@index([consumerId])
   @@index([status])

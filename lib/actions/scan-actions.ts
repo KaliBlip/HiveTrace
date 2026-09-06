@@ -197,6 +197,17 @@ export async function getFraudAlerts() {
   return prisma.fraudAlert.findMany({
     include: {
       batch: true,
+      order: {
+        include: {
+          consumer: { select: { name: true, email: true } },
+          payment: { select: { reference: true, status: true, amount: true } },
+          items: {
+            include: {
+              product: { select: { name: true, producer: { select: { businessName: true } } } },
+            },
+          },
+        },
+      },
       producer: {
         include: {
           user: { select: { name: true } },

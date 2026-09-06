@@ -21,6 +21,7 @@ import { getConsumerOrders } from '@/lib/actions/consumer-actions';
 import { ConsumerHeader } from '@/components/consumer/header';
 import { RetryPaymentButton } from '@/components/consumer/retry-payment-button';
 import { ConfirmDeliveryButton } from '@/components/consumer/confirm-delivery-button';
+import { ReportOrderButton } from '@/components/consumer/report-order-button';
 
 export default async function ConsumerOrdersPage() {
   const orders = await getConsumerOrders();
@@ -129,6 +130,9 @@ export default async function ConsumerOrdersPage() {
                       )}
                       {order.status === 'DELIVERED' && !order.deliveryConfirmedAt && (
                         <ConfirmDeliveryButton orderId={order.id} />
+                      )}
+                      {order.payment?.status === 'PAID' && !order.deliveryConfirmedAt && (
+                        <ReportOrderButton orderId={order.id} />
                       )}
                       {(order.status === 'PAID' || order.status === 'SHIPPED') && (
                         <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">

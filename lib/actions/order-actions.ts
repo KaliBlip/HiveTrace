@@ -404,6 +404,64 @@ export async function confirmOrderDelivery(orderId: string) {
   return confirmedOrder;
 }
 
+export async function reportOrderNotReceived(orderId: string, reason: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
+
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, consumerId: session.user.id },
+    include: {
+      payment: true,
+      items: { include: { product: { include: { producer: true, batch: true } } } },
+    },
+  });
+
+  if (!order) throw new Error('Order not found');
+  if (order.payment?.status !== 'PAID') {
+    throw new Error('Only paid orders can be reported as not received');
+  }
+
+  const existing = await prisma.fraudAlert.findFirst({
+    where: {
+      orderId,
+      type: 'ORDER_NOT_RECEIVED',
+      status: { in: ['FLAGGED', 'INVESTIGATING'] },
+    },
+  });
+
+  if (existing) return existing;
+
+  const firstItem = order.items[0];
+  const alert = await prisma.fraudAlert.create({
+    data: {
+      orderId: order.id,
+      producerId: firstItem?.product.producerId,
+      batchId: firstItem?.product.batchId,
+      type: 'ORDER_NOT_RECEIVED',
+      severity: 'HIGH',
+      description: `Consumer reported paid order ${order.id.slice(-8).toUpperCase()} was not received. Reason: ${reason.trim() || 'No reason provided'}`,
+      status: 'FLAGGED',
+      evidence: JSON.stringify({
+        orderId: order.id,
+        consumerId: session.user.id,
+        paymentReference: order.payment.reference,
+        paymentStatus: order.payment.status,
+        orderStatus: order.status,
+        deliveryConfirmedAt: order.deliveryConfirmedAt,
+        producerId: firstItem?.product.producerId,
+        producerName: firstItem?.product.producer.businessName,
+        batchCode: firstItem?.product.batch.batchCode,
+        reason: reason.trim(),
+      }),
+    },
+  });
+
+  revalidatePath('/consumer/orders');
+  revalidatePath('/admin/fraud');
+  revalidatePath('/admin');
+  return alert;
+}
+
 export async function getAdminDeliveryProofs() {
   const session = await auth();
   if (!session?.user || (session.user as any).role !== 'ADMIN') {

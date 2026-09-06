@@ -27,6 +27,13 @@ type FraudAlert = {
   createdAt: Date | string;
   batchId: string | null;
   batch?: { batchCode: string; id: string } | null;
+  order?: {
+    id: string;
+    status: string;
+    consumer: { name: string | null; email: string };
+    payment: { reference: string; status: string; amount: number } | null;
+    items: { product: { name: string; producer: { businessName: string } } }[];
+  } | null;
 };
 
 interface FraudAlertsPanelProps {
@@ -76,6 +83,8 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
         return <AlertTriangle className="w-5 h-5 text-red-500" />;
       case 'DUPLICATE_QR':
         return <ShieldAlert className="w-5 h-5 text-orange-500" />;
+      case 'ORDER_NOT_RECEIVED':
+        return <AlertTriangle className="w-5 h-5 text-red-500" />;
       default:
         return <Activity className="w-5 h-5 text-blue-500" />;
     }
@@ -87,6 +96,8 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
         return 'Impossible Travel';
       case 'DUPLICATE_QR':
         return 'Duplicate QR Code';
+      case 'ORDER_NOT_RECEIVED':
+        return 'Paid Order Not Received';
       case 'GEO_MISMATCH':
         return 'Geo Mismatch';
       case 'SUSPICIOUS_ACTIVITY':
@@ -244,6 +255,14 @@ export function FraudAlertsPanel({ initialAlerts }: FraudAlertsPanelProps) {
                       {new Date(alert.createdAt).toLocaleString()}
                     </p>
                   </div>
+                  {alert.order && (
+                    <div className="col-span-2 rounded-lg border border-red-200 bg-red-50/50 p-3 dark:border-red-900/50 dark:bg-red-950/20">
+                      <p className="text-[10px] font-bold uppercase text-red-700 dark:text-red-300">Order trace</p>
+                      <p className="text-xs font-semibold">Order #{alert.order.id.slice(-8).toUpperCase()} · {alert.order.consumer.email}</p>
+                      <p className="text-xs text-muted-foreground">Payment: {alert.order.payment?.status || 'N/A'} · {alert.order.payment?.reference || 'No reference'}</p>
+                      <p className="text-xs text-muted-foreground">Beekeeper: {alert.order.items[0]?.product.producer.businessName || 'Unknown'} · Product: {alert.order.items[0]?.product.name || 'Unknown'}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-2 pt-2">
