@@ -6,9 +6,25 @@ import { Eye, Truck, CheckCircle2 } from 'lucide-react';
 import { updateOrderStatus } from '@/lib/actions/order-actions';
 import { toast } from 'sonner';
 
-export function OrderActionButtons({ orderId, status }: { orderId: string; status: string }) {
+type OrderDetails = {
+  consumerName: string;
+  consumerEmail: string;
+  shippingAddress: string;
+  totalAmount: number;
+};
+
+export function OrderActionButtons({
+  orderId,
+  status,
+  details,
+}: {
+  orderId: string;
+  status: string;
+  details: OrderDetails;
+}) {
   const [currentStatus, setCurrentStatus] = useState(status);
   const [pending, setPending] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const handleStatusUpdate = async (newStatus: string) => {
     setPending(true);
@@ -25,10 +41,23 @@ export function OrderActionButtons({ orderId, status }: { orderId: string; statu
 
   return (
     <div className="flex flex-col gap-2 justify-center">
-      <Button variant="outline" size="sm" className="gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        className="gap-2"
+        onClick={() => setShowDetails((visible) => !visible)}
+      >
         <Eye className="w-4 h-4" />
-        View Details
+        {showDetails ? 'Hide Details' : 'View Details'}
       </Button>
+      {showDetails && (
+        <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-xs">
+          <p><span className="font-semibold">Customer:</span> {details.consumerName}</p>
+          <p><span className="font-semibold">Email:</span> {details.consumerEmail}</p>
+          <p><span className="font-semibold">Delivery address:</span> {details.shippingAddress}</p>
+          <p><span className="font-semibold">Order total:</span> GH₵{details.totalAmount.toLocaleString()}</p>
+        </div>
+      )}
       {currentStatus === 'PAID' && (
         <Button
           className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"

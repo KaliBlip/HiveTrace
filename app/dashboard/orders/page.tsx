@@ -67,7 +67,16 @@ export default async function ProducerOrdersPage() {
                 </div>
 
                 {/* Actions */}
-                <OrderActionButtons orderId={order.id} status={order.status} />
+                <OrderActionButtons
+                  orderId={order.id}
+                  status={order.status}
+                  details={{
+                    consumerName: (order as any).consumer?.name || 'Unknown Customer',
+                    consumerEmail: (order as any).consumer?.email || 'Unknown email',
+                    shippingAddress: order.shippingAddress || 'No shipping address provided',
+                    totalAmount: order.totalAmount,
+                  }}
+                />
               </div>
             </CardContent>
           </Card>

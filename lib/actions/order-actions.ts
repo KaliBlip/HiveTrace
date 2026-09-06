@@ -192,6 +192,11 @@ export async function getProducerOrders() {
     },
     include: {
       items: {
+        where: {
+          product: {
+            producerId: producer.id,
+          },
+        },
         include: {
           product: true,
         },
