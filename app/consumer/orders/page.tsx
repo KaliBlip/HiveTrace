@@ -130,6 +130,11 @@ export default async function ConsumerOrdersPage() {
                       {order.status === 'DELIVERED' && !order.deliveryConfirmedAt && (
                         <ConfirmDeliveryButton orderId={order.id} />
                       )}
+                      {(order.status === 'PAID' || order.status === 'SHIPPED') && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          Awaiting delivery
+                        </span>
+                      )}
                     </div>
                   </div>
                 </CardHeader>
