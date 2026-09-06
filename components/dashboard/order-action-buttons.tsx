@@ -16,8 +16,8 @@ export function OrderActionButtons({ orderId, status }: { orderId: string; statu
       await updateOrderStatus(orderId, newStatus);
       setCurrentStatus(newStatus);
       toast.success(`Order marked as ${newStatus.toLowerCase()}`);
-    } catch {
-      toast.error('Failed to update order');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update order');
     } finally {
       setPending(false);
     }

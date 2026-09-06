@@ -335,6 +335,7 @@ export async function updateOrderStatus(orderId: string, status: string) {
   });
 
   revalidatePath('/dashboard/orders');
+  revalidatePath('/consumer/orders');
   revalidatePath('/admin');
   return updatedOrder;
 }
