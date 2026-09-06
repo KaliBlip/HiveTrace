@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { TrendingUp, AlertTriangle, Users, Package, Clock } from 'lucide-react';
 import { getAdminStats } from '@/lib/actions/admin-actions';
+import { getAdminDeliveryProofs } from '@/lib/actions/order-actions';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -12,6 +13,7 @@ export default async function AdminPage() {
   if (!session) redirect('/auth/login');
   if ((session.user as any).role !== 'ADMIN') redirect('/dashboard');
   const statsData = await getAdminStats();
+  const deliveryProofs = await getAdminDeliveryProofs();
 
   const stats = [
     {
@@ -83,6 +85,31 @@ export default async function AdminPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+        <Card className="lg:col-span-3 border-emerald-200 dark:border-emerald-900/50">
+          <CardHeader>
+            <CardTitle className="text-xl">Recent Delivery Proof</CardTitle>
+            <CardDescription>Consumer confirmations recorded after beekeeper delivery</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {deliveryProofs.length === 0 ? (
+              <p className="py-4 text-sm text-muted-foreground">No consumer delivery confirmations yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {deliveryProofs.map((order) => (
+                  <div key={order.id} className="flex flex-col gap-2 rounded-lg border border-border p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="font-bold">Order #{order.id.slice(-8).toUpperCase()}</p>
+                      <p className="text-sm text-muted-foreground">{order.consumer.name || order.consumer.email} confirmed delivery</p>
+                      <p className="text-xs text-muted-foreground">{order.items[0]?.product.producer.businessName || 'Beekeeper unavailable'}</p>
+                    </div>
+                    <p className="text-xs font-semibold text-emerald-600">{new Date(order.deliveryConfirmedAt!).toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Recent Fraud Alerts */}
         <div className="lg:col-span-2 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 sm:px-2">

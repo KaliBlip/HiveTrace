@@ -46,6 +46,9 @@ export default async function ProducerOrdersPage() {
                   </div>
                   <p className="text-sm text-muted-foreground">{new Date(order.createdAt).toLocaleDateString()}</p>
                   <p className="font-medium">{(order as any).consumer?.name || 'Unknown Customer'}</p>
+                  {order.deliveryConfirmedAt && (
+                    <p className="text-xs font-semibold text-green-600">Delivery proof confirmed {new Date(order.deliveryConfirmedAt).toLocaleString()}</p>
+                  )}
                 </div>
 
                 {/* Items Summary */}

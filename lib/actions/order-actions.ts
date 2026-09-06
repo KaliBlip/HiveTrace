@@ -311,11 +311,74 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
   if (!producer) throw new Error('Producer profile not found');
 
-  const order = await prisma.order.update({
+  const order = await prisma.order.findFirst({
+    where: {
+      id: orderId,
+      items: { some: { product: { producerId: producer.id } } },
+    },
+  });
+
+  if (!order) throw new Error('Order not found');
+
+  const allowedTransitions: Record<string, string[]> = {
+    PAID: ['SHIPPED'],
+    SHIPPED: ['DELIVERED'],
+  };
+
+  if (!allowedTransitions[order.status]?.includes(status)) {
+    throw new Error(`Cannot change order from ${order.status} to ${status}`);
+  }
+
+  const updatedOrder = await prisma.order.update({
     where: { id: orderId },
     data: { status },
   });
 
   revalidatePath('/dashboard/orders');
-  return order;
+  revalidatePath('/admin');
+  return updatedOrder;
+}
+
+export async function confirmOrderDelivery(orderId: string) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
+
+  const order = await prisma.order.findFirst({
+    where: { id: orderId, consumerId: session.user.id },
+  });
+
+  if (!order) throw new Error('Order not found');
+  if (order.status !== 'DELIVERED') {
+    throw new Error('Delivery can only be confirmed after the order is marked delivered');
+  }
+  if (order.deliveryConfirmedAt) return order;
+
+  const confirmedOrder = await prisma.order.update({
+    where: { id: orderId },
+    data: { deliveryConfirmedAt: new Date() },
+  });
+
+  revalidatePath('/consumer/orders');
+  revalidatePath('/dashboard/orders');
+  revalidatePath('/admin');
+  return confirmedOrder;
+}
+
+export async function getAdminDeliveryProofs() {
+  const session = await auth();
+  if (!session?.user || (session.user as any).role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  return prisma.order.findMany({
+    where: { deliveryConfirmedAt: { not: null } },
+    include: {
+      consumer: { select: { name: true, email: true } },
+      items: {
+        include: { product: { select: { name: true, producer: { select: { businessName: true } } } } },
+      },
+    },
+    orderBy: { deliveryConfirmedAt: 'desc' },
+    take: 10,
+  });
 }

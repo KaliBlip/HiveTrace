@@ -20,6 +20,7 @@ import Link from 'next/link';
 import { getConsumerOrders } from '@/lib/actions/consumer-actions';
 import { ConsumerHeader } from '@/components/consumer/header';
 import { RetryPaymentButton } from '@/components/consumer/retry-payment-button';
+import { ConfirmDeliveryButton } from '@/components/consumer/confirm-delivery-button';
 
 export default async function ConsumerOrdersPage() {
   const orders = await getConsumerOrders();
@@ -126,6 +127,9 @@ export default async function ConsumerOrdersPage() {
                       {order.status === 'PENDING' && (
                         <RetryPaymentButton orderId={order.id} />
                       )}
+                      {order.status === 'DELIVERED' && !order.deliveryConfirmedAt && (
+                        <ConfirmDeliveryButton orderId={order.id} />
+                      )}
                     </div>
                   </div>
                 </CardHeader>
@@ -218,6 +222,12 @@ export default async function ConsumerOrdersPage() {
                           <p className="text-muted-foreground leading-relaxed">
                             {order.shippingAddress || 'No shipping address provided.'}
                           </p>
+                          {order.deliveryConfirmedAt && (
+                            <div className="flex items-center gap-2 pt-2 text-emerald-600 dark:text-emerald-400">
+                              <ShieldCheck className="size-4" />
+                              <span className="font-semibold">Delivery confirmed on {new Date(order.deliveryConfirmedAt).toLocaleString()}</span>
+                            </div>
+                          )}
                         </div>
                       </div>
 
