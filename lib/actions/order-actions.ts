@@ -345,9 +345,14 @@ export async function updateOrderStatus(orderId: string, status: string) {
       id: orderId,
       items: { some: { product: { producerId: producer.id } } },
     },
+    include: { payment: true },
   });
 
   if (!order) throw new Error('Order not found');
+
+  if (order.payment?.status !== 'PAID') {
+    throw new Error('Delivery cannot be updated until payment is confirmed');
+  }
 
   const allowedTransitions: Record<string, string[]> = {
     PAID: ['SHIPPED'],

@@ -16,10 +16,12 @@ type OrderDetails = {
 export function OrderActionButtons({
   orderId,
   status,
+  paymentStatus,
   details,
 }: {
   orderId: string;
   status: string;
+  paymentStatus?: string;
   details: OrderDetails;
 }) {
   const [currentStatus, setCurrentStatus] = useState(status);
@@ -58,7 +60,10 @@ export function OrderActionButtons({
           <p><span className="font-semibold">Order total:</span> GH₵{details.totalAmount.toLocaleString()}</p>
         </div>
       )}
-      {currentStatus === 'PAID' && (
+      {paymentStatus !== 'PAID' && (
+        <p className="text-xs font-semibold text-amber-600">Payment not confirmed</p>
+      )}
+      {currentStatus === 'PAID' && paymentStatus === 'PAID' && (
         <Button
           className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2"
           size="sm"
@@ -69,7 +74,7 @@ export function OrderActionButtons({
           Mark as Shipped
         </Button>
       )}
-      {currentStatus === 'SHIPPED' && (
+      {currentStatus === 'SHIPPED' && paymentStatus === 'PAID' && (
         <Button
           variant="outline"
           className="border-green-500 text-green-600 hover:bg-green-50 gap-2"

@@ -70,6 +70,7 @@ export default async function ProducerOrdersPage() {
                 <OrderActionButtons
                   orderId={order.id}
                   status={order.status}
+                  paymentStatus={(order as any).payment?.status}
                   details={{
                     consumerName: (order as any).consumer?.name || 'Unknown Customer',
                     consumerEmail: (order as any).consumer?.email || 'Unknown email',
