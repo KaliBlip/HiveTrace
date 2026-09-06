@@ -73,7 +73,7 @@ export default async function ProducerOrdersPage() {
                   paymentStatus={(order as any).payment?.status}
                   details={{
                     consumerName: (order as any).consumer?.name || 'Unknown Customer',
-                    consumerEmail: (order as any).consumer?.email || 'Unknown email',
+                    consumerEmail: (order as any).customerEmail || (order as any).consumer?.email || 'Unknown email',
                     shippingAddress: order.shippingAddress || 'No shipping address provided',
                     totalAmount: order.totalAmount,
                   }}

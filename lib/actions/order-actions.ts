@@ -51,6 +51,7 @@ export async function createPendingOrderFromCart(data: {
       consumerId: session.user.id,
       status: 'PENDING',
       totalAmount: data.totalAmount,
+      customerEmail: data.customerEmail?.trim() || null,
       shippingAddress: data.shippingAddress,
       paymentId: reference,
       items: {

@@ -283,6 +283,7 @@ model Order {
   status          String      @default("PENDING")
   totalAmount     Float
   currency        String      @default("NGN") // Default for Paystack
+  customerEmail   String?
   shippingAddress String?
   paymentId       String?     @unique // Paystack reference
   deliveryConfirmedAt DateTime?
