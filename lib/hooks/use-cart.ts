@@ -20,12 +20,20 @@ export interface CartItem extends Product {
   quantity: number;
 }
 
+export interface AddItemResult {
+  success: boolean;
+  addedQuantity: number;
+  totalInCart: number;
+  stock: number;
+  reason?: 'out_of_stock' | 'capped_at_stock' | 'already_max_stock';
+}
+
 interface CartStore {
   items: CartItem[];
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   toggleOpen: () => void;
-  addItem: (product: Product, quantity?: number) => void;
+  addItem: (product: Product, quantity?: number) => AddItemResult;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -44,23 +52,43 @@ export const useCart = create<CartStore>()(
       addItem: (product, quantity = 1) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.id === product.id);
-        const maxStock = typeof product.stock === 'number' ? product.stock : Infinity;
+        const currentQty = existingItem?.quantity ?? 0;
+        const stock = typeof product.stock === 'number' ? Math.max(0, product.stock) : Infinity;
+
+        // Out of stock
+        if (stock <= 0) {
+          return { success: false, addedQuantity: 0, totalInCart: currentQty, stock, reason: 'out_of_stock' };
+        }
+
+        // Already at max stock
+        if (currentQty >= stock) {
+          return { success: false, addedQuantity: 0, totalInCart: currentQty, stock, reason: 'already_max_stock' };
+        }
+
+        const remainingCapacity = stock - currentQty;
+        const actualToAdd = Math.min(Math.max(1, quantity), remainingCapacity);
+        const newTotalQty = currentQty + actualToAdd;
 
         if (existingItem) {
-          const newQty = Math.min(existingItem.quantity + quantity, maxStock);
           set({
             items: currentItems.map((item) =>
               item.id === product.id
-                ? { ...item, quantity: newQty, stock: product.stock ?? item.stock }
+                ? { ...item, quantity: newTotalQty, stock: product.stock ?? item.stock }
                 : item
             ),
           });
         } else {
-          const initialQty = Math.min(quantity, maxStock);
-          if (initialQty > 0) {
-            set({ items: [...currentItems, { ...product, quantity: initialQty }] });
-          }
+          set({ items: [...currentItems, { ...product, quantity: actualToAdd }] });
         }
+
+        const isCapped = actualToAdd < quantity;
+        return {
+          success: true,
+          addedQuantity: actualToAdd,
+          totalInCart: newTotalQty,
+          stock,
+          reason: isCapped ? 'capped_at_stock' : undefined,
+        };
       },
 
       removeItem: (productId) => {
