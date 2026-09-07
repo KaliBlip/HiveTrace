@@ -54,8 +54,24 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
   const isLowStock = product.stock > 0 && product.stock < 10;
 
   const handleAddToCart = () => {
-    addItem(product, qty);
-    toast.success(`Added ${qty} × ${product.name} to cart`);
+    const result = addItem(product, qty);
+
+    if (!result.success) {
+      if (result.reason === 'out_of_stock') {
+        toast.error(`${product.name} is currently out of stock`);
+      } else if (result.reason === 'already_max_stock') {
+        toast.warning(`You already have all ${result.stock} available units in your cart`);
+      }
+      return;
+    }
+
+    if (result.reason === 'capped_at_stock') {
+      toast.warning(
+        `Only ${result.addedQuantity} unit(s) added. Maximum available stock is ${result.stock}.`
+      );
+    } else {
+      toast.success(`Added ${result.addedQuantity} × ${product.name} to cart`);
+    }
   };
 
   const harvestFormatted = product.batchHarvestDate
