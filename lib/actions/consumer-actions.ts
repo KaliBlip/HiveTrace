@@ -64,6 +64,7 @@ export async function searchPublicBatch(batchCode: string) {
   return {
     id: batch.id,
     batchCode: batch.batchCode,
+    producerId: batch.producerId,
     honeyType: batch.honeyType,
     quantity: batch.quantity,
     harvestDate: batch.harvestDate.toISOString(),

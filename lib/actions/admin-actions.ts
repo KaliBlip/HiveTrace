@@ -461,7 +461,6 @@ export async function rejectBatch(batchId: string, reason?: string) {
     where: { id: batchId },
     data: {
       verified: false,
-      status: 'REJECTED',
     },
   });
 

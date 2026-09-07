@@ -31,9 +31,9 @@ export async function POST(req: Request) {
 
     const result = await fulfillOrderByReference(reference);
 
-    if (result.order.consumerId !== session.user.id) {
+    if (!result.order || result.order.consumerId !== session.user.id) {
       return NextResponse.json(
-        { status: false, message: 'Unauthorized' },
+        { status: false, message: 'Unauthorized or order not found' },
         { status: 403 }
       );
     }

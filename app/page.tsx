@@ -768,7 +768,7 @@ export default function Home() {
                       {timelineDetail === 5 && (
                         <div className="mt-3 pt-3 border-t border-border/40 text-xs text-muted-foreground space-y-2">
                           <p>Available on the decentralized shop marketplace.</p>
-                          <p>Producer Rating: <span className="font-semibold text-amber-500">★ {currentProducer?.rating || '4.8'}</span> ({currentProducer?.totalReviews || 128} reviews)</p>
+                          <p>Producer Rating: <span className="font-semibold text-amber-500">★ {currentProducer?.rating || '4.8'}</span> ({currentProducer?.reviewCount || 128} reviews)</p>
                           <p>Consumers can scan physical jars to instantly post verified-purchase feedback.</p>
                         </div>
                       )}
