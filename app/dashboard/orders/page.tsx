@@ -50,16 +50,25 @@ export default async function ProducerOrdersPage() {
 
                 {/* Items Summary */}
                 <div className="lg:col-span-2 space-y-3">
-                  <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Items</p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider">Your Items in Order</p>
+                    {(order as any).isMultiProducerCart && (
+                      <Badge variant="outline" className="text-[11px] bg-primary/5 text-primary border-primary/20">
+                        Multi-Producer Cart
+                      </Badge>
+                    )}
+                  </div>
                   {order.items.map((item) => (
                     <div key={item.id} className="flex justify-between items-center text-sm">
-                      <span>{item.product?.name || 'Deleted Product'} x {item.quantity}</span>
+                      <span>{item.product?.name || 'Honey Product'} × {item.quantity}</span>
                       <span className="font-medium">GH₵{(item.priceAtPurchase * item.quantity).toLocaleString()}</span>
                     </div>
                   ))}
                   <div className="pt-2 border-t border-border flex justify-between font-bold">
-                    <span>Total</span>
-                    <span>GH₵{order.totalAmount.toLocaleString()}</span>
+                    <span>Your Share</span>
+                    <span className="text-primary font-heading text-base">
+                      GH₵{((order as any).producerSubtotal ?? order.totalAmount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </span>
                   </div>
                 </div>
 
