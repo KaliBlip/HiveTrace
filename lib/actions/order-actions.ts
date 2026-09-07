@@ -98,9 +98,16 @@ export async function fulfillOrderByReference(reference: string) {
     return { order: payment.order, alreadyPaid: true };
   }
 
-  const verification = await verifyPaystackPayment(reference);
+  let verification = await verifyPaystackPayment(reference);
 
-  if (!verification.status || verification.data?.status !== 'success') {
+  // Paystack can briefly report a transaction as pending immediately after
+  // the popup callback. Give the gateway a few attempts to settle it.
+  for (let attempt = 1; attempt < 3 && verification.data?.status !== 'success'; attempt += 1) {
+    await new Promise((resolve) => setTimeout(resolve, 750));
+    verification = await verifyPaystackPayment(reference);
+  }
+
+  if (verification.data?.status === 'failed') {
     await prisma.payment.update({
       where: { id: payment.id },
       data: { status: 'FAILED' },
@@ -109,7 +116,11 @@ export async function fulfillOrderByReference(reference: string) {
       where: { id: payment.orderId },
       data: { status: 'FAILED' },
     });
-    throw new Error(verification.message || 'Payment verification failed');
+    throw new Error(verification.message || 'Payment was declined by Paystack');
+  }
+
+  if (!verification.status || verification.data?.status !== 'success') {
+    throw new Error('Payment is still being confirmed by Paystack. Please refresh your orders shortly.');
   }
 
   const expectedAmount = Math.round(payment.order.totalAmount * 100);
