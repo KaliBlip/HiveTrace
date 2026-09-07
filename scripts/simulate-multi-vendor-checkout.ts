@@ -235,7 +235,7 @@ async function main() {
   console.log(`   - HiveTrace Fee (5%):   GH₵  ${feeA.toFixed(2)}`);
   console.log(`   - Net Payout (95%):     GH₵ ${netA.toFixed(2)} => Disbursed to ${producerA.momoProvider} MoMo (${producerA.momoNumber})`);
 
-  console.log('\n📌 Producer B (${producerB.businessName}):');
+  console.log(`\n📌 Producer B (${producerB.businessName}):`);
   console.log(`   - Items Sold: ${qtyB}x ${productB.name}`);
   console.log(`   - Gross Sales:          GH₵ ${subtotalB.toFixed(2)} (100%)`);
   console.log(`   - HiveTrace Fee (5%):   GH₵  ${feeB.toFixed(2)}`);
