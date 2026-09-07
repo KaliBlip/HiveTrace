@@ -44,17 +44,22 @@ export const useCart = create<CartStore>()(
       addItem: (product, quantity = 1) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.id === product.id);
+        const maxStock = typeof product.stock === 'number' ? product.stock : Infinity;
 
         if (existingItem) {
+          const newQty = Math.min(existingItem.quantity + quantity, maxStock);
           set({
             items: currentItems.map((item) =>
               item.id === product.id
-                ? { ...item, quantity: item.quantity + quantity }
+                ? { ...item, quantity: newQty, stock: product.stock ?? item.stock }
                 : item
             ),
           });
         } else {
-          set({ items: [...currentItems, { ...product, quantity }] });
+          const initialQty = Math.min(quantity, maxStock);
+          if (initialQty > 0) {
+            set({ items: [...currentItems, { ...product, quantity: initialQty }] });
+          }
         }
       },
 
@@ -68,9 +73,13 @@ export const useCart = create<CartStore>()(
           return;
         }
 
+        const item = get().items.find((i) => i.id === productId);
+        const maxStock = typeof item?.stock === 'number' && item.stock >= 0 ? item.stock : Infinity;
+        const finalQuantity = Math.min(quantity, maxStock);
+
         set({
           items: get().items.map((item) =>
-            item.id === productId ? { ...item, quantity } : item
+            item.id === productId ? { ...item, quantity: finalQuantity } : item
           ),
         });
       },

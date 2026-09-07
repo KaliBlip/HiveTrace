@@ -4,6 +4,7 @@ import { AuthProvider } from '@/lib/providers/auth-provider'
 import { ThemeProvider } from '@/components/theme-provider'
 import { CartOverlay } from '@/components/shop/cart-overlay'
 import { MobileTabBar } from '@/components/mobile-tab-bar'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 export const viewport: Viewport = {
@@ -58,6 +59,7 @@ export default function RootLayout({
             {children}
             <CartOverlay />
             <MobileTabBar />
+            <Toaster position="top-right" richColors />
           </ThemeProvider>
         </AuthProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}

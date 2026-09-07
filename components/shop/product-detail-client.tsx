@@ -55,6 +55,7 @@ export function ProductDetailClient({ product }: { product: ProductDetail }) {
 
   const handleAddToCart = () => {
     addItem(product, qty);
+    toast.success(`Added ${qty} × ${product.name} to cart`);
   };
 
   const harvestFormatted = product.batchHarvestDate

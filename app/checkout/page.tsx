@@ -5,7 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ShoppingBag, Lock, CreditCard, ArrowLeft } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ShoppingBag, Lock, CreditCard, ArrowLeft, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/lib/hooks/use-cart';
 import { useAuth } from '@/lib/hooks/use-auth';
@@ -31,6 +32,7 @@ export default function CheckoutPage() {
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -45,6 +47,7 @@ export default function CheckoutPage() {
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
+    setErrorMessage(null);
 
     const shippingAddress = `${formData.address}, ${formData.city}, ${formData.state}`;
 
@@ -92,7 +95,9 @@ export default function CheckoutPage() {
       clearCart();
       window.location.href = authorization_url;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Checkout failed. Please try again.');
+      const msg = error instanceof Error ? error.message : 'Checkout failed. Please try again.';
+      setErrorMessage(msg);
+      toast.error(msg);
       setIsProcessing(false);
     }
   };
@@ -252,6 +257,13 @@ export default function CheckoutPage() {
                     </span>
                   </div>
                 </div>
+
+                {errorMessage && (
+                  <Alert variant="destructive" className="mt-2 text-left">
+                    <AlertCircle className="h-4 w-4 shrink-0" />
+                    <AlertDescription className="text-xs">{errorMessage}</AlertDescription>
+                  </Alert>
+                )}
 
                 <Button
                   type="submit"

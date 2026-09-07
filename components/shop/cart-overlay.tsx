@@ -123,11 +123,17 @@ export function CartOverlay() {
                           <span className="w-10 text-center text-sm font-bold font-heading text-foreground">{item.quantity}</span>
                           <button 
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-8 h-8 flex items-center justify-center hover:bg-background rounded-lg transition-all text-muted-foreground hover:text-foreground shadow-none hover:shadow-sm"
+                            disabled={typeof item.stock === 'number' && item.quantity >= item.stock}
+                            className="w-8 h-8 flex items-center justify-center hover:bg-background rounded-lg transition-all text-muted-foreground hover:text-foreground shadow-none hover:shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
+                        {typeof item.stock === 'number' && item.quantity >= item.stock && item.stock > 0 && (
+                          <span className="text-[10px] text-amber-600 font-medium">
+                            Max stock ({item.stock})
+                          </span>
+                        )}
                         <button 
                           onClick={() => removeItem(item.id)}
                           className="w-10 h-10 flex items-center justify-center text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 rounded-xl transition-all"
