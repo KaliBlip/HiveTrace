@@ -51,6 +51,7 @@ const consumerMenuItems = [
 
 const adminMenuItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/finances", label: "Finances & Revenue", icon: Coins },
   { href: "/admin/producers", label: "Producers", icon: Users },
   { href: "/admin/fraud", label: "Fraud Detection", icon: AlertTriangle },
   { href: "/admin/batches", label: "All Batches", icon: Box },
