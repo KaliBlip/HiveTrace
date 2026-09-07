@@ -2,7 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-import { HIVETRACE_COMMISSION_RATE } from './revenue-actions';
+import { HIVETRACE_COMMISSION_RATE } from '@/lib/config';
 
 export interface AdminMarketplaceFinances {
   totalGMV: number; // Gross Merchandise Value across all paid orders

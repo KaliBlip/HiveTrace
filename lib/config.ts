@@ -3,6 +3,8 @@
  * Centralized config for HiveTrace platform
  */
 
+export const HIVETRACE_COMMISSION_RATE = 0.05; // 5% HiveTrace Platform Commission
+
 export const config = {
   // App metadata
   app: {

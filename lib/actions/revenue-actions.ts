@@ -2,8 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
-
-export const HIVETRACE_COMMISSION_RATE = 0.05; // 5% HiveTrace Platform Commission
+import { HIVETRACE_COMMISSION_RATE } from '@/lib/config';
 
 export interface ProducerRevenueStats {
   producer: {
