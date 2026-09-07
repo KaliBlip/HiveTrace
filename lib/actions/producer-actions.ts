@@ -31,7 +31,7 @@ export async function getProducerStats() {
     };
   }
 
-  const [scanCount, recentBatches] = await Promise.all([
+  const [scanCount, recentBatches, paidOrderItems] = await Promise.all([
     prisma.qRScan.count({
       where: { qrCode: { batch: { producerId: producer.id } } },
     }),
@@ -41,12 +41,25 @@ export async function getProducerStats() {
       orderBy: { createdAt: 'desc' },
       include: { _count: { select: { qrCodes: true } } },
     }),
+    prisma.orderItem.findMany({
+      where: {
+        product: { producerId: producer.id },
+        order: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } },
+      },
+      select: { priceAtPurchase: true, quantity: true },
+    }),
   ]);
+
+  const totalRevenue = paidOrderItems.reduce(
+    (sum, item) => sum + item.priceAtPurchase * item.quantity,
+    0
+  );
 
   return {
     producer,
     batchCount: producer._count.batches,
     scanCount,
+    totalRevenue,
     recentBatches,
   };
 }
