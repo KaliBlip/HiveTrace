@@ -31,7 +31,7 @@ export async function getProducerStats() {
     };
   }
 
-  const [scanCount, recentBatches] = await Promise.all([
+  const [scanCount, recentBatches, paidOrderItems] = await Promise.all([
     prisma.qRScan.count({
       where: { qrCode: { batch: { producerId: producer.id } } },
     }),
@@ -41,12 +41,25 @@ export async function getProducerStats() {
       orderBy: { createdAt: 'desc' },
       include: { _count: { select: { qrCodes: true } } },
     }),
+    prisma.orderItem.findMany({
+      where: {
+        product: { producerId: producer.id },
+        order: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED'] } },
+      },
+      select: { priceAtPurchase: true, quantity: true },
+    }),
   ]);
+
+  const totalRevenue = paidOrderItems.reduce(
+    (sum, item) => sum + item.priceAtPurchase * item.quantity,
+    0
+  );
 
   return {
     producer,
     batchCount: producer._count.batches,
     scanCount,
+    totalRevenue,
     recentBatches,
   };
 }
@@ -120,6 +133,12 @@ export async function updateProducerProfile(data: {
   longitude?: number;
   apiarySize?: number;
   certifications?: string;
+  payoutMethod?: string;
+  accountName?: string;
+  bankName?: string;
+  accountNumber?: string;
+  momoProvider?: string;
+  momoNumber?: string;
 }) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');
@@ -141,6 +160,12 @@ export async function updateProducerProfile(data: {
       longitude: data.longitude,
       apiarySize: data.apiarySize,
       certifications: data.certifications,
+      payoutMethod: data.payoutMethod,
+      accountName: data.accountName,
+      bankName: data.bankName,
+      accountNumber: data.accountNumber,
+      momoProvider: data.momoProvider,
+      momoNumber: data.momoNumber,
     },
   });
 
@@ -152,4 +177,34 @@ export async function updateProducerProfile(data: {
   }
 
   return updatedProducer;
+}
+
+export async function updateProducerPayoutDetails(data: {
+  payoutMethod: 'MOMO' | 'BANK';
+  accountName: string;
+  bankName?: string;
+  accountNumber?: string;
+  momoProvider?: string;
+  momoNumber?: string;
+}) {
+  const session = await auth();
+  if (!session?.user?.id) throw new Error('Unauthorized');
+
+  const producer = await prisma.producer.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  if (!producer) throw new Error('Producer profile not found');
+
+  return await prisma.producer.update({
+    where: { id: producer.id },
+    data: {
+      payoutMethod: data.payoutMethod,
+      accountName: data.accountName,
+      bankName: data.payoutMethod === 'BANK' ? data.bankName : null,
+      accountNumber: data.payoutMethod === 'BANK' ? data.accountNumber : null,
+      momoProvider: data.payoutMethod === 'MOMO' ? data.momoProvider : null,
+      momoNumber: data.payoutMethod === 'MOMO' ? data.momoNumber : null,
+    },
+  });
 }

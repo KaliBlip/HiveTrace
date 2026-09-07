@@ -65,6 +65,14 @@ model Producer {
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
+  // Payout Details (Bank or Mobile Money)
+  payoutMethod      String?    @default("MOMO") // MOMO or BANK
+  accountName       String?
+  bankName          String?
+  accountNumber     String?
+  momoProvider      String?    // MTN, Telecel, AT
+  momoNumber        String?
+
   // Relations
   user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   batches           HoneyBatch[]

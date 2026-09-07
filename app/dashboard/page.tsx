@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, ArrowRight, Clock, Package, Plus, ShieldCheck, Star, Zap } from 'lucide-react';
+import { AlertCircle, ArrowRight, Clock, Coins, Package, Plus, ShieldCheck, Star, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getProducerStats } from '@/lib/actions/producer-actions';
@@ -24,10 +24,34 @@ export default async function DashboardPage() {
   const rating = producer.ratings?.averageRating || 5;
 
   const stats = [
-    { title: 'Batches', value: statsData.batchCount.toLocaleString(), detail: 'Registered records', icon: Package },
-    { title: 'Scans', value: statsData.scanCount.toLocaleString(), detail: 'Network events', icon: Zap },
-    { title: 'Rating', value: rating.toFixed(1), detail: 'Consumer signal', icon: Star },
-    { title: 'Trust', value: `${Math.round(rating * 20)}%`, detail: 'Reputation score', icon: ShieldCheck },
+    {
+      title: 'Total Revenue',
+      value: `GH₵ ${(statsData.totalRevenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+      detail: 'Accumulated earnings',
+      icon: Coins,
+      href: '/dashboard/revenue',
+    },
+    {
+      title: 'Batches',
+      value: statsData.batchCount.toLocaleString(),
+      detail: 'Registered records',
+      icon: Package,
+      href: '/dashboard/batches',
+    },
+    {
+      title: 'Scans',
+      value: statsData.scanCount.toLocaleString(),
+      detail: 'Network events',
+      icon: Zap,
+      href: '/dashboard/analytics',
+    },
+    {
+      title: 'Trust Score',
+      value: `${Math.round(rating * 20)}%`,
+      detail: 'Reputation score',
+      icon: ShieldCheck,
+      href: '/dashboard/reviews',
+    },
   ];
 
   return (
@@ -44,7 +68,13 @@ export default async function DashboardPage() {
               Register new harvest batches, publish products, and watch verification activity.
             </p>
           </div>
-          <div className="flex items-end">
+          <div className="flex flex-wrap items-end gap-3">
+            <Link href="/dashboard/revenue">
+              <Button size="lg" variant="outline" className="gap-2">
+                <Coins className="size-4" />
+                Revenue ledger
+              </Button>
+            </Link>
             <Link href="/dashboard/batches/new">
               <Button size="lg" className="gap-2">
                 <Plus className="size-4" />
@@ -59,9 +89,10 @@ export default async function DashboardPage() {
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           return (
-            <div
+            <Link
               key={stat.title}
-              className="motion-rise rounded-xl border border-border/60 bg-card/72 p-5 shadow-[var(--shadow-soft)] backdrop-blur"
+              href={stat.href}
+              className="motion-rise rounded-xl border border-border/60 bg-card/72 p-5 shadow-[var(--shadow-soft)] backdrop-blur transition-all hover:border-primary/40 hover:bg-card/90"
               style={{ animationDelay: `${index * 60}ms` }}
             >
               <div className="flex items-center justify-between gap-4">
@@ -70,9 +101,9 @@ export default async function DashboardPage() {
                 </span>
                 <span className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{stat.detail}</span>
               </div>
-              <p className="mt-8 font-heading text-4xl font-semibold tracking-tight">{stat.value}</p>
+              <p className="mt-8 font-heading text-3xl font-semibold tracking-tight">{stat.value}</p>
               <p className="mt-1 text-sm font-semibold text-muted-foreground">{stat.title}</p>
-            </div>
+            </Link>
           );
         })}
       </section>

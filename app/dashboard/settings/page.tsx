@@ -28,6 +28,12 @@ export default function SettingsPage() {
     description: '',
     certifications: '',
     apiarySize: '',
+    payoutMethod: 'MOMO',
+    accountName: '',
+    bankName: '',
+    accountNumber: '',
+    momoProvider: 'MTN',
+    momoNumber: '',
   });
 
   const [producerMeta, setProducerMeta] = useState({
@@ -59,6 +65,12 @@ export default function SettingsPage() {
             description: producer.description || '',
             certifications: producer.certifications || '',
             apiarySize: producer.apiarySize?.toString() || '',
+            payoutMethod: producer.payoutMethod || 'MOMO',
+            accountName: producer.accountName || producer.user?.name || '',
+            bankName: producer.bankName || '',
+            accountNumber: producer.accountNumber || '',
+            momoProvider: producer.momoProvider || 'MTN',
+            momoNumber: producer.momoNumber || producer.phoneNumber || '',
           }));
           setProducerMeta({
             verified: producer.verified,
@@ -89,11 +101,17 @@ export default function SettingsPage() {
         description: formData.description,
         certifications: formData.certifications,
         apiarySize: formData.apiarySize ? parseInt(formData.apiarySize, 10) : undefined,
+        payoutMethod: formData.payoutMethod,
+        accountName: formData.accountName,
+        bankName: formData.bankName,
+        accountNumber: formData.accountNumber,
+        momoProvider: formData.momoProvider,
+        momoNumber: formData.momoNumber,
       });
       await update();
-      toast.success('Profile updated successfully');
+      toast.success('Settings and payout details updated successfully');
     } catch {
-      toast.error('Failed to update profile');
+      toast.error('Failed to update settings');
     } finally {
       setIsSaving(false);
     }
@@ -111,7 +129,7 @@ export default function SettingsPage() {
     <div className="space-y-8">
       <div className="space-y-2">
         <h1 className="text-4xl font-bold">Settings</h1>
-        <p className="text-muted-foreground">Manage your producer account and preferences</p>
+        <p className="text-muted-foreground">Manage your producer account, payout settlement, and preferences</p>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -119,7 +137,7 @@ export default function SettingsPage() {
           <Card className="border-border">
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
-              <CardDescription>Update your business details</CardDescription>
+              <CardDescription>Update your business and apiary details</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-border">
@@ -219,7 +237,7 @@ export default function SettingsPage() {
 
               <Button
                 onClick={handleSave}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground h-12 px-8 font-bold"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 px-8 font-bold"
                 disabled={isSaving}
               >
                 {isSaving ? (
@@ -228,7 +246,137 @@ export default function SettingsPage() {
                     Saving...
                   </>
                 ) : (
-                  'Save Changes'
+                  'Save Profile Details'
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Payout & Banking / MoMo Settlement Card */}
+          <Card className="border-border/80 bg-card/80 shadow-[var(--shadow-soft)]">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="font-heading text-xl">Payout & Settlement Account</CardTitle>
+                  <CardDescription>
+                    Where your net product revenue (95% after 5% platform fee) will be disbursed
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <Label>Payout Method</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, payoutMethod: 'MOMO' })}
+                    className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
+                      formData.payoutMethod === 'MOMO'
+                        ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
+                        : 'border-border/70 hover:bg-muted/40 text-muted-foreground'
+                    }`}
+                  >
+                    <span>📱</span> Mobile Money (MoMo)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, payoutMethod: 'BANK' })}
+                    className={`flex items-center justify-center gap-2.5 p-3.5 rounded-xl border text-sm font-semibold transition-all ${
+                      formData.payoutMethod === 'BANK'
+                        ? 'border-primary bg-primary/10 text-primary ring-1 ring-primary/30'
+                        : 'border-border/70 hover:bg-muted/40 text-muted-foreground'
+                    }`}
+                  >
+                    <span>🏦</span> Bank Account
+                  </button>
+                </div>
+              </div>
+
+              {formData.payoutMethod === 'MOMO' ? (
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="momoProvider">Mobile Money Provider</Label>
+                    <select
+                      id="momoProvider"
+                      value={formData.momoProvider}
+                      onChange={(e) => setFormData({ ...formData, momoProvider: e.target.value })}
+                      className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                    >
+                      <option value="MTN">MTN Mobile Money</option>
+                      <option value="TELECEL">Telecel Cash (Vodafone)</option>
+                      <option value="AT">AT Money (AirtelTigo)</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="momoNumber">MoMo Phone Number</Label>
+                    <Input
+                      id="momoNumber"
+                      type="tel"
+                      placeholder="e.g. 024 123 4567"
+                      value={formData.momoNumber}
+                      onChange={(e) => setFormData({ ...formData, momoNumber: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="momoAccountName">Registered Account Name</Label>
+                    <Input
+                      id="momoAccountName"
+                      placeholder="e.g. Kwame Mensah Apiaries"
+                      value={formData.accountName}
+                      onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+                    />
+                    <p className="text-[11px] text-muted-foreground">The full name registered on your Mobile Money SIM.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="bankName">Bank Name</Label>
+                    <Input
+                      id="bankName"
+                      placeholder="e.g. GCB Bank, Ecobank, Stanbic Bank"
+                      value={formData.bankName}
+                      onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="accountNumber">Account Number</Label>
+                    <Input
+                      id="accountNumber"
+                      placeholder="e.g. 1029384756102"
+                      value={formData.accountNumber}
+                      onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bankAccountName">Account Name</Label>
+                    <Input
+                      id="bankAccountName"
+                      placeholder="e.g. Kwame Mensah Honey Enterprise"
+                      value={formData.accountName}
+                      onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <Button
+                onClick={handleSave}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground h-11 px-8 font-bold"
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  'Save Payout Information'
                 )}
               </Button>
             </CardContent>

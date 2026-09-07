@@ -9,6 +9,7 @@ import {
   Box,
   ChevronLeft,
   ChevronRight,
+  Coins,
   Database,
   Home,
   LayoutDashboard,
@@ -35,6 +36,7 @@ const producerMenuItems = [
   { href: "/dashboard/batches", label: "Batches", icon: Box },
   { href: "/dashboard/products", label: "Listings", icon: ShoppingBag },
   { href: "/dashboard/orders", label: "Orders", icon: Package },
+  { href: "/dashboard/revenue", label: "Revenue", icon: Coins },
   { href: "/dashboard/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/dashboard/settings", label: "Settings", icon: Settings },
@@ -49,6 +51,7 @@ const consumerMenuItems = [
 
 const adminMenuItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/finances", label: "Finances & Revenue", icon: Coins },
   { href: "/admin/producers", label: "Producers", icon: Users },
   { href: "/admin/fraud", label: "Fraud Detection", icon: AlertTriangle },
   { href: "/admin/batches", label: "All Batches", icon: Box },

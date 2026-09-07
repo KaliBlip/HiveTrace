@@ -200,7 +200,7 @@ export async function getProducerOrders() {
 
   if (!producer) return [];
 
-  return await prisma.order.findMany({
+  const orders = await prisma.order.findMany({
     where: {
       items: {
         some: {
@@ -218,7 +218,11 @@ export async function getProducerOrders() {
           },
         },
         include: {
-          product: true,
+          product: {
+            include: {
+              batch: true,
+            },
+          },
         },
       },
       consumer: {
@@ -230,6 +234,24 @@ export async function getProducerOrders() {
       payment: true,
     },
     orderBy: { createdAt: 'desc' },
+  });
+
+  return orders.map((order) => {
+    const producerItems = order.items.filter(
+      (item) => item.product?.producerId === producer.id
+    );
+    const producerSubtotal = producerItems.reduce(
+      (sum, item) => sum + item.priceAtPurchase * item.quantity,
+      0
+    );
+    const isMultiProducerCart = order.items.length > producerItems.length;
+
+    return {
+      ...order,
+      items: producerItems,
+      producerSubtotal,
+      isMultiProducerCart,
+    };
   });
 }
 
