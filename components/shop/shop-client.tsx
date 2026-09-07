@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useCart } from '@/lib/hooks/use-cart';
+import { toast } from 'sonner';
 
 interface ShopProduct {
   id: string;
@@ -55,6 +56,19 @@ function ProductCard({ product, index }: { product: ShopProduct; index: number }
   const { addItem } = useCart();
   const isLowStock = product.stock > 0 && product.stock < 10;
   const isOutOfStock = product.stock === 0;
+
+  const handleAddToCart = () => {
+    const result = addItem(product as any, 1);
+    if (!result.success) {
+      if (result.reason === 'out_of_stock') {
+        toast.error(`${product.name} is out of stock`);
+      } else if (result.reason === 'already_max_stock') {
+        toast.warning(`You already have all ${result.stock} available units in your cart`);
+      }
+      return;
+    }
+    toast.success(`Added ${product.name} to cart`);
+  };
 
   return (
     <article
@@ -134,7 +148,7 @@ function ProductCard({ product, index }: { product: ShopProduct; index: number }
           </div>
 
           <button
-            onClick={() => addItem(product as any)}
+            onClick={handleAddToCart}
             disabled={isOutOfStock}
             className="grid size-10 place-items-center rounded-xl border border-border/70 bg-background text-foreground transition-all hover:border-primary hover:bg-primary hover:text-primary-foreground active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
             aria-label={`Add ${product.name} to cart`}
