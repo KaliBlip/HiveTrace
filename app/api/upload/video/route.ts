@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
+import { requireApprovedProducer } from '@/lib/producer-authorization';
 
 export async function POST(request: NextRequest) {
   try {
+    await requireApprovedProducer();
+
     const formData = await request.formData();
     const file = formData.get('video') as File;
 
@@ -46,6 +49,9 @@ export async function POST(request: NextRequest) {
     const url = `/uploads/videos/${filename}`;
     return NextResponse.json({ url, filename });
   } catch (error) {
+    if (error instanceof Error && (error.message === 'Unauthorized' || error.message.includes('producer account') || error.message.includes('Only producer'))) {
+      return NextResponse.json({ error: error.message }, { status: 403 });
+    }
     console.error('Video upload error:', error);
     return NextResponse.json({ error: 'Failed to upload video' }, { status: 500 });
   }

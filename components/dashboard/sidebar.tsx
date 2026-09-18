@@ -4,13 +4,11 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  AlertTriangle,
   BarChart3,
   Box,
   ChevronLeft,
   ChevronRight,
   Coins,
-  Database,
   Home,
   LayoutDashboard,
   LogOut,
@@ -24,6 +22,7 @@ import {
   Star,
   Users,
   ClipboardList,
+  ClipboardCheck,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -53,12 +52,14 @@ const adminMenuItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/finances", label: "Finances & Revenue", icon: Coins },
   { href: "/admin/producers", label: "Producers", icon: Users },
-  { href: "/admin/fraud", label: "Fraud Detection", icon: AlertTriangle },
   { href: "/admin/batches", label: "All Batches", icon: Box },
   { href: "/admin/products", label: "Product Listings", icon: ShoppingBag },
-  { href: "/admin/ledger", label: "Blockchain Ledger", icon: Database },
   { href: "/admin/messages", label: "Contact Messages", icon: Mail },
   { href: "/admin/reports", label: "Reports", icon: ClipboardList },
+];
+
+const boardMenuItems = [
+  { href: "/board", label: "Validation Queue", icon: ClipboardCheck },
 ];
 
 interface SidebarProps {
@@ -82,6 +83,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       ? producerMenuItems
       : currentRole === "admin"
         ? adminMenuItems
+        : currentRole === "validation_board"
+          ? boardMenuItems
         : consumerMenuItems;
 
   return (

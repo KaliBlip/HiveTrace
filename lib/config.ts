@@ -81,6 +81,7 @@ export const config = {
   roles: {
     CONSUMER: 'consumer',
     PRODUCER: 'producer',
+    VALIDATION_BOARD: 'validation_board',
     ADMIN: 'admin',
   } as const,
 

@@ -14,15 +14,18 @@ export async function POST(request: NextRequest) {
     }
 
     const role = (session.user as { role?: string }).role;
-    if (role !== 'PRODUCER' && role !== 'ADMIN') {
+    if (role !== 'PRODUCER') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     const body = await request.json();
-    const { honeyType, quantity, harvestDate, description } = body;
+    const { honeyType, quantity, harvestDate, description, honeyImage, packagingImage, honeyVideo, price } = body;
 
     if (!honeyType || !quantity || !harvestDate) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    if (!honeyImage || !packagingImage || !honeyVideo) {
+      return NextResponse.json({ error: 'Finished honey, packaging, and batch video evidence are required for Validation Board review' }, { status: 400 });
     }
 
     const producer = await prisma.producer.findUnique({
@@ -33,7 +36,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Producer profile not found' }, { status: 404 });
     }
 
-    if (!producer.verified && role !== 'ADMIN') {
+    if (!producer.verified || producer.status !== 'ACCREDITED') {
       return NextResponse.json(
         { error: 'Producer account must be approved before creating batches' },
         { status: 403 }
@@ -60,10 +63,15 @@ export async function POST(request: NextRequest) {
         quantity: parseFloat(quantity),
         harvestDate: new Date(harvestDate),
         description: description || null,
+        honeyImage,
+        packagingImage,
+        honeyVideo,
+        price: price ? parseFloat(price) : null,
         producerId: producer.id,
         verificationHash,
         verified: false,
         verifiedAt: null,
+        boardStatus: 'PENDING_REVIEW',
       },
     });
 

@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User model - stores all users (producers, consumers, admins)
+// User model - stores producers, consumers, administrators and validation-board members.
 model User {
   id          String     @id @default(cuid())
   email       String     @unique
@@ -27,6 +27,8 @@ model User {
   reviews   Review[]
   sessions  Session[]
   orders    Order[]
+  inspectionsPerformed FarmInspection[] @relation("InspectionVerifier")
+  batchesReviewed       HoneyBatch[]     @relation("BatchBoardReviewer")
 
   @@index([email])
 }
@@ -62,6 +64,9 @@ model Producer {
   verified          Boolean    @default(false)
   verifiedAt        DateTime?
   status            String     @default("PENDING")
+  accreditationExpiresAt DateTime?
+  lastInspectionAt  DateTime?
+  accreditedById    String?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
@@ -79,6 +84,7 @@ model Producer {
   ratings           ProducerRating?
   fraudAlerts       FraudAlert[]
   products          Product[]
+  inspections       FarmInspection[]
 
   @@index([userId])
   @@index([verified])
@@ -122,6 +128,10 @@ model HoneyBatch {
   longitude         Float?
   registrationLocation String?
   blockchainTx      String?
+  boardStatus       String     @default("PENDING_REVIEW")
+  boardDecisionNotes String?
+  boardReviewedAt   DateTime?
+  boardReviewerId   String?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 
@@ -132,10 +142,59 @@ model HoneyBatch {
   fraudAlerts       FraudAlert[]
   product           Product?
   ledgerBlocks      LedgerBlock[]
+  boardReviewer     User?      @relation("BatchBoardReviewer", fields: [boardReviewerId], references: [id], onDelete: SetNull)
+  certificate       ValidationCertificate?
 
   @@index([producerId])
   @@index([verified])
   @@index([harvestDate])
+}
+
+// Evidence captured by an external Validation Board during an on-site farm visit.
+// URLs are stored so the application can use local uploads now and object storage later.
+model FarmInspection {
+  id                  String   @id @default(cuid())
+  producerId          String
+  verifierId          String
+  visitDate           DateTime
+  latitude            Float?
+  longitude           Float?
+  identityDocumentUrl String
+  apiaryPhotos        String   // JSON array of uploaded image URLs
+  hivePhotos          String   // JSON array of uploaded image URLs
+  honeyPhotos         String   // JSON array of uploaded image URLs
+  packagingPhotos     String   // JSON array of uploaded image URLs
+  certificates        String   // JSON array of uploaded document URLs
+  videoUrl            String
+  signedReportUrl     String
+  notes               String
+  outcome             String   @default("SUBMITTED") // SUBMITTED, APPROVED, REJECTED
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  producer            Producer @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  verifier            User     @relation("InspectionVerifier", fields: [verifierId], references: [id], onDelete: Restrict)
+
+  @@index([producerId])
+  @@index([verifierId])
+  @@index([visitDate])
+}
+
+// A human-issued certificate is the public validation stamp for an approved batch.
+model ValidationCertificate {
+  id          String     @id @default(cuid())
+  batchId     String     @unique
+  number      String     @unique
+  issuedAt    DateTime   @default(now())
+  expiresAt   DateTime
+  issuedById  String
+  status      String     @default("ACTIVE") // ACTIVE, EXPIRED, REVOKED
+  notes       String?
+
+  batch       HoneyBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([number])
+  @@index([status])
 }
 
 // Blockchain-style ledger for immutable batch verification records
@@ -345,6 +404,4 @@ model Payment {
   // Relations
   order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
-
-
 

@@ -3,17 +3,15 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, MapPin, Star, ShieldAlert, Loader2, Sparkles, Check, X, Phone } from 'lucide-react';
-import { getAllProducers, approveProducer, rejectProducer } from '@/lib/actions/admin-actions';
+import { Search, MapPin, Star, ShieldAlert, Loader2, Phone } from 'lucide-react';
+import { getAllProducers } from '@/lib/actions/admin-actions';
 import { toast } from 'sonner';
 
 export default function AdminProducersPage() {
   const [producers, setProducers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [actioningId, setActioningId] = useState<string | null>(null);
 
   const fetchProducers = async () => {
     try {
@@ -29,32 +27,6 @@ export default function AdminProducersPage() {
   useEffect(() => {
     fetchProducers();
   }, []);
-
-  const handleApprove = async (id: string) => {
-    setActioningId(id);
-    try {
-      await approveProducer(id);
-      toast.success('Producer approved successfully!');
-      await fetchProducers();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to approve producer');
-    } finally {
-      setActioningId(null);
-    }
-  };
-
-  const handleReject = async (id: string) => {
-    setActioningId(id);
-    try {
-      await rejectProducer(id);
-      toast.success('Producer account rejected');
-      await fetchProducers();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to reject producer');
-    } finally {
-      setActioningId(null);
-    }
-  };
 
   const filteredProducers = producers.filter((p) => {
     const term = searchQuery.toLowerCase();
@@ -86,7 +58,7 @@ export default function AdminProducersPage() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold uppercase italic tracking-tighter">
             PRODUCER <span className="text-primary not-italic tracking-tight">MANAGEMENT</span>
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-lg mt-1">Vet, approve, and audit honey producers on the HiveTrace platform</p>
+          <p className="text-muted-foreground text-sm sm:text-lg mt-1">Oversight view. Producer accreditation is performed by the Validation Board after a documented farm inspection.</p>
         </div>
 
         {/* Search */}
@@ -178,60 +150,8 @@ export default function AdminProducersPage() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 shrink-0">
-                    {producer.status === 'PENDING' && (
-                      <>
-                        <Button 
-                          size="default" 
-                          className="flex-1 sm:flex-initial bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl gap-2 font-bold px-4 sm:px-6"
-                          onClick={() => handleApprove(producer.id)}
-                          disabled={actioningId !== null}
-                        >
-                          {actioningId === producer.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Check className="w-4 h-4" />
-                          )}
-                          Approve
-                        </Button>
-                        <Button 
-                          size="default" 
-                          variant="outline"
-                          className="flex-1 sm:flex-initial border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-800 dark:hover:bg-rose-950/30 rounded-xl gap-2 font-bold px-4 sm:px-6"
-                          onClick={() => handleReject(producer.id)}
-                          disabled={actioningId !== null}
-                        >
-                          {actioningId === producer.id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <X className="w-4 h-4" />
-                          )}
-                          Reject
-                        </Button>
-                      </>
-                    )}
-                    {producer.status === 'REJECTED' && (
-                      <Button 
-                        size="default" 
-                        variant="outline"
-                        className="flex-1 sm:flex-initial rounded-xl gap-2 font-bold px-4 sm:px-6"
-                        onClick={() => handleApprove(producer.id)}
-                        disabled={actioningId !== null}
-                      >
-                        Re-Approve
-                      </Button>
-                    )}
-                    {producer.status === 'APPROVED' && (
-                      <Button 
-                        size="default" 
-                        variant="outline"
-                        className="flex-1 sm:flex-initial border-rose-200 text-rose-600 hover:bg-rose-50 hover:text-rose-700 dark:border-rose-800 dark:hover:bg-rose-950/30 rounded-xl gap-2 font-bold px-4 sm:px-6"
-                        onClick={() => handleReject(producer.id)}
-                        disabled={actioningId !== null}
-                      >
-                        Revoke Approval
-                      </Button>
-                    )}
+                  <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-muted-foreground">
+                    This record is managed by the Validation Board. Inspection and accreditation decisions are not available in the administrator portal.
                   </div>
                 </div>
               ))}

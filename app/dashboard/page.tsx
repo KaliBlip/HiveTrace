@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, ArrowRight, Clock, Coins, Package, Plus, ShieldCheck, Star, Zap } from 'lucide-react';
+import { AlertCircle, ArrowRight, Clock, Coins, Package, Plus, ShieldCheck, Zap } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getProducerStats } from '@/lib/actions/producer-actions';
@@ -20,8 +20,12 @@ export default async function DashboardPage() {
     ratings?: { averageRating?: number | null } | null;
     businessName?: string;
     verified?: boolean;
+    status?: string;
+    accreditationExpiresAt?: Date | null;
   };
   const rating = producer.ratings?.averageRating || 5;
+  const accreditationExpiresAt = producer.accreditationExpiresAt as Date | null | undefined;
+  const isAccredited = producer.verified && producer.status === 'ACCREDITED' && (!accreditationExpiresAt || accreditationExpiresAt > new Date());
 
   const stats = [
     {
@@ -65,7 +69,7 @@ export default async function DashboardPage() {
             </h1>
             <p className="text-lg leading-8 text-muted-foreground">
               Operating as <span className="font-semibold text-foreground">{producer.businessName || 'your apiary'}</span>.
-              Register new harvest batches, publish products, and watch verification activity.
+              Submit harvest batches with photo/video evidence, then publish products after Validation Board certification.
             </p>
           </div>
           <div className="flex flex-wrap items-end gap-3">
@@ -113,7 +117,7 @@ export default async function DashboardPage() {
           <div className="flex flex-col justify-between gap-4 border-b border-border/60 p-6 sm:flex-row sm:items-center">
             <div>
               <h2 className="font-heading text-2xl font-semibold tracking-tight">Recent batches</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Latest cryptographic registrations.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Latest submissions and Validation Board decisions.</p>
             </div>
             <Link href="/dashboard/batches">
               <Button variant="outline" className="gap-2">
@@ -128,7 +132,7 @@ export default async function DashboardPage() {
               <div className="p-10 text-center">
                 <Package className="mx-auto mb-4 size-10 text-muted-foreground" />
                 <p className="font-semibold">No batches yet</p>
-                <p className="mt-1 text-sm text-muted-foreground">Register your first harvest batch to begin the traceability chain.</p>
+                <p className="mt-1 text-sm text-muted-foreground">Submit your first harvest batch for Validation Board review.</p>
               </div>
             ) : (
               statsData.recentBatches.map((batch) => (
@@ -166,14 +170,14 @@ export default async function DashboardPage() {
             </p>
           </div>
 
-          {!producer.verified && (
+          {!isAccredited && (
             <div className="rounded-xl border border-primary/25 bg-primary/10 p-6">
               <div className="flex items-center gap-3">
                 <AlertCircle className="size-5 text-primary" />
-                <p className="font-semibold">Verification pending</p>
+                <p className="font-semibold">Accreditation required</p>
               </div>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Your producer profile is still under review. Marketplace access may be limited until approval.
+                Your producer profile must be inspected and accredited by the Validation Board before you can submit batches or list products.
               </p>
             </div>
           )}

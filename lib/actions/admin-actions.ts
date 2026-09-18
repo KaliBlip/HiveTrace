@@ -2,7 +2,6 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
-import { registerBatchOnLedger } from '@/lib/blockchain';
 import { analyzeHoneyImage, generateFallbackAnalysis, type HoneyAnalysisResult } from '@/lib/honey-analysis';
 
 const ACTIVE_FRAUD_STATUSES = ['FLAGGED', 'PENDING', 'INVESTIGATING'] as const;
@@ -102,33 +101,8 @@ export async function getAllProducers() {
 }
 
 export async function approveProducer(id: string) {
-  const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
-    throw new Error('Unauthorized');
-  }
-
-  const producer = await prisma.producer.update({
-    where: { id },
-    data: {
-      verified: true,
-      status: 'APPROVED',
-      verifiedAt: new Date(),
-    }
-  });
-
-  // Also update rating/trust score structure
-  await prisma.producerRating.upsert({
-    where: { producerId: id },
-    update: { trustScore: 100 },
-    create: {
-      producerId: id,
-      averageRating: 5.0,
-      totalReviews: 0,
-      trustScore: 100,
-    }
-  });
-
-  return producer;
+  void id;
+  throw new Error('Producer accreditation is performed only by the Validation Board after a documented farm inspection');
 }
 
 export async function rejectProducer(id: string) {
@@ -178,98 +152,9 @@ export async function verifyAndApproveBatch(
     score?: number;
   }
 ) {
-  const session = await auth();
-  if (!session?.user || (session.user as any).role !== 'ADMIN') {
-    throw new Error('Unauthorized');
-  }
-
-  const batch = await prisma.honeyBatch.findUnique({
-    where: { id },
-    include: { producer: true },
-  });
-
-  if (!batch) {
-    throw new Error('Batch not found');
-  }
-
-  if (batch.verified && batch.blockchainTx) {
-    return batch;
-  }
-
-  const { blockHash } = await registerBatchOnLedger({
-    batchId: batch.id,
-    batchCode: batch.batchCode,
-    verificationHash: batch.verificationHash,
-    adminId: session.user.id,
-    metadata: {
-      honeyType: batch.honeyType,
-      quantity: batch.quantity,
-      producerId: batch.producerId,
-      producerName: batch.producer.businessName,
-      qualityMetrics: qualityMetrics ?? null,
-    },
-  });
-
-  const updatedBatch = await prisma.honeyBatch.update({
-    where: { id },
-    data: {
-      verified: true,
-      verifiedAt: new Date(),
-      blockchainTx: blockHash,
-    },
-  });
-
-  const codePayload = JSON.stringify({
-    batchId: batch.batchCode,
-    hash: batch.verificationHash,
-  });
-
-  const existingQr = await prisma.qRCode.findFirst({
-    where: { batchId: id },
-  });
-
-  if (!existingQr) {
-    await prisma.qRCode.create({
-      data: {
-        batchId: id,
-        code: codePayload,
-      },
-    });
-  }
-
-  // Automatically create a marketplace product listing for this approved batch
-  const existingProduct = await prisma.product.findUnique({
-    where: { batchId: id },
-  });
-
-  if (!existingProduct) {
-    const productName = batch.honeyType.toLowerCase().includes('honey')
-      ? batch.honeyType
-      : `${batch.honeyType} Honey`;
-
-    await prisma.product.create({
-      data: {
-        name: productName,
-        description: batch.description || '',
-        price: batch.price || 0,
-        unit: 'kg',
-        stock: Math.floor(batch.quantity),
-        imageUrl: batch.honeyImage || batch.packagingImage || null,
-        batchId: batch.id,
-        producerId: batch.producerId,
-        isActive: true,
-      },
-    });
-  }
-
-  revalidatePath('/admin/batches');
-  revalidatePath(`/admin/batches/${id}`);
-  revalidatePath('/dashboard/batches');
-  revalidatePath('/dashboard/products');
-  revalidatePath('/shop');
-  revalidatePath(`/verify/${batch.verificationHash}`);
-
-  return updatedBatch;
+  void id;
+  void qualityMetrics;
+  throw new Error('Batch approval, certificate issuance, and QR creation are performed only by the Validation Board after human evidence comparison');
 }
 
 export async function updateFraudAlertStatus(
@@ -486,4 +371,3 @@ export async function rejectBatch(batchId: string, reason?: string) {
 
   return { success: true, message: 'Batch rejected successfully' };
 }
-

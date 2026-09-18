@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { verifyBatchByHash } from '@/lib/actions/verify-actions';
-import { registerScanByHash, reportBatchDiscrepancy } from '@/lib/actions/scan-actions';
+import { reportBatchDiscrepancy } from '@/lib/actions/scan-actions';
 import { toast } from 'sonner';
 import { PublicHeader } from '@/components/public-header';
 
@@ -29,7 +29,6 @@ export default function VerifyBatchPage() {
 
   const [batch, setBatch] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [geoState, setGeoState] = useState<'prompting' | 'acquired' | 'denied' | 'unsupported'>('prompting');
   const [reporting, setReporting] = useState(false);
   const [reported, setReported] = useState(false);
 
@@ -37,34 +36,9 @@ export default function VerifyBatchPage() {
     async function lookupAndLog() {
       setLoading(true);
       
-      let coords: { lat?: number; lng?: number } = {};
-      if (typeof window !== 'undefined' && navigator.geolocation) {
-        try {
-          const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-              enableHighAccuracy: true,
-              timeout: 5000,
-            });
-          });
-          coords = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setGeoState('acquired');
-        } catch {
-          setGeoState('denied');
-        }
-      } else {
-        setGeoState('unsupported');
-      }
-
       try {
         const result = await verifyBatchByHash(hash);
         setBatch(result);
-        
-        if (result) {
-          await registerScanByHash(hash, coords);
-        }
       } catch {
         setBatch(null);
       } finally {
@@ -138,7 +112,7 @@ export default function VerifyBatchPage() {
                 AUTHENTICITY <span className="text-primary not-italic">CONFIRMED.</span>
               </h1>
               <p className="text-stone-400 font-normal text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2">
-                This batch has been cryptographically signed and verified on the HiveTrace ledger. 100% genuine artisan honey.
+                This batch was reviewed by the Validation Board using farm-inspection and product-evidence records.
               </p>
             </div>
           </div>
@@ -163,7 +137,7 @@ export default function VerifyBatchPage() {
                 QUALITY <span className="text-amber-500 not-italic">UNVERIFIED.</span>
               </h1>
               <p className="text-amber-200/70 font-normal text-sm sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed px-2">
-                This batch has been logged by the producer but is awaiting formal camera & quality certification by HiveTrace administrators. Proceed with caution.
+                This batch is awaiting human review by the Validation Board. It is not yet certified or available for public sale.
               </p>
             </div>
           </div>
@@ -223,10 +197,7 @@ export default function VerifyBatchPage() {
                     Fully Verified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                    {geoState === 'acquired' && '✓ GPS Verified Scan'}
-                    {geoState === 'denied' && '⚠ Scan Logged (GPS Denied)'}
-                    {geoState === 'prompting' && '⌛ Resolving Location...'}
-                    {geoState === 'unsupported' && '⚠ Location Unsupported'}
+                    Validation Board approval recorded
                   </p>
                 </div>
               ) : (
@@ -235,13 +206,28 @@ export default function VerifyBatchPage() {
                     Unverified
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                    Awaiting admin quality check
+                    Awaiting Validation Board review
                   </p>
                 </div>
               )}
             </div>
           </div>
         </div>
+
+        {batch.verified && (
+          <Card className="border-primary/25 rounded-2xl sm:rounded-3xl overflow-hidden">
+            <CardHeader className="bg-primary/5 border-b border-primary/15">
+              <CardTitle className="flex items-center gap-2 text-lg"><ShieldCheck className="text-primary" /> Digital validation certificate</CardTitle>
+              <CardDescription>Human-reviewed evidence from the Validation Board.</CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-5 p-6 sm:grid-cols-4">
+              <div><p className="text-xs uppercase font-bold text-muted-foreground">Validation Board</p><p className="mt-1 font-semibold">{batch.validationBoard}</p></div>
+              <div><p className="text-xs uppercase font-bold text-muted-foreground">Last inspection</p><p className="mt-1 font-semibold">{batch.inspectionDate ? new Date(batch.inspectionDate).toLocaleDateString() : 'Recorded on file'}</p></div>
+              <div><p className="text-xs uppercase font-bold text-muted-foreground">Approval date</p><p className="mt-1 font-semibold">{batch.approvalDate ? new Date(batch.approvalDate).toLocaleDateString() : 'Recorded on file'}</p></div>
+              <div><p className="text-xs uppercase font-bold text-muted-foreground">Certificate</p><p className="mt-1 font-mono text-sm font-semibold">{batch.certificate?.number || 'Certificate pending'}</p></div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Assets & Verification details */}
         <div className="grid lg:grid-cols-3 gap-8 sm:gap-12">

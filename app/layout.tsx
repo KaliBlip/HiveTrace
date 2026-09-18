@@ -19,8 +19,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'HiveTrace - Cryptographically Verified Honey Traceability',
-  description: 'Track the complete journey of honey from hive to table with blockchain-verified traceability and producer reputation.',
+  title: 'HiveTrace - Validation Board Honey Traceability',
+  description: 'Document producer inspections, human batch validation, digital certificates, and consumer QR verification for honey.',
   generator: 'v0.app',
   icons: {
     icon: [

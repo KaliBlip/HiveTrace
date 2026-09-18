@@ -1,4 +1,4 @@
-import { getProductById } from '@/lib/actions/product-actions';
+import { getPublicProductById } from '@/lib/actions/product-actions';
 import { ProductDetailClient } from '@/components/shop/product-detail-client';
 import { ConsumerHeader } from '@/components/consumer/header';
 import { Footer } from '@/components/footer';
@@ -7,7 +7,7 @@ import Link from 'next/link';
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const product = await getProductById(id);
+  const product = await getPublicProductById(id);
 
   if (!product) {
     return (

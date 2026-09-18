@@ -1,14 +1,15 @@
-# HiveTrace - Cryptographically Verified Honey Traceability Platform
+# HiveTrace - Validation Board Honey Traceability Platform
 
-A modern Next.js application for tracking honey from hive to table with cryptographic verification, producer reputation systems, and anti-fraud detection.
+A modern Next.js application for tracking honey from hive to table through Validation Board inspections, human evidence review, digital certificates, and consumer QR verification.
 
 ![HiveTrace](./public/hero-beehive.jpg)
 
 ## 🎯 Features
 
 ### For Producers
-- **Batch Management**: Create and manage honey batches with automatic HMAC-SHA256 verification
-- **QR Code Generation**: Unique QR codes for each batch linking to verification data
+- **Accreditation Workflow**: Submit a membership application and await an on-site Validation Board inspection
+- **Evidence-Based Batch Submission**: Submit finished-honey, packaging, and video evidence for human comparison
+- **Digital Certificate & QR Code**: Board-approved batches receive a certificate and consumer verification QR code
 - **Dashboard Analytics**: Track batch performance, scan counts, and consumer engagement
 - **Producer Reputation**: Build reputation through verified consumer reviews
 - **Settings & Profile**: Manage business information and account settings
@@ -20,21 +21,19 @@ A modern Next.js application for tracking honey from hive to table with cryptogr
 - **Verified Reviews**: Leave reviews on batches you've purchased
 - **Traceability Tab**: See complete journey from harvest to sale
 
-### For Admins
-- **Fraud Monitoring**: Real-time fraud detection dashboard
-- **Producer Approval**: Vet and approve new producers
-- **Batch Management**: Overview and audit of all batches
-- **Alert System**: Track suspicious QR scans, geo-mismatches, and unusual patterns
-- **Reports**: Generate compliance and audit reports
+### For Validation Board Members
+- **Farm Inspections**: Record visit dates, notes, signed report, identity document, photos, certificates, and video evidence
+- **Producer Accreditation**: Accredit, reject, or request further inspection based on documented field evidence
+- **Batch Comparison**: Compare producer-submitted honey/packaging evidence against inspection records
+- **Certificate Issuance**: Approve a batch, issue its digital certificate, and activate its QR verification page
 
-## 🔒 Security Features
+## ✅ Validation Approach
 
-- **Cryptographic Verification**: HMAC-SHA256 signatures prevent batch tampering
-- **Duplicate QR Prevention**: Track and prevent fraudulent QR code cloning
-- **Geo-Verification**: Detect suspicious scans from unexpected locations
-- **Suspicious Activity Detection**: Monitor scan patterns for anomalies
-- **Producer Vetting**: Admin approval process for producer accounts
-- **Audit Trail**: Complete history of all batch operations
+- **Human-governed validation**: A dedicated external Validation Board records and reviews evidence
+- **Mandatory field evidence**: Identity document, farm visit, apiary/hive/honey/packaging photographs, certificates, video, and signed report
+- **Periodic accreditation**: Producer accreditation expires annually and requires a renewed inspection
+- **Digital certification**: QR verification is activated only for a board-approved batch with an active certificate
+- **Transparent public records**: Consumers see the producer, board, inspection date, approval date, batch details, and certificate number
 
 ## 🚀 Tech Stack
 
@@ -124,14 +123,10 @@ A modern Next.js application for tracking honey from hive to table with cryptogr
 
 ## 📖 Documentation
 
-Full technical documentation for this final-year project is in the [`docs/`](./docs/) folder:
+The authoritative documentation for this final-year project is:
 
-- [Documentation Index](./docs/README.md) — Start here
-- [System Architecture](./docs/02-system-architecture.md)
-- [Cryptographic Verification](./docs/05-cryptographic-verification.md)
-- [Blockchain Ledger](./docs/06-blockchain-ledger.md)
-- [Fraud Detection](./docs/07-fraud-detection-system.md)
-- [Testing & Demonstration Guide](./docs/13-testing-demonstration.md)
+- [Complete HiveTrace System Documentation](./docs/HIVETRACE_COMPLETE_DOCUMENTATION.md) — roles, Validation Board architecture, full flows, data model, setup, and production requirements.
+- [Documentation Index](./docs/README.md) — supporting and historical reference material.
 
 ## 📖 Usage Guide
 
@@ -188,27 +183,18 @@ Format: `HT-YYYY-XXX-###`
 - `XXX` = Random 3-letter code
 - `###` = Random 3-digit code
 
-### Verification Hash
-Each batch is cryptographically signed using HMAC-SHA256:
-```
-hash = HMAC-SHA256(
-  secret,
-  JSON.stringify({
-    batchId,
-    harvestDate,
-    quantity,
-    producerId
-  })
-)
-```
+### Human Validation Record
+Each batch is approved by a Validation Board member after comparing producer evidence with the latest farm inspection record. The resulting certificate and QR code expose the documented approval to consumers.
+
+The certificate records the responsible Validation Board member, latest inspection date, approval date, certificate number, and expiry date.
 
 ### QR Code Data
 QR codes encode:
 ```json
 {
   "batchId": "HT-2024-WFB-001",
-  "hash": "7a3c2f8e9b4d1c6e5f2a9d3b7c1e8a4f",
-  "timestamp": "2024-05-15T10:30:00Z"
+  "certificateNumber": "HT-CERT-2026-AB12CD34",
+  "approvalStatus": "APPROVED"
 }
 ```
 

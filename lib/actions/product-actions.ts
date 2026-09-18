@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { requireApprovedProducer } from '@/lib/producer-authorization';
 
 export async function getProducerProducts() {
   const session = await auth();
@@ -26,7 +27,15 @@ export async function getProducerProducts() {
 
 export async function getAllActiveProducts() {
   return await prisma.product.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      batch: {
+        verified: true,
+        boardStatus: 'APPROVED',
+        certificate: { is: { status: 'ACTIVE', expiresAt: { gt: new Date() } } },
+        producer: { verified: true, status: 'ACCREDITED' },
+      },
+    },
     include: {
       producer: {
         include: { user: { select: { name: true } } },
@@ -52,6 +61,25 @@ export async function getProductById(id: string) {
           },
         },
       },
+    },
+  });
+}
+
+export async function getPublicProductById(id: string) {
+  return prisma.product.findFirst({
+    where: {
+      id,
+      isActive: true,
+      batch: {
+        verified: true,
+        boardStatus: 'APPROVED',
+        certificate: { is: { status: 'ACTIVE', expiresAt: { gt: new Date() } } },
+        producer: { verified: true, status: 'ACCREDITED' },
+      },
+    },
+    include: {
+      producer: { include: { user: { select: { name: true, email: true } } } },
+      batch: { include: { reviews: { include: { user: { select: { name: true, email: true } } }, orderBy: { createdAt: 'desc' } } } },
     },
   });
 }
@@ -109,20 +137,24 @@ export async function createProduct(data: {
   batchId: string;
   imageUrl?: string;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
-
-  const producer = await prisma.producer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!producer) throw new Error('Producer profile not found');
+  const producer = await requireApprovedProducer();
 
   // Fetch the associated batch to get its product image
   const batch = await prisma.honeyBatch.findUnique({
     where: { id: data.batchId },
   });
-  const batchImage = batch ? (batch.honeyImage || batch.packagingImage) : null;
+  if (!batch || batch.producerId !== producer.id) {
+    throw new Error('Batch not found or does not belong to your producer account');
+  }
+  if (!batch.verified) {
+    throw new Error('Only admin-verified batches can be listed for sale');
+  }
+  const certificate = await prisma.validationCertificate.findUnique({ where: { batchId: batch.id } });
+  if (!certificate || certificate.status !== 'ACTIVE' || certificate.expiresAt <= new Date()) {
+    throw new Error('Only batches with an active Validation Board certificate can be listed for sale');
+  }
+
+  const batchImage = batch.honeyImage || batch.packagingImage;
 
   // Check if batch already has a listing
   const existingProduct = await prisma.product.findUnique({
@@ -130,6 +162,9 @@ export async function createProduct(data: {
   });
 
   if (existingProduct) {
+    if (existingProduct.producerId !== producer.id) {
+      throw new Error('Unauthorized to manage this product');
+    }
     if (existingProduct.isActive) {
       throw new Error('This batch already has an active marketplace listing.');
     }
@@ -172,8 +207,12 @@ export async function createProduct(data: {
 }
 
 export async function deleteProduct(id: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
+  const producer = await requireApprovedProducer();
+
+  const product = await prisma.product.findUnique({ where: { id } });
+  if (!product || product.producerId !== producer.id) {
+    throw new Error('Unauthorized to delete this product');
+  }
 
   await prisma.product.update({
     where: { id },
@@ -194,8 +233,7 @@ export async function updateProduct(id: string, data: {
   imageUrl?: string;
   isActive?: boolean;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
+  const producer = await requireApprovedProducer();
 
   const product = await prisma.product.findUnique({
     where: { id },
@@ -204,11 +242,7 @@ export async function updateProduct(id: string, data: {
 
   if (!product) throw new Error('Product not found');
   
-  const producer = await prisma.producer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!producer || product.producerId !== producer.id) {
+  if (product.producerId !== producer.id) {
     throw new Error('Unauthorized to update this product');
   }
 

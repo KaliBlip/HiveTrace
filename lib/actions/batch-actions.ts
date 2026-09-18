@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 import { generateBatchHash } from '@/lib/crypto';
+import { requireApprovedProducer } from '@/lib/producer-authorization';
 
 export async function getProducerBatches() {
   const session = await auth();
@@ -36,14 +37,11 @@ export async function createBatch(data: {
   longitude?: number;
   registrationLocation?: string;
 }) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
+  const producer = await requireApprovedProducer();
 
-  const producer = await prisma.producer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!producer) throw new Error('Producer profile not found');
+  if (!data.honeyImage || !data.packagingImage || !data.honeyVideo) {
+    throw new Error('Finished honey, packaging, and batch video evidence are required for Validation Board review');
+  }
 
   // Generate cryptographic hash for the batch
   const verificationHash = generateBatchHash({
@@ -72,6 +70,7 @@ export async function createBatch(data: {
       verificationHash,
       verified: false, // Set to false so it requires Admin quality approval
       verifiedAt: null,
+      boardStatus: 'PENDING_REVIEW',
     },
   });
 
@@ -97,4 +96,3 @@ export async function getBatchById(id: string) {
     }
   });
 }
-

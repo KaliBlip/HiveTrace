@@ -12,6 +12,7 @@ const proxyMiddleware = async (req: NextRequest) => {
   const isAuthRoute = nextUrl.pathname.startsWith("/auth");
   const isDashboard = nextUrl.pathname.startsWith("/dashboard");
   const isAdmin = nextUrl.pathname.startsWith("/admin");
+  const isBoard = nextUrl.pathname.startsWith("/board");
   const isConsumerOrders = nextUrl.pathname.startsWith("/consumer/orders");
   const isCheckout = nextUrl.pathname.startsWith("/checkout");
 
@@ -22,7 +23,7 @@ const proxyMiddleware = async (req: NextRequest) => {
   }
 
   // If not logged in, redirect to login for protected routes (preserving the request origin)
-  if ((isDashboard || isAdmin || isConsumerOrders || isCheckout) && !isLoggedIn) {
+  if ((isDashboard || isAdmin || isBoard || isConsumerOrders || isCheckout) && !isLoggedIn) {
     const loginUrl = new URL("/auth/login", req.url);
     loginUrl.searchParams.set("callbackUrl", nextUrl.pathname + nextUrl.search);
     return NextResponse.redirect(loginUrl);
@@ -31,6 +32,11 @@ const proxyMiddleware = async (req: NextRequest) => {
   // Admin routes: admin only
   if (isAdmin && userRole !== "admin") {
     const url = new URL("/dashboard", req.url);
+    return NextResponse.redirect(url);
+  }
+
+  if (isBoard && userRole !== "validation_board") {
+    const url = new URL(getRoleHomePath(userRole), req.url);
     return NextResponse.redirect(url);
   }
 
@@ -50,6 +56,7 @@ export const config = {
   matcher: [
     "/dashboard/:path*",
     "/admin/:path*",
+    "/board/:path*",
     "/consumer/orders",
     "/checkout/:path*",
     "/auth/:path*",

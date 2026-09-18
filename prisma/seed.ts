@@ -61,6 +61,7 @@ async function main() {
 
   const demoAccounts = [
     { email: 'admin@hivetrace.com', name: 'HiveTrace Admin', role: 'ADMIN' },
+    { email: 'board@hivetrace.com', name: 'Validation Board Officer', role: 'VALIDATION_BOARD' },
     { email: 'eric@primehoney.com', name: 'Eric Prime', role: 'PRODUCER' },
     { email: 'linda@consumer.com', name: 'Linda Consumer', role: 'CONSUMER' },
   ];
@@ -93,8 +94,9 @@ async function main() {
         latitude: 6.6886,
         longitude: -1.6244,
         verified: true,
-        status: 'APPROVED',
+        status: 'ACCREDITED',
         verifiedAt: new Date(),
+        accreditationExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       },
       create: {
         userId: ericUser.id,
@@ -105,8 +107,9 @@ async function main() {
         description: 'New demo producer account for dashboard testing.',
         verificationHash: makeHash(`producer-${ericUser.id}-prime-honey`),
         verified: true,
-        status: 'APPROVED',
+        status: 'ACCREDITED',
         verifiedAt: new Date(),
+        accreditationExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       },
     });
     console.log(`  ✓ Producer profile: Prime Honey Apiaries (${ericUser.email})`);

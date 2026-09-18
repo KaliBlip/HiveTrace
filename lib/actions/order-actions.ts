@@ -3,6 +3,7 @@
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
+import { requireApprovedProducer } from '@/lib/producer-authorization';
 import {
   verifyPaystackPayment,
   generatePaymentReference,
@@ -369,14 +370,7 @@ export async function retryOrderPayment(orderId: string) {
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
-  const session = await auth();
-  if (!session?.user?.id) throw new Error('Unauthorized');
-
-  const producer = await prisma.producer.findUnique({
-    where: { userId: session.user.id },
-  });
-
-  if (!producer) throw new Error('Producer profile not found');
+  const producer = await requireApprovedProducer();
 
   const order = await prisma.order.findFirst({
     where: {

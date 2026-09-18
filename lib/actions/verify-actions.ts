@@ -10,6 +10,9 @@ export async function verifyBatchByHash(hash: string) {
   // Accept public verifier values and legacy product links that used the internal batch id.
   const batch = await prisma.honeyBatch.findFirst({
     where: {
+      verified: true,
+      boardStatus: 'APPROVED',
+      certificate: { is: { status: 'ACTIVE', expiresAt: { gt: new Date() } } },
       OR: [
         { id: hash },
         { verificationHash: { equals: hash } },
@@ -28,6 +31,8 @@ export async function verifyBatchByHash(hash: string) {
         },
       },
       qrCodes: true,
+      certificate: true,
+      boardReviewer: { select: { name: true } },
       reviews: {
         select: { rating: true },
       },
@@ -57,6 +62,17 @@ export async function verifyBatchByHash(hash: string) {
     price: batch.price,
     registrationLocation: batch.registrationLocation,
     blockchainTx: batch.blockchainTx,
+    certificate: batch.certificate
+      ? {
+          number: batch.certificate.number,
+          status: batch.certificate.status,
+          issuedAt: batch.certificate.issuedAt.toISOString(),
+          expiresAt: batch.certificate.expiresAt.toISOString(),
+        }
+      : null,
+    validationBoard: batch.boardReviewer?.name || 'Validation Board',
+    inspectionDate: batch.producer.lastInspectionAt?.toISOString() || null,
+    approvalDate: batch.boardReviewedAt?.toISOString() || null,
     producer: {
       name: batch.producer.user.name || batch.producer.businessName,
       location: batch.producer.location || 'Unknown',
@@ -78,9 +94,9 @@ export async function verifyBatchByHash(hash: string) {
       ...(batch.verifiedAt
         ? [
             {
-              event: 'Quality Check Passed',
+              event: 'Validation Board Approval',
               date: batch.verifiedAt.toISOString().split('T')[0],
-              location: 'HiveTrace Verification Network',
+              location: batch.boardReviewer?.name || 'Validation Board',
             },
           ]
         : []),

@@ -92,6 +92,7 @@ export function isValidPassword(password: string): boolean {
 export function getRoleHomePath(role?: string | null): string {
   const normalized = role?.toLowerCase();
   if (normalized === 'admin') return '/admin';
+  if (normalized === 'validation_board') return '/board';
   if (normalized === 'producer') return '/dashboard';
   return '/shop';
 }

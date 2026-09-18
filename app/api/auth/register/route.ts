@@ -42,6 +42,8 @@ export async function POST(req: Request) {
           location: '',
           phoneNumber: phoneNumber ? phoneNumber.trim() : null,
           verificationHash,
+          status: 'PENDING_BOARD_REVIEW',
+          verified: false,
         },
       });
     }

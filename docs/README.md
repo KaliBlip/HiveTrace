@@ -1,6 +1,12 @@
 # HiveTrace Documentation
 
-Technical documentation for the HiveTrace final-year project: a cryptographically verified honey traceability platform with anti-fraud detection, immutable audit ledger, and integrated e-commerce.
+Technical documentation for the HiveTrace final-year project. The current product is a human-governed honey traceability platform centred on Validation Board field inspections, accreditation, evidence comparison, certificates, and QR verification.
+
+## Start here
+
+[**Complete HiveTrace System Documentation**](./HIVETRACE_COMPLETE_DOCUMENTATION.md) is the single authoritative description of the current architecture, roles, validation rules, data model, user flows, setup, and deployment requirements.
+
+The numbered documents below are retained as supporting and historical technical references. Some describe legacy AI, blockchain, fraud-detection, or admin-approval work that is no longer the core validation method.
 
 ## Document Index
 
